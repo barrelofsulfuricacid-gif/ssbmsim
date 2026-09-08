@@ -59,5 +59,4 @@ configuration and the separate Dolphin oracle workflow.
 Start with [CONTRIBUTING.md](CONTRIBUTING.md), the
 [architecture](docs/architecture/ssbm_native_runtime.md), and
 [dependency provenance](docs/dependencies.md). Public contributions use the same
-setup and tests as CI. Original project code is under [0BSD](LICENSE);
-third-party code retains its own terms in [THIRD_PARTY.md](THIRD_PARTY.md).
+setup and tests as CI. 
