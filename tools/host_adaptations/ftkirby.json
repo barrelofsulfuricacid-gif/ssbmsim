@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftKirby/ftkirby.c",
+  "source_sha256": "a9b5929d123e0e9575b2d581cc4d0e6b77e7aa42a48edd002572055bc8c47f45",
+  "adapted_sha256": "9ffd637283b669f7b6d9b49dea919dbcdccd978484207d1606e3838c468df19b",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_archive_root_api.h",
+      "sha256": "8a59f13dee89619ddfcc051d46f31d30ab75f02e238472074822ee71e7ca17fa"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"ftkirby.h\"",
+      "new": "#include \"ftkirby.h\"\n#include \"lb/lbfile.h\"\n#include \"native_archive_root_api.h\"",
+      "count": 1,
+      "reason": "Declare resident normalized graph binding; retain source copy-ability and costume tables."
+    },
+    {
+      "old": "        lbDvd_800178E8(2, ftKb_Init_803CA9D0[arg0].filename, 4, 4, 0, 1, 3, 1,\n                       0);",
+      "new": "        (void) pf_ssbm_native_archive_root_require(\n            lbFileGetFullName(ftKb_Init_803CA9D0[arg0].filename),\n            ftKb_Init_803CA9D0[arg0].name);",
+      "count": 1,
+      "reason": "Prebind the copy-data root at the original preload point instead of queueing optical-disc I/O. Do not populate the source synchronous-load cache early. Preserve the later effect preload and all roster iteration."
+    },
+    {
+      "old": "                lbDvd_800178E8(2, ftKb_Init_803CB3E8[arg0][i].dat_filename, 4,\n                               4, 0, 1, 3, 1, 0);",
+      "new": "                Fighter_CostumeStrings* cs = &ftKb_Init_803CB3E8[arg0][i];\n                const char* file = lbFileGetFullName(cs->dat_filename);\n                (void) pf_ssbm_native_archive_root_require(file, cs->joint_name);\n                if (cs->matanim_joint_name != NULL) {\n                    (void) pf_ssbm_native_archive_root_require(\n                        file, cs->matanim_joint_name);\n                }",
+      "count": 1,
+      "reason": "Prebind both costume roots for exactly the original selected color range, with locale resolution and mandatory-root checks. Source joint/material caches remain untouched until the synchronous load."
+    },
+    {
+      "old": "                lbArchive_80017040(NULL, ftKb_Init_803CA9D0[arg0].filename,\n                                   &((HSD_Archive**) &ft_80459B88)[arg0],\n                                   ftKb_Init_803CA9D0[arg0].name, 0);",
+      "new": "                ((HSD_Archive**) &ft_80459B88)[arg0] =\n                    pf_ssbm_native_archive_root_require(\n                        lbFileGetFullName(ftKb_Init_803CA9D0[arg0].filename),\n                        ftKb_Init_803CA9D0[arg0].name);",
+      "count": 1,
+      "reason": "Bind the same public data root to the original cache slot. The source cast names HSD_Archive but lbArchive writes the public root, not an archive handle. Keep the null-cache guard and exact slot addressing."
+    },
+    {
+      "old": "                    lbArchive_80017040(NULL, costumes[arg1].dat_filename, item,\n                                       cs->joint_name, &item->matanim,\n                                       cs->matanim_joint_name, 0);",
+      "new": "                    const char* file = lbFileGetFullName(costumes[arg1].dat_filename);\n                    item->joint = pf_ssbm_native_archive_root_require(file, cs->joint_name);\n                    item->matanim = pf_ssbm_native_archive_root_require(\n                        file, cs->matanim_joint_name);",
+      "count": 1,
+      "reason": "Retain synchronous joint-then-material root writes and cache guards while resolving already-prebound graph roots."
+    },
+    {
+      "old": "                    lbArchive_80017040(NULL, costumes[arg1].dat_filename, item,\n                                       cs->joint_name, 0);",
+      "new": "                    item->joint = pf_ssbm_native_archive_root_require(\n                        lbFileGetFullName(costumes[arg1].dat_filename), cs->joint_name);",
+      "count": 1,
+      "reason": "Retain the no-material branch and its following explicit null write; resolve the same joint root without DAT parsing."
+    }
+  ]
+}

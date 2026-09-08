@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/types.h",
+  "source_sha256": "156c7b4a597db5913674322f54cbe584f0fdb80c21be93c89e579068282c317a",
+  "adapted_sha256": "e8fb3b147dbb78a89d5e70850a21d9c366341f22225e2c767b8c8bc329367b2b",
+  "replacements": [
+    {
+      "old": "union ColorOverlay_x8_t {\n",
+      "new": "#pragma scalar_storage_order big-endian\nunion ColorOverlay_x8_t {\n",
+      "count": 1,
+      "reason": "Decode the immutable PowerPC color-animation command word with its original six-bit opcode and 26-bit timer layout on native little-endian i686."
+    },
+    {
+      "old": "};\nASSERT_SIZE(union ColorOverlay_x8_t, 0x4);\n",
+      "new": "};\n#pragma scalar_storage_order default\nASSERT_SIZE(union ColorOverlay_x8_t, 0x4);\n",
+      "count": 1,
+      "reason": "Return the following runtime-owned ColorOverlay pointers, counters, colors, and flags to native host storage immediately after the immutable command-word overlay."
+    },
+    {
+      "old": "struct Command_00 {\n",
+      "new": "#pragma scalar_storage_order big-endian\nstruct Command_00 {\n",
+      "count": 1,
+      "reason": "Decode the original big-endian PowerPC fighter/item command byte stream with its declared scalar and bitfield meanings on the native little-endian i686 compiler."
+    },
+    {
+      "old": "struct Command_05 {\n    union CmdUnion* ptr;\n};\nstruct Command_07 {\n    union CmdUnion* ptr;\n};\nstruct Command_09 {\n",
+      "new": "#pragma scalar_storage_order default\nstruct Command_05 {\n    union CmdUnion* ptr;\n};\nstruct Command_07 {\n    union CmdUnion* ptr;\n};\n#pragma scalar_storage_order big-endian\nstruct Command_09 {\n",
+      "count": 1,
+      "reason": "Keep startup-materialized native subroutine and goto pointers in host byte order while the surrounding immutable command words retain the original big-endian scalar layout. GCC applies scalar_storage_order to these pointer-only overlays and otherwise byte-swaps a valid native pointer before Command_05 or Command_07 follows it."
+    },
+    {
+      "old": "struct spawn_gfx_1 {\n    u32 gfxID : 16;\n    u32 unkFloat : 16;\n};\n",
+      "new": "struct spawn_gfx_1 {\n    u16 gfxID;\n    u16 unkFloat;\n};\n",
+      "count": 1,
+      "reason": "Decode the two byte-aligned PowerPC halfwords as big-endian u16 scalars. GCC's reverse scalar storage order selects the correct half of a u32 bitfield container but otherwise reads each 16-bit field's bytes in host order (for example source GFX 0x0407 becomes 0x0704)."
+    },
+    {
+      "old": "struct spawn_hitbox_1 {\n    u32 size : 16;\n    s32 z_offset : 16;\n};\nstruct spawn_hitbox_2 {\n    s32 y_offset : 16;\n    s32 x_offset : 16;\n};\n",
+      "new": "struct spawn_hitbox_1 {\n    u16 size;\n    s16 z_offset;\n};\nstruct spawn_hitbox_2 {\n    s16 y_offset;\n    s16 x_offset;\n};\n",
+      "count": 1,
+      "reason": "Decode byte-aligned hitbox size and offsets as signed or unsigned big-endian halfword scalars instead of host-byte-order slices of a 32-bit bitfield container."
+    },
+    {
+      "old": "struct sound_effect_2 {\n    u32 padding : 16;\n    u32 volume : 8;\n    u32 panning : 8;\n};\n",
+      "new": "struct sound_effect_2 {\n    u16 padding;\n    u8 volume;\n    u8 panning;\n};\n",
+      "count": 1,
+      "reason": "Decode the byte-aligned sound command halfword and bytes directly from the immutable big-endian command stream."
+    },
+    {
+      "old": "struct stage_sfx_2 {\n    u32 x0_b0_15 : 16;\n    u32 x2_b0_15 : 16;\n};\nstruct stage_sfx_3 {\n    u32 x0_b0_15 : 16;\n    u32 x2_b0_7 : 8;\n    u32 x3_b0_7 : 8;\n};\n",
+      "new": "struct stage_sfx_2 {\n    u16 x0_b0_15;\n    u16 x2_b0_15;\n};\nstruct stage_sfx_3 {\n    u16 x0_b0_15;\n    u8 x2_b0_7;\n    u8 x3_b0_7;\n};\n",
+      "count": 1,
+      "reason": "Decode byte-aligned stage-SFX halfwords and bytes as big-endian scalar fields rather than host-byte-order slices of a u32 bitfield container."
+    },
+    {
+      "old": "struct CommandInfo {\n",
+      "new": "#pragma scalar_storage_order default\n\nstruct CommandInfo {\n",
+      "count": 1,
+      "reason": "Return subsequent runtime-owned CommandInfo floats, counters, and native pointers to the host scalar layout after the packed asset command overlay definitions."
+    }
+  ]
+}

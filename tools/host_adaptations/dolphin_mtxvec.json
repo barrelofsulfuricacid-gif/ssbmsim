@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "source_path": "extern/dolphin/src/dolphin/mtx/mtxvec.c",
+  "source_sha256": "41335e9824650e3ac56f620774028bba01d539ed8384b2c89d9e5bb3ed597184",
+  "adapted_sha256": "acad09757cbe5efd0668e4d6e462625b4f2dc8be3ad78aea0b0d685550bfc846",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include <dolphin.h>",
+      "new": "#include \"native_numeric.h\"\n#include <dolphin/os.h>",
+      "count": 1,
+      "reason": "Include only the native assertion contract instead of the unrelated target SDK umbrella."
+    },
+    {
+      "old": "void C_MTXMultVec(Mtx44 m, Vec* src, Vec* dst)",
+      "new": "void C_MTXMultVec(const Mtx m, const Vec* src, Vec* dst)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible declaration and expose the 3x4 extent actually read; const changes no ABI or operation order."
+    },
+    {
+      "old": "asm void PSMTXMultVec(register Mtx44 m, register Vec* src, register Vec* dst)",
+      "new": "#if 0\nasm void PSMTXMultVec(register Mtx44 m, register Vec* src, register Vec* dst)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single transform implementations; TARGET_PC consumers select the adjacent portable C bodies."
+    },
+    {
+      "old": "void C_MTXMultVecArray(Mtx m, Vec* srcBase, Vec* dstBase, u32 count)",
+      "new": "#endif\nvoid C_MTXMultVecArray(const Mtx m, const Vec* srcBase, Vec* dstBase, u32 count)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation and match its read-only input contracts."
+    },
+    {
+      "old": "asm void PSMTXMultVecArray(register Mtx m, register Vec* srcBase,",
+      "new": "#if 0\nasm void PSMTXMultVecArray(register Mtx m, register Vec* srcBase,",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single array implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_MTXMultVecSR(Mtx44 m, Vec* src, Vec* dst)",
+      "new": "#endif\nvoid C_MTXMultVecSR(const Mtx m, const Vec* src, Vec* dst)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation, expose the 3x4 extent actually read, and match its read-only input contracts."
+    },
+    {
+      "old": "void MTXMultVecArraySR(Mtx44 m, Vec* srcBase, Vec* dstBase, u32 count)",
+      "new": "void MTXMultVecArraySR(const Mtx m, const Vec* srcBase, Vec* dstBase, u32 count)",
+      "count": 1,
+      "reason": "Match Aurora's native C declaration and the 3x4 extent actually read; the source loop and arithmetic remain unchanged."
+    },
+    {
+      "old": "#define qr0 0\n",
+      "new": "#define qr0 0\n\nstatic f32 pf_ps_mtx_mult_vec_row(const f32 row[4], const Vec* src)\n{\n    f32 lane0 = row[0] * src->x;\n    f32 lane1 = row[1] * src->y;\n    lane0 = PF_SlippiMulAddF32(row[2], src->z, lane0);\n    lane1 = PF_SlippiMulAddF32(row[3], 1.0F, lane1);\n    return lane0 + lane1;\n}\n\nstatic f32 pf_ps_mtx_mult_vec_sr_row(const f32 row[4], const Vec* src)\n{\n    const f32 xy = row[0] * src->x + row[1] * src->y;\n    return PF_SlippiMulAddF32(row[2], src->z, xy);\n}\n",
+      "count": 1,
+      "reason": "Translate the exact lane order of GALE01's paired-single matrix-vector multiply and rotation-only multiply into scalar binary32 operations and fmaf calls without introducing guest CPU state. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "    vTmp.x = m[0][3] +\n             ((m[0][2] * src->z) + ((m[0][0] * src->x) + (m[0][1] * src->y)));\n    vTmp.y = m[1][3] +\n             ((m[1][2] * src->z) + ((m[1][0] * src->x) + (m[1][1] * src->y)));\n    vTmp.z = m[2][3] +\n             ((m[2][2] * src->z) + ((m[2][0] * src->x) + (m[2][1] * src->y)));",
+      "new": "    vTmp.x = pf_ps_mtx_mult_vec_row(m[0], src);\n    vTmp.y = pf_ps_mtx_mult_vec_row(m[1], src);\n    vTmp.z = pf_ps_mtx_mult_vec_row(m[2], src);",
+      "count": 1,
+      "reason": "Use the exact PSMTXMultVec paired-lane multiply, fused-add, and horizontal-sum order selected by GALE01 retail builds."
+    },
+    {
+      "old": "        vTmp.x = m[0][3] + ((m[0][2] * srcBase->z) +\n                            ((m[0][0] * srcBase->x) + (m[0][1] * srcBase->y)));\n        vTmp.y = m[1][3] + ((m[1][2] * srcBase->z) +\n                            ((m[1][0] * srcBase->x) + (m[1][1] * srcBase->y)));\n        vTmp.z = m[2][3] + ((m[2][2] * srcBase->z) +\n                            ((m[2][0] * srcBase->x) + (m[2][1] * srcBase->y)));",
+      "new": "        vTmp.x = pf_ps_mtx_mult_vec_row(m[0], srcBase);\n        vTmp.y = pf_ps_mtx_mult_vec_row(m[1], srcBase);\n        vTmp.z = pf_ps_mtx_mult_vec_row(m[2], srcBase);",
+      "count": 1,
+      "reason": "Use the same exact paired-single operation sequence for every PSMTXMultVecArray element."
+    },
+    {
+      "old": "    vTmp.x = (m[0][2] * src->z) + ((m[0][0] * src->x) + (m[0][1] * src->y));\n    vTmp.y = (m[1][2] * src->z) + ((m[1][0] * src->x) + (m[1][1] * src->y));\n    vTmp.z = (m[2][2] * src->z) + ((m[2][0] * src->x) + (m[2][1] * src->y));",
+      "new": "    vTmp.x = pf_ps_mtx_mult_vec_sr_row(m[0], src);\n    vTmp.y = pf_ps_mtx_mult_vec_sr_row(m[1], src);\n    vTmp.z = pf_ps_mtx_mult_vec_sr_row(m[2], src);",
+      "count": 1,
+      "reason": "Use the exact PSMTXMultVecSR paired multiply, horizontal sum, and final fused-add sequence."
+    },
+    {
+      "old": "        vTmp.x = (m[0][2] * srcBase->z) +\n                 ((m[0][0] * srcBase->x) + (m[0][1] * srcBase->y));\n        vTmp.y = (m[1][2] * srcBase->z) +\n                 ((m[1][0] * srcBase->x) + (m[1][1] * srcBase->y));\n        vTmp.z = (m[2][2] * srcBase->z) +\n                 ((m[2][0] * srcBase->x) + (m[2][1] * srcBase->y));",
+      "new": "        vTmp.x = pf_ps_mtx_mult_vec_sr_row(m[0], srcBase);\n        vTmp.y = pf_ps_mtx_mult_vec_sr_row(m[1], srcBase);\n        vTmp.z = pf_ps_mtx_mult_vec_sr_row(m[2], srcBase);",
+      "count": 1,
+      "reason": "Use the same exact rotation-only paired-single sequence for each native array element."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/MSL/math_1.c",
+  "source_sha256": "da9b2c87473277678bb92db55e7925af419e945542b4ac73c84fda1a57552564",
+  "adapted_sha256": "f00aa6aece2ea763c1c25dabc5c07d2d10b22bcf950c10ba47ba186146c7914c",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"math.h\"\n",
+      "new": "#include \"math.h\"\n\n#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__\n#define MSL_HI(x) (((int*) &(x))[1])\n#define MSL_LO(x) (((int*) &(x))[0])\n#else\n#define MSL_HI(x) (((int*) &(x))[0])\n#define MSL_LO(x) (((int*) &(x))[1])\n#endif\n",
+      "count": 1,
+      "reason": "The target MSL math header defines lvalue high- and low-word access for big-endian PowerPC doubles, but the native source intentionally resolves the host math header. These compile-time host-endian lvalues preserve the same IEEE-754 word operations in frexp while leaving fabsf__Ff and all source control flow unchanged."
+    }
+  ]
+}

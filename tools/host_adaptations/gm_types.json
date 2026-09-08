@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gm/types.h",
+  "source_sha256": "cdf84511e8b56824ec26d668bbec115384d69b311f08518e1317adc3d15e1ffc",
+  "adapted_sha256": "6672790caab2c759f8819f482e6cac02e86d2ccaa6d1f271dfc6666ea743eae4",
+  "replacements": [
+    {
+      "old": "    UNUSED UNK_T unused;",
+      "new": "    UNK_T unused;",
+      "count": 1,
+      "reason": "Remove an ignored field-level host attribute from the newly named GameScene callback slot. GCC diagnoses the attribute under -Werror, and explicitly discarding an attribute the compiler already ignores preserves the field type, offset, size, ABI, and all runtime behavior."
+    },
+    {
+      "old": "#if defined(MUST_MATCH) || defined(LINT)\n#pragma pack(push, 1)\n#endif",
+      "new": "#pragma pack(push, 1)",
+      "count": 1,
+      "reason": "Preserve the original packed 0x12-byte TmUnkMenuData row on the native GCC ABI so the live TmData size assertion and every following field offset remain exact."
+    },
+    {
+      "old": "#if defined(MUST_MATCH) || defined(LINT)\n#pragma pack(pop)\n#endif",
+      "new": "#pragma pack(pop)",
+      "count": 1,
+      "reason": "End the narrowly scoped native packing immediately after the TmUnkMenuData array, matching the original source's intended layout boundary."
+    },
+    {
+      "old": "typedef union UnkFlagStruct {\n    u8 u8;\n    struct {\n        u8 b0 : 1;\n        u8 b1 : 1;\n        u8 b2 : 1;\n        u8 b3 : 1;\n        u8 b4 : 1;\n        u8 b5 : 1;\n        u8 b6 : 1;\n        u8 b7 : 1;\n    };\n} UnkFlagStruct;",
+      "new": "typedef union UnkFlagStruct {\n    u8 u8;\n    struct __attribute__((scalar_storage_order(\"big-endian\"))) {\n        u8 b0 : 1;\n        u8 b1 : 1;\n        u8 b2 : 1;\n        u8 b3 : 1;\n        u8 b4 : 1;\n        u8 b5 : 1;\n        u8 b6 : 1;\n        u8 b7 : 1;\n    };\n} UnkFlagStruct;",
+      "count": 1,
+      "reason": "Preserve CodeWarrior MSB-first byte flags across every raw-byte/bitfield alias. Retail it_8026EECC at 0x8026eef4/0x8026eef8 loads xDAA and tests bit 0 for b7; GCC default instead tests bit 7. Scope reverse storage to the anonymous one-byte flag struct, preserving raw u8 and enclosing native scalar layout."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/sfx/crowdsfx.c",
+  "source_sha256": "b06e2e34802185f225ba5531774e3b94ef3b3b4d9d4a9c5c79fbc58862f5a108",
+  "adapted_sha256": "a8ad0b3a9565d228678ab711de1e368b4aaa8ff2cbce1983aa5b64c50d13706a",
+  "replacements": [
+    {
+      "old": "    if (out_of_bounds != 0) {\n        un_8032201C(spawn_id, cat);\n    } else {\n        return 0;\n    }\n}\n\nint un_80322598",
+      "new": "    if (out_of_bounds != 0) {\n        return un_8032201C(spawn_id, cat);\n    } else {\n        return 0;\n    }\n}\n\nint un_80322598",
+      "count": 1,
+      "reason": "The PowerPC return register from the final boolean call is the function result on the out-of-bounds path; express that existing source return contract explicitly for strict native C."
+    },
+    {
+      "old": "    un_8032201C(arg0, cat);\n}\n",
+      "new": "    return un_8032201C(arg0, cat);\n}\n",
+      "count": 1,
+      "reason": "The final crowd-category call supplies the function result in the PowerPC return register; preserve it explicitly instead of falling off a non-void native C function."
+    }
+  ]
+}

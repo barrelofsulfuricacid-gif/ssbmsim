@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "extern/dolphin/src/dolphin/gx/GXTransform.c",
+  "source_sha256": "673dfe03ee3b328dde598a926babf692e886215ab3495533053920613089a9a4",
+  "adapted_sha256": "a84b1c8fda8663e504a26e734ad96f9c4efa343960ff7a1412ec143c6230dee8",
+  "replacements": [
+    {
+      "old": "void GXSetProjection(f32 mtx[4][4], GXProjectionType type)",
+      "new": "#if 0\n\nvoid GXSetProjection(f32 mtx[4][4], GXProjectionType type)",
+      "count": 1,
+      "reason": "Retain the source-owned pure GXProject value transform while excluding the remainder of GXTransform.c, which writes GameCube GX registers or contains CodeWarrior paired-single assembly and is outside the native headless runtime."
+    },
+    {
+      "old": "void __GXSetMatrixIndex(GXAttr matIdxAttr)\n{\n    if (matIdxAttr < GX_VA_TEX4MTXIDX) {\n        GX_WRITE_SOME_REG4(8, 0x30, gx->matIdxA, -12);\n        GX_WRITE_XF_REG(24, gx->matIdxA);\n    } else {\n        GX_WRITE_SOME_REG4(8, 0x40, gx->matIdxB, -12);\n        GX_WRITE_XF_REG(25, gx->matIdxB);\n    }\n    gx->bpSent = 1;\n}\n",
+      "new": "void __GXSetMatrixIndex(GXAttr matIdxAttr)\n{\n    if (matIdxAttr < GX_VA_TEX4MTXIDX) {\n        GX_WRITE_SOME_REG4(8, 0x30, gx->matIdxA, -12);\n        GX_WRITE_XF_REG(24, gx->matIdxA);\n    } else {\n        GX_WRITE_SOME_REG4(8, 0x40, gx->matIdxB, -12);\n        GX_WRITE_XF_REG(25, gx->matIdxB);\n    }\n    gx->bpSent = 1;\n}\n\n#endif\n",
+      "count": 1,
+      "reason": "Close the compile-time exclusion after the final hardware-facing transform function so the adapted provider emits GXProject and no device or assembly implementation."
+    },
+    {
+      "old": "#include \"__gx.h\"\n\n#include <macros.h>\n#include <dolphin/gx.h>\n#include <dolphin/mtx.h>\n#include <dolphin/os.h>",
+      "new": "#include <dolphin/gx.h>\n#include <dolphin/mtx.h>\n\n#ifndef ASSERTMSGLINE\n#define ASSERTMSGLINE(line, cond, msg) ((void) 0)\n#endif",
+      "count": 1,
+      "reason": "The selected pure projection function needs only GX and matrix value types. Remove private GX state and OS assertion headers whose hardware macros belong exclusively to the excluded suffix; DEBUG=0 makes the original null assertion an empty operation."
+    },
+    {
+      "old": "void GXProject(f32 x, f32 y, f32 z, f32 mtx[3][4], f32* pm, f32* vp, f32* sx,\n               f32* sy, f32* sz)",
+      "new": "void GXProject(f32 x, f32 y, f32 z, const f32 mtx[3][4], const f32* pm,\n               const f32* vp, f32* sx, f32* sy, f32* sz)",
+      "count": 1,
+      "reason": "Match the maintained native SDK declaration's read-only qualifiers. The original body never writes the matrix, projection, or viewport inputs, and the PowerPC ABI is unchanged."
+    }
+  ]
+}

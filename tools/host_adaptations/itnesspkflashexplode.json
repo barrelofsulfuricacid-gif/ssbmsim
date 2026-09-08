@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itnesspkflashexplode.c",
+  "source_sha256": "a52de7b1c4cde04931cc0e6b4ddabb24ff6386e323b12c7eccf4bad3eb2dde50",
+  "adapted_sha256": "0b707dfa42c9e0779a133a8d0a055834b7ef4c646d86a2b0f394f9c635b8238d",
+  "replacements": [
+    {
+      "old": "    it->x40_vel.z = it->x40_vel.y = it->x40_vel.z = 0;",
+      "new": "    it->x40_vel.z = 0;\n    it->x40_vel.y = 0;\n    it->x40_vel.z = 0;",
+      "count": 1,
+      "reason": "GALE01 1.02 at 0x802AFD34/38/3C stores the same zero float to item offsets 0x48, 0x44, 0x48, leaving X at 0x40 unchanged. Sequence those exact stores explicitly to remove the unsequenced repeated assignment; do not correct the retail Z/Y/Z behavior to X/Y/Z."
+    }
+  ]
+}

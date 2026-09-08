@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gm/gm_1A36.c",
+  "source_sha256": "3964234a0a3dc1dccb39824c6f78c88b9a59a301f8fec4078120efa4b7aa9d7d",
+  "adapted_sha256": "4edc4b9b9c6ac7bfcfc92c1c13a90cddb3b365c1fca82ab450f1f9adbdedf983",
+  "replacements": [
+    {
+      "old": "#include \"types.h\"",
+      "new": "#include \"types.h\"\n\n#define PAD_STICK_UP (1 << 16)\n#define PAD_STICK_DOWN (1 << 17)\n#define PAD_STICK_LEFT (1 << 18)\n#define PAD_STICK_RIGHT (1 << 19)\n#define PAD_CONFIRM (1ULL << 32)\n#define PAD_CANCEL (1ULL << 33)\n#define PAD_LR_START (1ULL << 34)\n#define PAD_LRA_START (1ULL << 35)\n#define PAD_ANY_UP (1ULL << 36)\n#define PAD_ANY_DOWN (1ULL << 37)\n#define PAD_ANY_LEFT (1ULL << 38)\n#define PAD_ANY_RIGHT (1ULL << 39)",
+      "count": 1,
+      "reason": "Restore Melee's four synthesized stick-direction bits and eight 64-bit composite controller bits exactly as declared by the pinned doldecomp dolphin/pad.h. These are game-owned input-map flags above the physical SDK button contract, not missing Aurora PAD APIs, so the declarations remain local to the source that synthesizes them."
+    }
+  ]
+}

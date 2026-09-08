@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/sysdolphin/baselib/cobj.c",
+  "source_sha256": "b49cc2726fa8617c73c12090815611e7c554721f4f5d43bfca77df2cfa24cdce",
+  "adapted_sha256": "0c180d32ca8da71b6ddc11479eed568cf4b4d883a00226cc566fb0c7ceceabe6",
+  "replacements": [
+    {
+      "old": "    int unused[3];\n    GXProjectionType projection_type;\n    /// @todo Should be an `Mtx44` like the other three: `makeProjectionMtx`\n    /// writes 4 rows. Changing it here does not match, so the extra row\n    /// currently lands in `unused` above.\n    Mtx p;",
+      "new": "    GXProjectionType projection_type;\n    Mtx44 p;",
+      "count": 1,
+      "reason": "Apply the pinned source's explicit host-layout TODO: projection builders write a 4x4 matrix, while the matching build relied on the fourth row landing in an adjacent unused stack pad."
+    },
+    {
+      "old": "HSD_CObj* HSD_CObjGetCurrent(void)\n{\n    return current;\n}\n",
+      "new": "HSD_CObj* HSD_CObjGetCurrent(void)\n{\n    return current;\n}\n\nbool pf_hsd_cobj_select_headless(HSD_CObj* cobj)\n{\n    if (cobj == NULL) {\n        return false;\n    }\n    current = cobj;\n    HSD_CObjSetupViewingMtx(cobj);\n    return true;\n}\n",
+      "count": 1,
+      "reason": "Expose the gameplay-visible subset of HSD_CObjSetCurrent for the headless GX phase: select the source camera and refresh its source-owned viewing matrix while leaving viewport, scissor, projection, z-list, and GX device writes below the audited output boundary."
+    }
+  ]
+}

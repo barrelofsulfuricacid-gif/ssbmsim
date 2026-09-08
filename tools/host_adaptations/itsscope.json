@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itsscope.c",
+  "source_sha256": "422637dde64b5b0b5523a1b76a05f9c1dac637a43503b6fb0233da7ea042dc93",
+  "adapted_sha256": "a07a6dd5f7b76b7a0e26f8ab8d3f07b7ced52a7f4b3838395f9fa3b2091568e5",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"inlines.h\"\n",
+      "new": "#include <melee/it/kinds/inlines.h>\n",
+      "count": 1,
+      "reason": "The adapted source is materialized outside its original directory, so the local include spelling otherwise resolves to melee/it/inlines.h instead of the original melee/it/items/inlines.h. The canonical project-relative spelling selects the same pinned header and restores Item_InitSpawn's inline definition without changing behavior."
+    },
+    {
+      "old": "    case 9:\n        return attrs->xC[9];\n    }\n}\n",
+      "new": "    case 9:\n        return attrs->xC[9];\n    }\n    return 0;\n}\n",
+      "count": 1,
+      "reason": "The exact GALE01 DOL function at 0x80291D38 leaves the incoming Item_GObj pointer in r3 only for charge levels outside 0 through 9. Complete source-consumer audit proves it_80291DAC derives 0 through 9, ftCo_ItemScopeFire gates it_80291FA8 to 0 through 9, and the damage callback forwards only the guarded it_80291DAC result. Returning zero gives the unreachable host path a defined fail-closed value without introducing guest-address emulation; every reachable DOL branch is unchanged."
+    },
+    {
+      "old": "    } else {\n        return level;\n    }\n}\n\nvoid it_80291F14",
+      "new": "    } else {\n        return level;\n    }\n    return level;\n}\n\nvoid it_80291F14",
+      "count": 1,
+      "reason": "The source omits the loop-exhaustion return, but exact GALE01 DOL instructions at 0x80291EF8 through 0x80291F08 decrement r8 and then execute mr r3,r8. The shipped ItCo.dat Super Scope table has ammunition 48 and integer shot costs 1,2,3,4,6,8,10,12,14,16; the reachable one-ammunition charged-shot exhaustion therefore returns level zero exactly as the DOL does."
+    }
+  ]
+}

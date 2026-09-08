@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ft_0D31.c",
+  "source_sha256": "e0f78a933a22db3a6bfef104656a8f7a68dd856524ddba617b583b51bb8b4e4a",
+  "adapted_sha256": "e0812498fb8387718d5a442ae6d801af12973764f124346370ffbcacb6eaeb67",
+  "replacements": [
+    {
+      "old": "            fp->mv.co.unk_deadup.x44 = 3;\n            return;",
+      "new": "            fp->mv.co.unk_deadup.x44 = 3;\n            /* Slippi screen-KO velocity reuses the phase-one blend fields. */\n            fp->mv.co.walk.slow_anim_frame = *(f32*) (data + 12);\n            fp->mv.co.unk_deadup.x4C = *(f32*) (data + 15);\n            fp->self_vel.x = 0.0f;\n            fp->self_vel.y = 0.0f;\n            fp->self_vel.z = 0.0f;\n            return;",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Online/Core/FreezeDeadUpFallPhysics/InitHitVelocity.asm at 0x800D4C1C. Preserve phase/timer stores, initialize motion-local Y/Z velocity and zero ordinary velocity so screen-KO motion cannot move the gameplay position."
+    },
+    {
+      "old": "        ftCommon_Fall(fp, *(float*) (ca + 0x34), *(float*) (ca + 0x38));\n        lbVector_Add(&fp->mv.co.unk_deadup.x5C, &fp->self_vel);",
+      "new": "        {\n            /* The patch compares the double subtraction before binary32 storage. */\n            double velocity = (double) fp->mv.co.walk.slow_anim_frame -\n                              (double) *(float*) (ca + 0x34);\n            double terminal = -(double) *(float*) (ca + 0x38);\n            fp->mv.co.walk.slow_anim_frame =\n                (float) (velocity > terminal ? velocity : terminal);\n            fp->mv.co.unk_deadup.x5C.y = fp->mv.co.unk_deadup.x5C.y +\n                                       fp->mv.co.walk.slow_anim_frame;\n            fp->mv.co.unk_deadup.x5C.z = fp->mv.co.unk_deadup.x4C +\n                                       fp->mv.co.unk_deadup.x5C.z;\n        }",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Online/Core/FreezeDeadUpFallPhysics/UpdateFallVelocity.asm at 0x800D4D68 through 0x800D4D84. Keep gravity, terminal comparison and Y/Z accumulation order; preserve the remaining source animation guard, model-position accumulation and temporary-vector clearing."
+    },
+    {
+      "old": "            fp->self_vel.y =\n                (*(f32*) (data + 4) * Stage_GetCamBoundsTopOffset() -\n                 fp->cur_pos.y) /\n                (f32) data[1];",
+      "new": "            fp->self_vel.y =\n                PF_SlippiMulAddF32(*(f32*) (data + 4),\n                    Stage_GetCamBoundsTopOffset(), -fp->cur_pos.y) /\n                (f32) data[1];",
+      "count": 1,
+      "reason": "Preserve shared star-KO launch arithmetic: GALE01 0x800D4438 fmsubs rounds camera-bound displacement once, followed by fdivs at 0x800D4444. Source-wide KO launch audit finds this one computed camera-relative vertical launch; screen-KO velocity is independently source/Slippi-owned. Applies to all fighters and subfighters, not replay-specific values."
+    },
+    {
+      "old": "#include \"ft_0D31.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ft_0D31.h\"",
+      "count": 1,
+      "reason": "Declare shared Slippi binary32 fused value arithmetic."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

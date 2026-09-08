@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/spline.c",
+  "source_sha256": "736ab29868437a263bcdbdaefdf973c75e9fa4ff3d86a3baf548f3396d415c50",
+  "adapted_sha256": "b45379e321b52691479a7396e532d921b7c6abbcbeacdf212e841f55be29de0c",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    return (d1 * (t3_T2 - t2_T)) + ((d0 * (time + ((t3_T2 - t2_T) - t2_T))) +\n                                    ((p0 * (1.0f + (_2t3_T3 - _3t2_T2))) +\n                                     (p1 * (-_2t3_T3 + _3t2_T2))));",
+      "new": "    f32 result = p1 * (-_2t3_T3 + _3t2_T2);\n    result = PF_SlippiMulAddF32(p0, 1.0f + (_2t3_T3 - _3t2_T2), result);\n    result = PF_SlippiMulAddF32(d0, time + ((t3_T2 - t2_T) - t2_T), result);\n    return PF_SlippiMulAddF32(d1, t3_T2 - t2_T, result);",
+      "count": 1,
+      "reason": "Match splGetHelmite at GALE01 0x80378A80 through 0x80378A8C: start with the rounded p1 multiply, then accumulate p0, d0, and d1 through the target's three ordered PowerPC single-precision fused multiply-adds. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            p->x = (t * (cp[1].x - cp[0].x)) + cp[0].x;\n            p->y = (t * (cp[1].y - cp[0].y)) + cp[0].y;\n            p->z = (t * (cp[1].z - cp[0].z)) + cp[0].z;",
+      "new": "            p->x = PF_SlippiMulAddF32(t, cp[1].x - cp[0].x, cp[0].x);\n            p->y = PF_SlippiMulAddF32(t, cp[1].y - cp[0].y, cp[0].y);\n            p->z = PF_SlippiMulAddF32(t, cp[1].z - cp[0].z, cp[0].z);",
+      "count": 1,
+      "reason": "Match the PowerPC single-precision fused multiply-add codegen for the linear spline point evaluation: each axis computes one ordered a*b+c expression, which the target compiles to a single fmadds while the native import globally disables contraction. Same fmadds class as the fobj linear-channel adaptation and the splGetHelmite adaptation; verified end to end by the 9217 frame-919 oracle proof (native x919 converges to the oracle value). Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"spline.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"spline.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

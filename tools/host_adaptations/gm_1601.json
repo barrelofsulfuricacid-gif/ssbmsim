@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gm/gm_1601.c",
+  "source_sha256": "b88e0a0193665db2de9427b67db2f21b43cdad42a69825067c648f807787dd19",
+  "adapted_sha256": "9552001ed3451c2a6f3d35ed7f40431e125e92844f0ae9153d4fb99b71812a78",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_competitive_presentation.h",
+      "sha256": "c105cf2345adfe92f65cf7729b1c8a67445ac6881757b67e9a1b7e64b56873fe"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_competitive_presentation.c",
+      "sha256": "9adeefcf7c36aef535d5ec4c0c1b32bf6f45998190206995911ef65b3d0604ff"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"gm_1601.h\"\n",
+      "new": "#include \"gm_1601.h\"\n\n#include \"native_competitive_presentation.h\"\n#include \"native_numeric.h\"\n",
+      "count": 1,
+      "reason": "Hash-pin the headless competitive-presentation boundary used at respawn and the numeric compatibility helper that provides the exact source-level unsigned-16 quantization below."
+    },
+    {
+      "old": "s32 gm_801623A4(MatchEnd* arg0)\n{\n    fn_80162068(arg0);\n    fn_80162170(arg0);\n}",
+      "new": "s32 gm_801623A4(MatchEnd* arg0)\n{\n    fn_80162068(arg0);\n    fn_80162170(arg0);\n    return 0;\n}",
+      "count": 1,
+      "reason": "The GALE01 DOL epilogue returns incidental r3 state left by the second void statistics-update call. The sole source caller invokes gm_801623A4 as a statement and discards that result, so zero defines only the unobserved native return while preserving both calls and their order."
+    },
+    {
+      "old": "s32 gm_80162968(u32 seconds)\n{\n    u32* ptr = gmMainLib_GetSingleplayerTime();\n\n    *ptr = ((*ptr + seconds) > -1) ? -1 : (*ptr + seconds);\n}",
+      "new": "s32 gm_80162968(u32 seconds)\n{\n    u32* ptr = gmMainLib_GetSingleplayerTime();\n\n    *ptr = ((*ptr + seconds) > -1) ? -1 : (*ptr + seconds);\n    return 0;\n}",
+      "count": 1,
+      "reason": "The GALE01 DOL leaves the storage pointer in r3 after the saturating write, but all eight source call sites invoke this function as a statement. Returning zero defines only that discarded native result and leaves the original time accumulation unchanged."
+    },
+    {
+      "old": "s32 gm_801629B4(s32 amount)\n{\n    u32* ptr = gmMainLib_8015CD80();\n\n    *ptr = ((*ptr + amount) > -1) ? -1 : (*ptr + amount);\n}",
+      "new": "s32 gm_801629B4(s32 amount)\n{\n    u32* ptr = gmMainLib_8015CD80();\n\n    *ptr = ((*ptr + amount) > -1) ? -1 : (*ptr + amount);\n    return 0;\n}",
+      "count": 1,
+      "reason": "The GALE01 DOL leaves the persistent-storage pointer in r3 after the saturating write, and the sole source caller discards the declared result. Zero defines only that unobserved native return."
+    },
+    {
+      "old": "s32 gm_80162A4C(s32 amount)\n{\n    u32* ptr;\n\n    ptr = gmMainLib_GetTotalDamage();\n    *ptr = ((*ptr + amount) > -1) ? -1 : (*ptr + amount);\n}",
+      "new": "s32 gm_80162A4C(s32 amount)\n{\n    u32* ptr;\n\n    ptr = gmMainLib_GetTotalDamage();\n    *ptr = ((*ptr + amount) > -1) ? -1 : (*ptr + amount);\n    return 0;\n}",
+      "count": 1,
+      "reason": "The GALE01 DOL leaves the total-damage pointer in r3 after the saturating write, and the sole source caller discards the declared result. Zero defines only that unobserved native return."
+    },
+    {
+      "old": "float fn_80166A8C(register Vec3* src, register Vec3* dst)\n{\n#ifdef MWERKS_GEKKO\n    register float x = src->x;\n    asm { psq_st x, Vec3.x(dst), 1, qr3 }\n    return x;\n#endif\n}",
+      "new": "float fn_80166A8C(register Vec3* src, register Vec3* dst)\n{\n#ifdef MWERKS_GEKKO\n    register float x = src->x;\n    asm { psq_st x, Vec3.x(dst), 1, qr3 }\n    return x;\n#else\n    float x = src->x;\n    *(u16*) dst = PF_QuantizeU16Scale0(x);\n    return x;\n#endif\n}",
+      "count": 1,
+      "reason": "Melee initializes GQR3 to 0x00050005, so this one-lane psq_st truncates and clamps the nonnegative finite match statistic to an unscaled unsigned 16-bit value. The sole caller immediately reads that same storage as u16 and discards the float return. The native branch expresses that source-level value conversion directly without a guest register, address space, or instruction implementation."
+    },
+    {
+      "old": "    for (i = 0; i < 6; i++) {\n        if (arg1->team_standings[i].active != 0) {\n            team_count += 1;\n        }\n    }\n    if (arg0->n_team_winners > 1)",
+      "new": "    for (i = 0; i < ARRAY_SIZE(arg1->team_standings); i++) {\n        if (arg1->team_standings[i].active != 0) {\n            team_count += 1;\n        }\n    }\n    if (arg0->n_team_winners > 1)",
+      "count": 1,
+      "reason": "MatchEnd owns five team-standing records. Exact GALE01 DOL code reads active at offsets 0x26, 0x32, 0x3E, 0x4A, and 0x56 and then stops; it never performs the source spelling's sixth out-of-array read. The explicit array bound reproduces those five reads and removes host C undefined behavior."
+    },
+    {
+      "old": "float gm_80168BF8(int arg0)\n{\n    CharacterKind ckind = Player_GetPlayerCharacter(arg0);\n    u32 costume = Player_GetCostumeId(arg0);\n    gm_80168B34(ckind, Player_80036394(arg0), costume);\n}",
+      "new": "float gm_80168BF8(int arg0)\n{\n    CharacterKind ckind = Player_GetPlayerCharacter(arg0);\n    u32 costume = Player_GetCostumeId(arg0);\n    return gm_80168B34(ckind, Player_80036394(arg0), costume);\n}",
+      "count": 1,
+      "reason": "All eight source callers consume this animation frame. Exact GALE01 DOL code calls gm_80168B34 and returns without modifying f1, so returning the callee's float is the direct native expression of the observed ABI result."
+    },
+    {
+      "old": "        ifStatus_802F6508(slot);\n",
+      "new": "        pf_ifStatus_headless_respawn_reset(slot);\n",
+      "count": 1,
+      "reason": "Preserve fn_8016719C's exact post-Player_80032070 respawn boundary while bounding only IfAll.dat model reconstruction. Headless startup omits ifStatus_802F665C, so the original ifStatus_804D6D60 guard would make this source reset a no-op and leave the death-animation flag suppressing shared-RNG damage shake after respawn."
+    }
+  ]
+}

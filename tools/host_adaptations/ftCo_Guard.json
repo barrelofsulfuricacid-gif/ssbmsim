@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Guard.c",
+  "source_sha256": "738114cca1146510f30bb6456151cf6f2a9479466bd45e6e5389ce07a7dbb4a3",
+  "adapted_sha256": "e0da8067fe10bdd1a3b71584e20d8253a180e4d9e8592b6cff46cd64c26b1ed3",
+  "evidence": {
+    "dol_sha1": "08e0bf20134dfcb260699671004527b2d6bb1a45",
+    "function": "ftCo_80093240 and ftCo_800932DC",
+    "instructions": "GALE01 SDI 0x800932A8 and 0x800932B4 fmuls followed by 0x800932B8 and 0x800932CC fmadds; ASDI 0x80093324 and 0x80093330 fmuls followed by 0x80093334 and 0x80093348 fmadds"
+  },
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include <melee/pl/plbonuslib.h>\n",
+      "new": "#include \"native_numeric.h\"\n#include <melee/pl/plbonuslib.h>\n\n#include \"native_pad_input.h\"\n",
+      "count": 1,
+      "reason": "Expose the native two-frame raw main-stick history consumed by UCF 0.84's shield-SDI hook."
+    },
+    {
+      "old": "float ftCo_80092ED8(int arg0, float arg1)\n{\n    return p_ftCommonData->x28C *\n               (arg0 *\n                (1 - (arg1 * (p_ftCommonData->x2E8 - p_ftCommonData->x2E4) +\n                      p_ftCommonData->x2E4))) +\n           p_ftCommonData->x290;\n}",
+      "new": "float ftCo_80092ED8(int arg0, float arg1)\n{\n    float shield_scale =\n        PF_SlippiMulAddF32(arg1, p_ftCommonData->x2E8 - p_ftCommonData->x2E4,\n             p_ftCommonData->x2E4);\n    float guard_frames = (float) arg0 * (1.0f - shield_scale);\n    return PF_SlippiMulAddF32(p_ftCommonData->x28C, guard_frames,\n                p_ftCommonData->x290);\n}",
+      "count": 1,
+      "reason": "Match ftCo_80092ED8 at GALE01 0x80092F08 and 0x80092F20: reproduce the two PowerPC single-precision fmadds operations while retaining the separately rounded parameter difference and frame-count multiply. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        float f = (p_ftCommonData->x28C *\n                   (fp->x19A4 *\n                    (1.0f - ((fp->lightshield_amount *\n                              (p_ftCommonData->x2E8 - p_ftCommonData->x2E4)) +\n                             p_ftCommonData->x2E4)))) +\n                  p_ftCommonData->x290;",
+      "new": "        float shield_scale =\n            PF_SlippiMulAddF32(fp->lightshield_amount,\n                 p_ftCommonData->x2E8 - p_ftCommonData->x2E4,\n                 p_ftCommonData->x2E4);\n        float guard_frames =\n            (float) fp->x19A4 * (1.0f - shield_scale);\n        float f = PF_SlippiMulAddF32(p_ftCommonData->x28C, guard_frames,\n                       p_ftCommonData->x290);",
+      "count": 1,
+      "reason": "Match ftCo_80092F2C at GALE01 0x80093038 and 0x8009305C: reproduce the two PowerPC single-precision fmadds operations that determine shield-stun duration and guard push velocity, retaining all intervening single-precision rounding points. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            float scl = p_ftCommonData->x4C0 *\n                        (fp->input.lstick[0].x * p_ftCommonData->x4BC);\n            fp->cur_pos.x += fp->coll_data.floor.normal.y * scl;\n            fp->cur_pos.y += -fp->coll_data.floor.normal.x * scl;",
+      "new": "            float scaled_input =\n                fp->input.lstick[0].x * p_ftCommonData->x4BC;\n            float scl = p_ftCommonData->x4C0 * scaled_input;\n            fp->cur_pos.x =\n                PF_SlippiMulAddF32(fp->coll_data.floor.normal.y, scl, fp->cur_pos.x);\n            fp->cur_pos.y =\n                PF_SlippiMulAddF32(-fp->coll_data.floor.normal.x, scl, fp->cur_pos.y);",
+      "count": 1,
+      "reason": "Match ftCo_800932DC at GALE01 0x80093324 through 0x8009334C: retain the two separately rounded binary32 fmuls, then express each position accumulation as the target fmadds. The complete frozen-Stadium frame-3179 witness uses input 0x3f366666, factors 0x40400000 and 0x3f28f5c3, floor-normal Y 0x3f7fffff, and prior X 0x3ff5fa8e, yielding 0x40554701 fused instead of 0x40554700 unfused. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "void ftCo_80093240(Fighter_GObj* gobj)\n{\n    Fighter* fp = gobj->user_data;\n    if (fp->allow_sdi && fp->ground_or_air == GA_Ground) {\n        if ((fp->input.lstick[0].x < 0 ? -fp->input.lstick[0].x\n                                       : fp->input.lstick[0].x) >=\n                p_ftCommonData->sdi_min_stick_mag &&\n            fp->x670_timer_lstick_tilt_x < p_ftCommonData->sdi_stick_window)",
+      "new": "static bool ucf084_shield_sdi_input_is_fresh(Fighter* fp)\n{\n    if (fp->x673 > 1) {\n        return false;\n    }\n    if (!(fp->input.lstick[1].x < p_ftCommonData->sdi_min_stick_mag)) {\n        return false;\n    }\n    return pf_ssbm_native_ucf084_raw_main_x_delta_squared_two_frames(\n               fp->x618_player_id) >\n           62 * 62;\n}\n\nvoid ftCo_80093240(Fighter_GObj* gobj)\n{\n    Fighter* fp = gobj->user_data;\n    if (fp->allow_sdi && fp->ground_or_air == GA_Ground) {\n        if ((fp->input.lstick[0].x < 0\n                 ? -fp->input.lstick[0].x\n                 : fp->input.lstick[0].x) >= p_ftCommonData->sdi_min_stick_mag &&\n            (fp->x670_timer_lstick_tilt_x <\n                 p_ftCommonData->sdi_stick_window ||\n             ucf084_shield_sdi_input_is_fresh(fp)))\n",
+      "count": 1,
+      "reason": "Translate project-slippi/slippi-ssbm-asm revision fcf47f10dc244152c2ebaa3a9dec142ea42243b7 External/UCF 0.84/UCF/UCF Shield SDI.asm at GALE01 0x80093294. Preserve vanilla timer acceptance, then reproduce UCF's X-age, preceding processed X, and strict two-frame raw-X delta greater-than-62 override before the source-owned shield-SDI displacement and timer reset."
+    },
+    {
+      "old": "            float scl = p_ftCommonData->x4C0 * (fp->input.lstick[0].x *\n                                                p_ftCommonData->sdi_pos_scale);\n            fp->cur_pos.x += fp->coll_data.floor.normal.y * scl;\n            fp->cur_pos.y += -fp->coll_data.floor.normal.x * scl;",
+      "new": "            float scaled_input =\n                fp->input.lstick[0].x * p_ftCommonData->sdi_pos_scale;\n            float scl = p_ftCommonData->x4C0 * scaled_input;\n            fp->cur_pos.x =\n                PF_SlippiMulAddF32(fp->coll_data.floor.normal.y, scl, fp->cur_pos.x);\n            fp->cur_pos.y =\n                PF_SlippiMulAddF32(-fp->coll_data.floor.normal.x, scl, fp->cur_pos.y);",
+      "count": 1,
+      "reason": "Match grounded shield SDI ftCo_80093240 at GALE01 0x800932A8 and 0x800932B4 (two separately rounded products), then 0x800932B8 and 0x800932CC (fused X/Y projection). This is the same projection class as adjacent ASDI ftCo_800932DC. Preserve the existing UCF input predicate and timer reset. Synchronized FoD capture: prior X -7.248723030090332, stick X 0.737500011920929, scale 6, multiplier 0.6600000262260437, floor Y 0.9999999403953552 yields -4.328222751617432."
+    }
+  ]
+}

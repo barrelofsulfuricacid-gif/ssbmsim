@@ -1,0 +1,69 @@
+{
+  "adapted_sha256": "5320a9640831f5212d982486bb9d3e6fecdc20cccab9515a8c429e731fd2610a",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "count": 1,
+      "new": "    arg2 = (u16) (((u8*) cmd->u)[0] << 8 | ((u8*) cmd->u)[1]);",
+      "old": "    arg2 = ((u16*) cmd->u)[0];",
+      "reason": "Host-endian route for a big-endian item command halfword: the materialized item script image preserves DAT byte order, so a raw u16 cast reads byteswapped on little-endian hosts. Compose the GameCube u16 value explicitly from bytes (matches ftaction gfx_id precedent). Effect-table index bits; presentation-only consumer."
+    },
+    {
+      "count": 1,
+      "new": "    arg6 = (f32) (u16) (((u8*) cmd->u)[2] << 8 | ((u8*) cmd->u)[3]);",
+      "old": "    arg6 = (f32) ((u16*) cmd->u)[1];",
+      "reason": "Host-endian route for a big-endian item command halfword (second halfword of the word): raw u16 cast reads byteswapped on little-endian hosts. Compose explicitly from bytes. Presentation-only effect parameter."
+    },
+    {
+      "count": 1,
+      "new": "    ef_id = (u16) (((u8*) cmd->u)[0] << 8 | ((u8*) cmd->u)[1]);",
+      "old": "    ef_id = ((u16*) cmd->u)[0];",
+      "reason": "Host-endian route for a big-endian item command halfword: raw u16 cast reads byteswapped on little-endian hosts. Compose explicitly from bytes. Presentation-only effect id."
+    },
+    {
+      "count": 1,
+      "new": "    sp20.x = 0.003906f * (s16) (u16) (((u8*) cmd->u)[0] << 8 | ((u8*) cmd->u)[1]);",
+      "old": "    sp20.x = 0.003906f * ((s16*) cmd->u)[0];",
+      "reason": "Host-endian route for a big-endian item command signed halfword: raw s16 cast reads byteswapped on little-endian hosts (GCC documents the u16->s16 modular wrap). Compose explicitly from bytes. Presentation-only effect position."
+    },
+    {
+      "count": 1,
+      "new": "    sp20.y = 0.003906f * (s16) (u16) (((u8*) cmd->u)[2] << 8 | ((u8*) cmd->u)[3]);",
+      "old": "    sp20.y = 0.003906f * ((s16*) cmd->u)[1];",
+      "reason": "Host-endian route for a big-endian item command signed halfword (second halfword): raw s16 cast reads byteswapped on little-endian hosts. Compose explicitly from bytes. Presentation-only effect position."
+    },
+    {
+      "count": 1,
+      "new": "    sp20.z = 0.003906f * (s16) (u16) (((u8*) cmd->u)[0] << 8 | ((u8*) cmd->u)[1]);",
+      "old": "    sp20.z = 0.003906f * ((s16*) cmd->u)[0];",
+      "reason": "Host-endian route for a big-endian item command signed halfword: raw s16 cast reads byteswapped on little-endian hosts. Compose explicitly from bytes. Presentation-only effect position."
+    },
+    {
+      "count": 1,
+      "new": "    sp14.x = 0.003906f * (s16) (u16) (((u8*) cmd->u)[2] << 8 | ((u8*) cmd->u)[3]);",
+      "old": "    sp14.x = 0.003906f * ((s16*) cmd->u)[1];",
+      "reason": "Host-endian route for a big-endian item command signed halfword (second halfword): raw s16 cast reads byteswapped on little-endian hosts. Compose explicitly from bytes. Presentation-only effect position."
+    },
+    {
+      "count": 1,
+      "new": "    sp14.y = 0.003906f * (s16) (u16) (((u8*) cmd->u)[0] << 8 | ((u8*) cmd->u)[1]);",
+      "old": "    sp14.y = 0.003906f * ((s16*) cmd->u)[0];",
+      "reason": "Host-endian route for a big-endian item command signed halfword: raw s16 cast reads byteswapped on little-endian hosts. Compose explicitly from bytes. Presentation-only effect position."
+    },
+    {
+      "count": 1,
+      "new": "    sp14.z = 0.003906f * (s16) (u16) (((u8*) cmd->u)[2] << 8 | ((u8*) cmd->u)[3]);",
+      "old": "    sp14.z = 0.003906f * ((s16*) cmd->u)[1];",
+      "reason": "Host-endian route for a big-endian item command signed halfword (second halfword): raw s16 cast reads byteswapped on little-endian hosts. Compose explicitly from bytes. Presentation-only effect position."
+    },
+    {
+      "count": 1,
+      "new": "    u32 val = ((u16) (((u8*) cmd->u)[2] << 8 | ((u8*) cmd->u)[3]) & 0x1FFF);",
+      "old": "    u32 val = ((u16*) cmd->u)[1] & 0x1FFF;",
+      "reason": "GAMEPLAY: host-endian route for the big-endian set_hitbox_damage value halfword. The raw u16 cast reads 0x0200 (512) on little-endian hosts for a word whose GameCube value is 0x0002 (2), inflating every article set_hitbox_damage by 256x (observed Fox-laser damage 512.0 tripping the attack-power-over-500 assert). Compose the GameCube u16 explicitly from bytes before masking."
+    }
+  ],
+  "schema": 1,
+  "source_path": "src/melee/it/itanimlist.c",
+  "source_sha256": "1fc228edf9ee0dd3cea3f331361723bd405374f10f51414444946946ef283713"
+}

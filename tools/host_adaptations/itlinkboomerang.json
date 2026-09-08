@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itlinkboomerang.c",
+  "source_sha256": "690699f46a894e45dd2542094430d9ef217fe631de4792114c8d51c9b8db72c7",
+  "adapted_sha256": "5ec27b208220d9ba0bedc498606e6ff36d65f885863a1bcbc7c69725a9be3fac",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "        HSD_MtxGetRotation(&child->mtx[0], rot);",
+      "new": "        HSD_MtxGetRotation(child->mtx, rot);",
+      "count": 1,
+      "reason": "HSD_JObj::mtx is the complete inline 3x4 matrix. Taking the address of its first row produces the same address but makes GCC 11 infer a one-row, 16-byte region for a 48-byte matrix parameter. Passing the array itself uses the declaration-equivalent decay already used by other HSD_MtxGetRotation callers. Exact GALE01 DOL code at 0x802A0DFC adds the HSD_JObj matrix offset 0x44 before the call, so the accessed address, matrix extent, and behavior are unchanged."
+    }
+  ]
+}

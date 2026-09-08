@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Damage.c",
+  "source_sha256": "b51c1febe3b9df50e795c29083b4dff663780877d5edf2702e8a858dfb18c359",
+  "adapted_sha256": "3be56cb11849f646ba93a737bbcaef3865477520dfad91ab5ad2289f8b74d248",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi_wobble.h",
+      "sha256": "8b2b8a213f2cab3e8b795a95f1095e74534d0c1d5c425abbabbd4463f77c0a1e"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "        float kb_mag = kb_vel_x_neg * kb_vel_x_neg + kb_y * kb_y;\n",
+      "new": "        float kb_y_squared = kb_y * kb_y;\n        float kb_mag =\n            PF_SlippiMulAddF32(kb_vel_x_neg, kb_vel_x_neg, kb_y_squared);\n",
+      "count": 1,
+      "reason": "Match ftCo_8008E5A4 at GALE01 0x8008E5F4 through 0x8008E5FC: round the Y square, then accumulate the X square with the target PowerPC fmadds used by directional influence. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "float f3 = kb_y * fp->input.lstick[0].x +\n                       kb_vel_x_neg * fp->input.lstick[0].y;",
+      "new": "            float kb_x_stick_y =\n                kb_vel_x_neg * fp->input.lstick[0].y;\n            float f3 = PF_SlippiMulAddF32(\n                kb_y, fp->input.lstick[0].x, kb_x_stick_y);\n",
+      "count": 1,
+      "reason": "Match ftCo_8008E5A4 at GALE01 0x8008E618 through 0x8008E624: preserve the rounded X-stick term and the following single-rounding PowerPC fmadds dot product. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "                kb_mag = sqrtf(kb_x * kb_x + kb_y * kb_y);\n",
+      "new": "                kb_mag = sqrtf(\n                    PF_SlippiMulAddF32(kb_x, kb_x, kb_y_squared));\n",
+      "count": 1,
+      "reason": "Match ftCo_8008E5A4 at GALE01 0x8008E660: form the knockback magnitude square with the target PowerPC fmadds before the source-owned square root. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "                angle += scale * f30;\n",
+      "new": "                angle = PF_SlippiMulAddF32(scale, f30, angle);\n",
+      "count": 1,
+      "reason": "Match ftCo_8008E5A4 at GALE01 0x8008E6CC: add the directional-influence rotation with one PowerPC fmadds rounding. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            float scaled_kb_mag =\n                sqrtf(kb_x * kb_x + kb_y * kb_y) * p_ftCommonData->x1AC;\n",
+      "new": "            float kb_y_squared = kb_y * kb_y;\n            float scaled_kb_mag =\n                sqrtf(PF_SlippiMulAddF32(kb_x, kb_x, kb_y_squared)) *\n                p_ftCommonData->x1AC;\n",
+      "count": 1,
+      "reason": "Match ftCo_Damage_OnExitHitlag at GALE01 0x8008E858 through 0x8008E860: round the Y square, then form the magnitude square with the target PowerPC fmadds before the source-owned square root. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include <melee/sfx/crowdsfx.h>\n",
+      "new": "#include \"native_numeric.h\"\n#include <melee/sfx/crowdsfx.h>\n\n#include \"native_pad_input.h\"\n",
+      "count": 1,
+      "reason": "Expose the native two-frame raw main-stick history consumed by UCF 0.84's SDI hook."
+    },
+    {
+      "old": "void ftCo_Damage_OnEveryHitlag(Fighter_GObj* gobj)\n{\n    Fighter* fp = GET_FIGHTER(gobj);\n    if (fp->allow_sdi &&\n        VEC2_SQ_LEN(fp->input.lstick[0]) >=\n            SQ(p_ftCommonData->sdi_min_stick_mag) &&\n        (fp->x670_timer_lstick_tilt_x < p_ftCommonData->sdi_stick_window ||\n         fp->x671_timer_lstick_tilt_y < p_ftCommonData->sdi_stick_window))\n",
+      "new": "static bool ucf084_sdi_input_is_fresh(Fighter* fp)\n{\n    float previous_magnitude_squared;\n    float threshold_squared;\n\n    if (fp->x673 > 1 && fp->x674 > 1) {\n        return false;\n    }\n    previous_magnitude_squared =\n        fp->input.lstick[1].x * fp->input.lstick[1].x +\n        fp->input.lstick[1].y * fp->input.lstick[1].y;\n    threshold_squared =\n        p_ftCommonData->sdi_min_stick_mag *\n        p_ftCommonData->sdi_min_stick_mag;\n    if (!(previous_magnitude_squared < threshold_squared)) {\n        return false;\n    }\n    return pf_ssbm_native_ucf084_raw_main_delta_squared_two_frames(\n               fp->x618_player_id) >\n           62 * 62;\n}\n\nvoid ftCo_Damage_OnEveryHitlag(Fighter_GObj* gobj)\n{\n    Fighter* fp = GET_FIGHTER(gobj);\n    if (fp->allow_sdi &&\n        VEC2_SQ_LEN(fp->input.lstick[0]) >=\n            SQ(p_ftCommonData->sdi_min_stick_mag) &&\n        (fp->x670_timer_lstick_tilt_x < p_ftCommonData->sdi_stick_window ||\n         fp->x671_timer_lstick_tilt_y < p_ftCommonData->sdi_stick_window ||\n         ucf084_sdi_input_is_fresh(fp)))\n",
+      "count": 1,
+      "reason": "Translate the pinned UCF 0.84 SDI payload at GALE01 0x8008E54C. When Melee's ordinary tilt ages reject the pulse, accept only a one-update UCF axis edge whose preceding processed stick was inside the radial SDI threshold and whose exact raw two-frame X/Y delta has squared magnitude strictly greater than 62 squared."
+    },
+    {
+      "old": "#include \"ftCo_Damage.h\"",
+      "new": "#include \"ftCo_Damage.h\"\n#include \"native_slippi_wobble.h\"",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 PreventWobbling at the unique 0x8008F090 boundary inside the captured-damage inline expansion. Retain all other inlineB2 call sites unchanged and resume at 0x8008F0C8 after an enforced release."
+    },
+    {
+      "old": "static inline void inlineB2(Fighter_GObj* gobj)\n{\n    Fighter* fp = gobj->user_data;\n    ftCo_800C8D00(gobj);\n    if (fp->motion_id == 0xe0 || fp->motion_id == 0xe1) {\n        ftCo_800DC284(gobj);\n    }\n    if (fp->motion_id == 0xe3 || fp->motion_id == 0xe4) {\n        ftCo_800DC3A4(gobj);\n    }\n    if (ftCo_8008DA4C(\n            gobj, fp->dmg.x1860_element,\n            ftCo_8008D8E8(fp->dmg.kb_applied * p_ftCommonData->x154)))\n    {\n        ftCo_800C0408(gobj);\n    }\n    ftCommon_800804FC(fp);\n}\n",
+      "new": "static inline void inlineB2(Fighter_GObj* gobj, bool check_wobbling)\n{\n    Fighter* fp = gobj->user_data;\n    ftCo_800C8D00(gobj);\n    if (!check_wobbling || !pf_slippi_wobble_check(fp)) {\n        if (fp->motion_id == 0xe0 || fp->motion_id == 0xe1) {\n            ftCo_800DC284(gobj);\n        }\n        if (fp->motion_id == 0xe3 || fp->motion_id == 0xe4) {\n            ftCo_800DC3A4(gobj);\n        }\n    }\n    if (ftCo_8008DA4C(\n            gobj, fp->dmg.x1860_element,\n            ftCo_8008D8E8(fp->dmg.kb_applied * p_ftCommonData->x154)))\n    {\n        ftCo_800C0408(gobj);\n    }\n    ftCommon_800804FC(fp);\n}\n",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 PreventWobbling at the unique 0x8008F090 boundary inside the captured-damage inline expansion. Retain all other inlineB2 call sites unchanged and resume at 0x8008F0C8 after an enforced release."
+    },
+    {
+      "old": "inlineB2(gobj);",
+      "new": "inlineB2(gobj, false);",
+      "count": 3,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 PreventWobbling at the unique 0x8008F090 boundary inside the captured-damage inline expansion. Retain all other inlineB2 call sites unchanged and resume at 0x8008F0C8 after an enforced release."
+    },
+    {
+      "old": "fp->input.pressed_buttons = fp->input.released_buttons = 0;\n                    inlineB2(gobj, false);",
+      "new": "fp->input.pressed_buttons = fp->input.released_buttons = 0;\n                    inlineB2(gobj, true);",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 PreventWobbling at the unique 0x8008F090 boundary inside the captured-damage inline expansion. Retain all other inlineB2 call sites unchanged and resume at 0x8008F0C8 after an enforced release."
+    }
+  ]
+}

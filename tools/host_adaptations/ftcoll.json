@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/ftcoll.c",
+  "source_sha256": "f376f14500c1e018fd022b45563ac8163d0aba043f1817f8e1b2eeba651f16e7",
+  "adapted_sha256": "428158c177c3716089221ca9f3c244ef3f8e3a790143a3316cda9a728f2a7d57",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#define KNOCKBACK(defense, attack, arg3, one, ftd, hit, w, inner)             \\\n    ((defense) *                                                              \\\n     ((attack) *                                                              \\\n      ((arg3) * ((0.01F * (hit)->x24 *                                        \\\n                  ((ftd)->x11C *                                              \\\n                       (((ftd)->xF8 - (((w) * (ftd)->xF8) / ((one) + (w)))) * \\\n                        (inner)) +                                            \\\n                   (ftd)->x120)) +                                            \\\n                 (hit)->x2C))))",
+      "new": "#define KNOCKBACK(defense, attack, arg3, one, ftd, hit, w, inner)           \\\n    ((defense) *                                                            \\\n     ((attack) *                                                            \\\n      ((arg3) *                                                             \\\n       PF_SlippiMulAddF32(0.01F * (hit)->x24,                                             \\\n            PF_SlippiMulAddF32((ftd)->x11C,                                              \\\n                 ((ftd)->xF8 -                                             \\\n                  (((w) * (ftd)->xF8) / ((one) + (w)))) * (inner),        \\\n                 (ftd)->x120),                                             \\\n            (hit)->x2C))))",
+      "count": 1,
+      "reason": "Match the shared ftColl_80079AB0 and ftColl_80079EA8 PowerPC arithmetic shells: GALE01 uses fmadds for x11C * scaled_inner + x120 and for 0.01 * hit_damage * that_result + base_knockback. The frame-5390 complete-match witness otherwise rounds knockback one ULP high. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "x118 * ftd->x110 + ftd->x114 * (x118 * hit->x28)",
+      "new": "PF_SlippiMulAddF32(x118, ftd->x110,\n                                ftd->x114 * (x118 * hit->x28))",
+      "count": 2,
+      "reason": "Match the fixed-knockback branches' inner fmadds, which accumulate x118 * x110 onto the separately rounded x114 term. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "ftd->x110 * (count + fp->dmg.x1838_percentTemp) +\n                ftd->x114 * (unk_count * (count + fp->dmg.x1838_percentTemp))",
+      "new": "PF_SlippiMulAddF32(ftd->x110, count + fp->dmg.x1838_percentTemp,\n                 ftd->x114 *\n                     (unk_count *\n                      (count + fp->dmg.x1838_percentTemp)))",
+      "count": 1,
+      "reason": "Match ftColl_80079AB0's ordinary-damage inner fmadds while preserving each preceding multiply's binary32 rounding. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "ftd->x110 * (count + fp->dmg.x1838_percentTemp) +\n                    ftd->x114 *\n                        (unk_count * (count + fp->dmg.x1838_percentTemp))",
+      "new": "PF_SlippiMulAddF32(ftd->x110, count + fp->dmg.x1838_percentTemp,\n                     ftd->x114 *\n                         (unk_count *\n                          (count + fp->dmg.x1838_percentTemp)))",
+      "count": 1,
+      "reason": "Match ftColl_80079EA8's ordinary-damage inner fmadds while preserving each preceding multiply's binary32 rounding. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "result = defense *\n                         (attack *\n                          (stage *\n                           ((0.01F * (float) (damage = hit->x24) *\n                             (ftd->x11C *\n                                  ((decay - ((w * decay) / (1.0F + w))) *\n                                   ((x118 * ftd->x110) +\n                                    (ftd->x114 * (x118 * (float) hit->x28)))) +\n                              ftd->x120)) +\n                            (float) hit->x2C)));",
+      "new": "result = defense *\n                         (attack *\n                          (stage *\n                           PF_SlippiMulAddF32(\n                               0.01F * (float) (damage = hit->x24),\n                               PF_SlippiMulAddF32(\n                                   ftd->x11C,\n                                   (decay - ((w * decay) / (1.0F + w))) *\n                                       PF_SlippiMulAddF32(\n                                           x118, ftd->x110,\n                                           ftd->x114 *\n                                               (x118 * (float) hit->x28)),\n                                   ftd->x120),\n                               (float) hit->x2C)));",
+      "count": 1,
+      "reason": "Match ftColl_8007A06C's item fixed-knockback branch: GALE01 uses the same three fmadds as the shared fighter-hit shell, including its inner scale accumulation. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "result =\n                        defense *\n                        (attack *\n                         (stage *\n                          ((0.01F * (float) (damage = hit->x24) *\n                            (ftd->x11C *\n                                 ((decay - ((w * decay) / (1.0F + w))) *\n                                  ((ftd->x110 * ((float) count +\n                                                 fp->dmg.x1838_percentTemp)) +\n                                   (ftd->x114 *\n                                    ((float) (u32) unk_count *\n                                     ((float) count +\n                                      fp->dmg.x1838_percentTemp))))) +\n                             ftd->x120)) +\n                           (float) hit->x2C)));",
+      "new": "result =\n                        defense *\n                        (attack *\n                         (stage *\n                          PF_SlippiMulAddF32(\n                              0.01F * (float) (damage = hit->x24),\n                              PF_SlippiMulAddF32(\n                                  ftd->x11C,\n                                  (decay - ((w * decay) / (1.0F + w))) *\n                                      PF_SlippiMulAddF32(\n                                          ftd->x110,\n                                          (float) count +\n                                              fp->dmg.x1838_percentTemp,\n                                          ftd->x114 *\n                                              ((float) (u32) unk_count *\n                                               ((float) count +\n                                                fp->dmg.x1838_percentTemp))),\n                                  ftd->x120),\n                              (float) hit->x2C)));",
+      "count": 1,
+      "reason": "Match ftColl_8007A06C's item ordinary-knockback branch: GALE01 fuses the inner percent term, knockback growth term, and base-knockback accumulation. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "int_dmg * p_ftCommonData->x3D0 + p_ftCommonData->x3D4;",
+      "new": "PF_SlippiMulAddF32(int_dmg, p_ftCommonData->x3D0, p_ftCommonData->x3D4);",
+      "count": 3,
+      "reason": "Match the PowerPC single-precision fused multiply-add codegen for the clang rebound magnitude in the fighter-fighter and fighter-item hit-apply paths: int_dmg*x3D0+x3D4 is one ordered a*b+c expression, which the target contracts to a single fmadds while the native import globally disables contraction. Same fmadds class as the fobj linear-channel, spline, mplib vertex-write, fighter shield-damage, and itanimlist adaptations; verified end to end by the ea927946 frame-745 oracle proof (Falco rebound anim speed converges to the oracle value when the rebound magnitude is fused). Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"ftcoll.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftcoll.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    },
+    {
+      "old": "result =\n            defense *\n            (attack *\n             (stage * ((0.01F * (float) hit->x24 *\n                        (ftd->x11C * ((decay - ((w * decay) / (1.0F + w))) *\n                                      ((x118 * ftd->x110) +\n                                       (ftd->x114 * (x118 * (float) x28)))) +\n                         ftd->x120)) +\n                       (float) hit->x2C)));",
+      "new": "result = defense * (attack * (stage *\n                PF_SlippiMulAddF32(0.01F * (float) hit->x24,\n                    PF_SlippiMulAddF32(ftd->x11C,\n                        (decay - ((w * decay) / (1.0F + w))) *\n                            PF_SlippiMulAddF32(x118, ftd->x110,\n                                ftd->x114 * (x118 * (float) x28)),\n                        ftd->x120),\n                    (float) hit->x2C)));",
+      "count": 1,
+      "reason": "Preserve ftColl_80079C70's fixed knockback branch: GALE01 0x80079D5C/0x80079D64/0x80079D68 uses three ordered fmadds, matching the shared KNOCKBACK macro family. This expanded source branch bypasses the macro adaptation. Preserve binary32 products, division, casts, stage/attack/defense multiplication and cap."
+    },
+    {
+      "old": "result =\n                defense *\n                (attack *\n                 (stage *\n                  ((0.01F * (float) hit->x24 *\n                    (ftd->x11C *\n                         ((decay - ((w * decay) / (1.0F + w))) *\n                          ((ftd->x110 *\n                            ((float) count + fp->dmg.x1838_percentTemp)) +\n                           (ftd->x114 *\n                            ((float) (u32) unk_count *\n                             ((float) count + fp->dmg.x1838_percentTemp))))) +\n                     ftd->x120)) +\n                   (float) hit->x2C)));",
+      "new": "result = defense * (attack * (stage *\n                PF_SlippiMulAddF32(0.01F * (float) hit->x24,\n                    PF_SlippiMulAddF32(ftd->x11C,\n                        (decay - ((w * decay) / (1.0F + w))) *\n                            PF_SlippiMulAddF32(\n                                ftd->x110, (float) count + fp->dmg.x1838_percentTemp,\n                                ftd->x114 * ((float) (u32) unk_count *\n                                    ((float) count + fp->dmg.x1838_percentTemp))),\n                        ftd->x120),\n                    (float) hit->x2C)));",
+      "count": 1,
+      "reason": "Preserve ftColl_80079C70's ordinary knockback branch: GALE01 0x80079E48/0x80079E54/0x80079E58 uses three ordered fmadds, matching the shared KNOCKBACK macro family. This expanded source branch bypasses the macro adaptation. Preserve binary32 products, division, casts, stage/attack/defense multiplication and cap."
+    }
+  ]
+}

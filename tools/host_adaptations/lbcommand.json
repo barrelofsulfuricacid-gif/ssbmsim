@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/lb/lbcommand.c",
+  "source_sha256": "d0cd96443c3bb1f71fbcd1ae0094c0d323a249e04282db441485c260467529c8",
+  "adapted_sha256": "84986c6d6f2e201abb913eaf34a3b17bb35a29a7186c23a281645fc8d040f351",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "(union CmdUnion*) info->u->Command_03.value",
+      "new": "(union CmdUnion*) (uintptr_t) info->u->Command_03.value",
+      "count": 1,
+      "reason": "Command_03 stores its 26-bit loop count in the same 32-bit event_return word array used for command pointers. Exact GALE01 assembly masks the command word to 26 bits and stores that raw word; the explicit uintptr_t bridge preserves the same native i686 value and representation without treating it as a dereferenceable pointer."
+    },
+    {
+      "old": "void Command_04(CommandInfo* info)\n{\n    u32* ptr = (u32*) info;\n    ptr[info->loop_count + 3] -= 1;\n\n    if ((s32) info->event_return[info->loop_count - 1]) {\n        info->ptr[0] = &info->ptr[info->loop_count][0];\n        return;\n    }\n    NEXT_CMD(info);\n    info->loop_count -= 2;\n}",
+      "new": "void Command_04(CommandInfo* info)\n{\n    const u32 counter_index = info->loop_count - 1;\n    const u32 return_index = info->loop_count - 2;\n    u32 remaining =\n        (u32) (uintptr_t) info->event_return[counter_index] - 1;\n\n    info->event_return[counter_index] =\n        (union CmdUnion*) (uintptr_t) remaining;\n    if ((s32) remaining != 0) {\n        info->u = info->event_return[return_index];\n        return;\n    }\n    NEXT_CMD(info);\n    info->loop_count -= 2;\n}",
+      "count": 1,
+      "reason": "GALE01 Command_04 decrements the top 32-bit loop counter and copies the preceding 32-bit return address into CommandInfo.u. The decomp's ptr[1] array hack performs out-of-bounds typed pointer indexing and fails to update u under native GCC, making every loop finish in one frame. Explicit indices and uintptr_t conversions preserve the original i686 word layout, nested-loop stack order, signed zero test, and command ordering without undefined array or aliasing behavior."
+    }
+  ]
+}

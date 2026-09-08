@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ftdrawcommon.c",
+  "source_sha256": "49496d2fc19e4dfa2437d84bba34b3e029afe4c6b232dd77a01242872257b269",
+  "adapted_sha256": "1b64f2cd6ddd091f242c9aa36abd23b602e867cd760287a0f0ccd61f79525de5",
+  "replacements": [
+    {
+      "old": "    Vec3* pos;\n\n    MtxPtr matrix = HSD_CObjGetInvViewingMtxPtr(Camera_800310B8());\n    /// @todo this seems to be using the wrong common attributes\n    PSMTXMultVec(matrix, (Vec3*) &old->mv.co.walk.fast_anim_frame,\n                 &fp->cur_pos);\n    pos = &fp->cur_pos;\n\n    HSD_JObjSetTranslate(jobj, pos);",
+      "new": "    Vec3 model_pos;\n\n    MtxPtr matrix = HSD_CObjGetInvViewingMtxPtr(Camera_800310B8());\n    PSMTXMultVec(matrix, &old->mv.co.unk_deadup.x50, &model_pos);\n    HSD_JObjSetTranslate(jobj, &model_pos);",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Online/Core/FreezeDeadUpFallPhysics/UpdateModelPos.asm at 0x80080E80. Transform into a temporary model position; never write fighter cur_pos. Preserve the existing JObj dirty-matrix handling reached at 0x80080EE4."
+    }
+  ]
+}

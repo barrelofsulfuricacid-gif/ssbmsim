@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftZelda/ftzeldaspecialhi.c",
+  "source_sha256": "a4c6aa1b982979a0a91a6197b4ed2b6c32ab9cb4c9667c2c9d878b384743f5df",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "target_contractions": [
+      {
+        "address": "0x8013a0b8",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftZd_SpecialHi_8013A058"
+      },
+      {
+        "address": "0x8013a0c8",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftZd_SpecialHi_8013A058"
+      },
+      {
+        "address": "0x8013a0d8",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftZd_SpecialHi_8013A058"
+      },
+      {
+        "address": "0x8013a194",
+        "op": "fmadds",
+        "args": "f2, f3, f31, f2",
+        "function": "ftZd_SpecialHi_8013A058"
+      },
+      {
+        "address": "0x8013a2a4",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftZd_SpecialHi_8013A244"
+      },
+      {
+        "address": "0x8013a2b4",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftZd_SpecialHi_8013A244"
+      },
+      {
+        "address": "0x8013a2c4",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftZd_SpecialHi_8013A244"
+      },
+      {
+        "address": "0x8013a384",
+        "op": "fmadds",
+        "args": "f2, f3, f31, f2",
+        "function": "ftZd_SpecialHi_8013A244"
+      },
+      {
+        "address": "0x8013a3b0",
+        "op": "fmadds",
+        "args": "f0, f2, f31, f0",
+        "function": "ftZd_SpecialHi_8013A244"
+      }
+    ],
+    "scope": "All target contractions in this unit; inlined sqrtf contractions use the existing shared native MSL adaptation."
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftzeldaspecialhi.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftzeldaspecialhi.h\"",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "((attributes->x54 * var_f31) + attributes->x58)",
+      "new": "PF_SlippiMulAddF32(attributes->x54, var_f31, attributes->x58)",
+      "count": 3,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "_half * guess * (_three - guess * guess * var_f4)",
+      "new": "_half * guess * -PF_SlippiMulAddF64(var_f4, guess * guess, -_three)",
+      "count": 6,
+      "reason": "Both teleport entries preserve all three binary64 refinements, separate square/half products, and negated fused subtraction."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "adapted_sha256": "f4e6f2c05b60c8158ff8d35bae52a457cbd6a3ad2c117c793852f65c7e12ffd0"
+}

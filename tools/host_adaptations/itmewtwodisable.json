@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itmewtwodisable.c",
+  "source_sha256": "4159f84f99a29589531df3ee66363b2c4563cb11595d086d36172758687fb6e3",
+  "adapted_sha256": "a54824c01d80d4b2bcc46cc7e9d73da57fdbdf8d038eaea580b934c96f2a5755",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "ItemStateTable it_803F7750[1] = { 0, itMewtwodisable_UnkMotion0_Anim,\n                                  itMewtwodisable_UnkMotion0_Phys,\n                                  itMewtwodisable_UnkMotion0_Coll };",
+      "new": "static bool itMewtwodisable_UnkMotion0_CollPredicate(\n    Item_GObj* item_gobj)\n{\n    return itMewtwodisable_UnkMotion0_Coll(item_gobj) != 0;\n}\n\nItemStateTable it_803F7750[1] = {\n    0, itMewtwodisable_UnkMotion0_Anim,\n    itMewtwodisable_UnkMotion0_Phys,\n    itMewtwodisable_UnkMotion0_CollPredicate\n};",
+      "count": 1,
+      "reason": "Exact GALE01 code returns a wall/ceiling collision bitmask, while ItemStateTable.collided is a predicate callback. The public bitmask function has no source callers outside this table; item.c only copies the callback and tests its truth value. A translation-unit-local typed shim preserves that sole observed contract, retains the original public function and collision side effects, and removes an incompatible-function-pointer call from native C."
+    }
+  ]
+}

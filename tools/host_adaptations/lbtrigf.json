@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/lb/lbtrigf.c",
+  "source_sha256": "1701b0d56ecaeb4e4b1bed7b4727a5b655112d7cc71fa5861de00c5b685bc57d",
+  "adapted_sha256": "b00693beccff2dbf099a71fb7684430a33c3a4550cb087e64d89563fbbf191ef",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#ifdef __MWERKS__\nfloat atanf(float x)",
+      "new": "float atanf(float x)",
+      "count": 1,
+      "reason": "Compile the source-owned atanf body on the native host instead of hiding it behind the target compiler guard."
+    },
+    {
+      "old": "    float result = 1.0F - x * x;",
+      "new": "    float result = PF_SlippiMulAddF32(-x, x, 1.0F);",
+      "count": 1,
+      "reason": "Match acosf at GALE01 0x80022D30: compute 1-x*x with the target's single PowerPC fnmsubs rounding. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        guess = 0.5f * guess * (3.0f - guess * guess * result);",
+      "new": "        guess = (0.5f * guess) *\n                PF_SlippiMulAddF32(-result, guess * guess, 3.0f);",
+      "count": 3,
+      "reason": "Match all three acosf reciprocal-square-root refinements at GALE01 0x80022D4C through 0x80022D78: round both products surrounding the fused 3-result*guess_squared fnmsubs. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "    return atanf(x * lb_sqrtf(-(x * x - 1.0f)));",
+      "new": "    return atanf(x * lb_sqrtf(PF_SlippiMulAddF32(-x, x, 1.0f)));",
+      "count": 1,
+      "reason": "Match asinf at GALE01 0x80022DD4: compute 1-x*x with one PowerPC fnmsubs before the source-owned square root. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        guess = 0.5f * guess * (3.0f - guess * guess * x);",
+      "new": "        guess = (0.5f * guess) * PF_SlippiMulAddF32(-x, guess * guess, 3.0f);",
+      "count": 3,
+      "reason": "Match all three lb_sqrtf reciprocal-square-root refinements at GALE01 0x80022E10 through 0x80022E40: round both products surrounding the fused 3-x*guess_squared fnmsubs. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "__fnmsubs(result, lookup_ptr[7], offset_33)",
+      "new": "PF_SlippiMulAddF32(-result, lookup_ptr[7], offset_33)",
+      "count": 1,
+      "reason": "Express the target fused negative multiply-subtract as the equivalent native binary32 fused operation. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "__fnmsubs(result, lookup_ptr[13], offset_39)",
+      "new": "PF_SlippiMulAddF32(-result, lookup_ptr[13], offset_39)",
+      "count": 1,
+      "reason": "Express the second target fused negative multiply-subtract as the equivalent native binary32 fused operation. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        // clang-format off\n        result = result *\n            result_squared * (\n                result_squared * (\n                    result_squared * (\n                        result_squared * (\n                            result_squared * (\n                                result_squared * (\n                                    atanf_lookup[6]\n                                ) + atanf_lookup[5]\n                            ) + atanf_lookup[4]\n                        ) + atanf_lookup[3]\n                    ) + atanf_lookup[2]\n                ) + atanf_lookup[1]\n            ) + result;\n        // clang-format on",
+      "new": "        float result_cubed = result * result_squared;\n        float polynomial =\n            PF_SlippiMulAddF32(result_squared, atanf_lookup[6], atanf_lookup[5]);\n        polynomial = PF_SlippiMulAddF32(result_squared, polynomial, atanf_lookup[4]);\n        polynomial = PF_SlippiMulAddF32(result_squared, polynomial, atanf_lookup[3]);\n        polynomial = PF_SlippiMulAddF32(result_squared, polynomial, atanf_lookup[2]);\n        polynomial = PF_SlippiMulAddF32(result_squared, polynomial, atanf_lookup[1]);\n        result = PF_SlippiMulAddF32(result_cubed, polynomial, result);",
+      "count": 1,
+      "reason": "Match atanf at GALE01 0x80022FC8 through 0x80022FEC: evaluate the odd polynomial in the DOL's exact six-fmadds order after separately rounding result cubed. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "    return result;\n}\n#endif",
+      "new": "    return result;\n}",
+      "count": 1,
+      "reason": "Close the now-unconditional source-owned atanf definition."
+    },
+    {
+      "old": "#include \"lbtrigf.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"lbtrigf.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+name	url	bytes	sha256
+libc6-dev-i386_2.35-0ubuntu3.14_amd64.deb	https://archive.ubuntu.com/ubuntu/pool/main/g/glibc/libc6-dev-i386_2.35-0ubuntu3.14_amd64.deb	1444030	1f4707a137c4db8b627e25bf87bdc3951e0176528aa55ab0ffae8f37c97cf2fd
+lib32gcc-11-dev_11.4.0-1ubuntu1~22.04.3_amd64.deb	https://archive.ubuntu.com/ubuntu/pool/main/g/gcc-11/lib32gcc-11-dev_11.4.0-1ubuntu1%7e22.04.3_amd64.deb	2338918	5bb9b32d03d4bfef99c8e5a472289550768fadf70c366c83f237838995c894db
+lib32stdc++-11-dev_11.4.0-1ubuntu1~22.04.3_amd64.deb	https://archive.ubuntu.com/ubuntu/pool/main/g/gcc-11/lib32stdc%2b%2b-11-dev_11.4.0-1ubuntu1%7e22.04.3_amd64.deb	989228	56302c0ceb3fd7d2c4a57a7bb9f20d8b0cc070e4878a0a21572ea2f0b0a3cf10

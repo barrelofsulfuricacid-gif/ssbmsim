@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/itzako.c",
+  "source_sha256": "0c437060691a9b817ef2d737c9eeffbe608e8724c51338f2baef9762d3764fba",
+  "adapted_sha256": "3290c644c2d7d19f8e7f7a8b13ce6a33dc1b4625963e7c9195c0421e0612f094",
+  "replacements": [
+    {
+      "old": "int it_8027BA54(HSD_GObj* item_gobj, Vec3* arg1)\n{\n    Vec3 sp20;\n    Vec3 sp14;\n    Item* item;\n\n    item = GET_ITEM(item_gobj);\n    Camera_GetTransformPosition(&sp20);\n    sp20.x = ((10.0f * (HSD_Randf() - 0.5)) + sp20.x);\n    sp20.y += 30.0f * HSD_Randf();\n    lbVector_Diff(&sp20, &item->pos, &sp14);\n    lbVector_Normalize(&sp14);\n    sp14.x *= 10.0f;\n    sp14.y *= 10.0f;\n    sp14.z *= 10.0f;\n    *arg1 = sp14;\n}",
+      "new": "int it_8027BA54(HSD_GObj* item_gobj, Vec3* arg1)\n{\n    Vec3 sp20;\n    Vec3 sp14;\n    Item* item;\n\n    item = GET_ITEM(item_gobj);\n    Camera_GetTransformPosition(&sp20);\n    sp20.x = ((10.0f * (HSD_Randf() - 0.5)) + sp20.x);\n    sp20.y += 30.0f * HSD_Randf();\n    lbVector_Diff(&sp20, &item->pos, &sp14);\n    lbVector_Normalize(&sp14);\n    sp14.x *= 10.0f;\n    sp14.y *= 10.0f;\n    sp14.z *= 10.0f;\n    *arg1 = sp14;\n    return 0;\n}",
+      "count": 1,
+      "reason": "Satisfy the host compiler for the decomp-owned int signature; every source call site ignores the return value, so the added constant cannot affect gameplay-visible behavior."
+    }
+  ]
+}

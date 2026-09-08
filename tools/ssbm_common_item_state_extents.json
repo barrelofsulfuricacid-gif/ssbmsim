@@ -1,0 +1,658 @@
+{
+  "source_revision": "ae5898ee0dfda41b34fdf846f7d680a33e14779d",
+  "registration_sha256": "751e526756e96db23ab697f75cb67c9676481aed01daf4bef820e8479c25294d",
+  "slots": [
+    {
+      "slot": 0,
+      "table": "it_803F5468",
+      "file": "kinds/itcapsule.c",
+      "sha256": "3b88847793563231e0f73ae6cc54ff776b6661b1d7dedd6ba5eb8c06620070a0",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        1,
+        -1
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 1,
+      "table": "it_803F5850",
+      "file": "kinds/itbox.c",
+      "sha256": "abe228e0ba105e06543090c212fb6deb459094b790bacf2df75b12d664e70ff0",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        1,
+        2,
+        -1
+      ],
+      "required_rows": 3
+    },
+    {
+      "slot": 2,
+      "table": "it_803F58E0",
+      "file": "kinds/ittaru.c",
+      "sha256": "ef189444ac8afe0fa7b966b385fd4636091a8c37ad4fd325365b95ddac4e7a32",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        2,
+        3
+      ],
+      "required_rows": 4
+    },
+    {
+      "slot": 3,
+      "table": "it_803F5988",
+      "file": "kinds/itegg.c",
+      "sha256": "df75f4b1e1bd35de29c4be12d4f0b96c83ffb4973124a17ec6a4cf1e3708e799",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        -1
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 4,
+      "table": "it_803F59F8",
+      "file": "kinds/itkusudama.c",
+      "sha256": "53bdf41c0251c831d260e058aa232aabf0d622162f0ebddf11383b9709227063",
+      "animation_ids": [
+        -1,
+        0,
+        -1,
+        1,
+        -1,
+        2,
+        2,
+        3,
+        4
+      ],
+      "required_rows": 5
+    },
+    {
+      "slot": 5,
+      "table": "it_803F63C0",
+      "file": "kinds/ittarucann.c",
+      "sha256": "87c02f637edabaf0ea999b933064bd7c2479aa903fd38e8eb390cd979f4c07f8",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        3
+      ],
+      "required_rows": 4
+    },
+    {
+      "slot": 6,
+      "table": "it_803F54D8",
+      "file": "kinds/itbombhei.c",
+      "sha256": "df5d51ae6fb962430a0ae8118e5371101413f250f5dabb0f4e8d6b404f0e2a43",
+      "animation_ids": [
+        -1,
+        -1,
+        0,
+        0,
+        6,
+        4,
+        4,
+        1,
+        4,
+        2,
+        5,
+        3,
+        -1
+      ],
+      "required_rows": 7
+    },
+    {
+      "slot": 7,
+      "table": "it_803F55D0",
+      "file": "kinds/itdosei.c",
+      "sha256": "192704b062f7294b15f6982a42f03126961af8f0e2458142817fae29f82fa69e",
+      "animation_ids": [
+        -1,
+        0,
+        2,
+        -1,
+        3,
+        1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        3
+      ],
+      "required_rows": 4
+    },
+    {
+      "slot": 8,
+      "table": "it_803F56C8",
+      "file": "kinds/itheart.c",
+      "sha256": "280a3dcad04ef4e7d7510ff4818c1140edc66f92d8e019de184b48040589f0eb",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "required_rows": 0
+    },
+    {
+      "slot": 9,
+      "table": "it_803F5740",
+      "file": "kinds/ittomato.c",
+      "sha256": "eca7fea211a53ac1811269c7b183a6ab6123440f285154583b365c6594a2c707",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "required_rows": 0
+    },
+    {
+      "slot": 10,
+      "table": "it_803F57A0",
+      "file": "kinds/itstar.c",
+      "sha256": "dc4f53963aa6f205d098bd43f8eac83d93d32541249205040ecf183e6d99e0ad",
+      "animation_ids": [
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 11,
+      "table": "it_803F57B0",
+      "file": "kinds/itbat.c",
+      "sha256": "e8424b23f34861da03424bec1aaac5e1c56e8e8a744e0cf7a6d284c9fda947a0",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 12,
+      "table": "it_803F5800",
+      "file": "kinds/itsword.c",
+      "sha256": "f23bba56773e95786800c4441430011ac405a556b040e24b81be2399aaee4173",
+      "animation_ids": [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 13,
+      "table": "it_803F5AB0",
+      "file": "kinds/itparasol.c",
+      "sha256": "674a2b55ced7879e27744629c7acf95e355600cc39ac2c97cd2396fa7ca7a78f",
+      "animation_ids": [
+        -1,
+        4,
+        0,
+        -1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "required_rows": 8
+    },
+    {
+      "slot": 14,
+      "table": "it_803F5BA8",
+      "file": "kinds/itgshell.c",
+      "sha256": "7274a018b1667f72c722713ed70261fb01c6a13b429ba37a08a1f0646336fdf8",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 15,
+      "table": "it_803F5C48",
+      "file": "kinds/itrshell.c",
+      "sha256": "f718bdf62a228f1f60bdc0464705996764d37a4306120329e6e20cc0b3a4e27d",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        -1
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 16,
+      "table": "it_803F5CC8",
+      "file": "kinds/itlgun.c",
+      "sha256": "83796cc48fe7443fa9e5ce0ea5aa53122e8a37846321212a1f810bc84d64ab0b",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        -1
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 17,
+      "table": "it_803F5D28",
+      "file": "kinds/itfreeze.c",
+      "sha256": "3e414d02360c8b7002f0ef9310d9be003313cde0bdad58a7ca941cd85b9dab95",
+      "animation_ids": [
+        0,
+        0,
+        -1,
+        1,
+        0,
+        0
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 18,
+      "table": "it_803F5DB0",
+      "file": "kinds/itfoods.c",
+      "sha256": "0d2a4d2691f8568b82f84d3f70f5b9213d6a42ca0ef6159f4b43504febd0e80f",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "required_rows": 0
+    },
+    {
+      "slot": 19,
+      "table": "ItemStateTable_MsBomb",
+      "file": "kinds/itmsbomb.c",
+      "sha256": "18fe1ec32bc6cc3223a661529e80c272ab6f429d75ef8afb8693c1c8d69779fe",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        2,
+        -1
+      ],
+      "required_rows": 3
+    },
+    {
+      "slot": 20,
+      "table": "ItemStateTable_Flipper",
+      "file": "kinds/itflipper.c",
+      "sha256": "40a233c73688bb81f51241aef5fc68a99cdbf588914a2b6dea7a003be3654e0e",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        2
+      ],
+      "required_rows": 3
+    },
+    {
+      "slot": 21,
+      "table": "it_803F5F40",
+      "file": "kinds/itsscope.c",
+      "sha256": "422637dde64b5b0b5523a1b76a05f9c1dac637a43503b6fb0233da7ea042dc93",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 22,
+      "table": "it_803F5F90",
+      "file": "kinds/itstarrod.c",
+      "sha256": "28121b59061d4ef8fd355dbd7f4f2968ce0a7886f61384b97bc3576b5056b68a",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 23,
+      "table": "it_803F6310",
+      "file": "kinds/itlipstick.c",
+      "sha256": "30a19d9b5fbfdd7bb1b080e7c5b9a826e471179fe38ea447422e0ba116e1c41d",
+      "animation_ids": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 24,
+      "table": "it_803F5FF0",
+      "file": "kinds/itharisen.c",
+      "sha256": "e6d3384b83523de4a582163eb25e28de6cf25b741fe8786d153b6dfeb35061e2",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        4,
+        -1
+      ],
+      "required_rows": 5
+    },
+    {
+      "slot": 25,
+      "table": "it_803F6090",
+      "file": "kinds/itfflower.c",
+      "sha256": "a894c947fb6e3757d0325392a1100d49ce9e5626814df36a293d4cb53810106c",
+      "animation_ids": [
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        0
+      ],
+      "required_rows": 5
+    },
+    {
+      "slot": 26,
+      "table": "it_803F6110",
+      "file": "kinds/itkinoko.c",
+      "sha256": "846455f3fcaaa35148383ad9d0e6aec78c3b5e01d8d23241b7beb8fce1fd7e4b",
+      "animation_ids": [
+        0,
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 27,
+      "table": "it_803F6130",
+      "file": "kinds/itdkinoko.c",
+      "sha256": "009a5c95b1efc32dd560dd925c99b56b4a0b6fe4b6e33bede855f27d04347d07",
+      "animation_ids": [
+        0,
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 28,
+      "table": "it_803F6150",
+      "file": "kinds/ithammer.c",
+      "sha256": "6399d98de26d1d382503d8a1f264324c5223b86303a7c3d0743808fa3b7be16b",
+      "animation_ids": [
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        -1
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 29,
+      "table": "it_803F61B0",
+      "file": "kinds/itwstar.c",
+      "sha256": "c5154b349ff0f224a1a6e671b22405380cd94befb19db0228d7008181a5682fe",
+      "animation_ids": [
+        0,
+        -1,
+        -1,
+        2,
+        -1,
+        1
+      ],
+      "required_rows": 3
+    },
+    {
+      "slot": 30,
+      "table": "it_803F6220",
+      "file": "kinds/itscball.c",
+      "sha256": "2593f804930d175386c6a56b872c14a6b6ae06a67f0ab14b8299216465838a68",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 31,
+      "table": "it_803F6270",
+      "file": "kinds/itrabbitc.c",
+      "sha256": "1bd2faf662d82923004efccdb26b0f619043a4a57f2b9e6c5c23bcf2cbc0dc21",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "required_rows": 0
+    },
+    {
+      "slot": 32,
+      "table": "it_803F62C0",
+      "file": "kinds/itmetalb.c",
+      "sha256": "36aa1dd71190e0f556317b44ca2874978698a7e33d5f431fd641a4a15d4812f1",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "required_rows": 0
+    },
+    {
+      "slot": 33,
+      "table": "it_803F6370",
+      "file": "kinds/itspycloak.c",
+      "sha256": "199410d191072e0f20c750a5ad439dbe96bbde55e10f18edc84868f14659f313",
+      "animation_ids": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 34,
+      "table": "it_803F6488",
+      "file": "kinds/itmball.c",
+      "sha256": "aeb7f6de0bb31ef7fff1951fcb9b2509478276945bd359eb8bdb61fd7d3d4846",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        1
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 35,
+      "table": "it_803F64F8",
+      "file": "kinds/itlgunray.c",
+      "sha256": "c60711c2aeb8d3130bb7f055c9d44c77474d82309e28f7192424914dcec76e08",
+      "animation_ids": [
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 36,
+      "table": "it_803F6530",
+      "file": "kinds/itstarrodstar.c",
+      "sha256": "98ca1c7e724e771a76d16310c3f91830e9a65a9143bc008ec6e5b8d2f1dcda54",
+      "animation_ids": [
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 37,
+      "table": "it_803F6680",
+      "file": "kinds/itlipstickspore.c",
+      "sha256": "5fbe1f3ee7d23186b7517348551a451cbc42b720ebc065b0743bf2691cb0625d",
+      "animation_ids": [
+        0,
+        1
+      ],
+      "required_rows": 2
+    },
+    {
+      "slot": 38,
+      "table": "it_803F6568",
+      "file": "kinds/itsscopebeam.c",
+      "sha256": "88fe7c3951b215bb2951733ec6806342d5b9413342650b2e2781f5632e4404f4",
+      "animation_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "required_rows": 10
+    },
+    {
+      "slot": 39,
+      "table": "it_803F6630",
+      "file": "kinds/itlgunbeam.c",
+      "sha256": "47b50aea64c13cbd923bc4efd8ccccedc938c280008ee305a4d68ed33938941d",
+      "animation_ids": [
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 40,
+      "table": "it_803F6640",
+      "file": "kinds/ithammerhead.c",
+      "sha256": "9dce8bf7112dde2b1ef479e94c9dbb661293d561e248c729870a5462aec8279b",
+      "animation_ids": [
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 41,
+      "table": "it_803F66C8",
+      "file": "kinds/itfflowerflame.c",
+      "sha256": "f332e502cdca830732ebcce493d370f0da7d062907c4c55edb78e51e4eb5c077",
+      "animation_ids": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "required_rows": 1
+    },
+    {
+      "slot": 42,
+      "table": "it_803F6728",
+      "file": "kinds/itevyoshiegg.c",
+      "sha256": "58e4d618dba7ef4746062c19540c0a50f8fb0a06ae35eeef031172b8924aeb90",
+      "animation_ids": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "required_rows": 1
+    }
+  ]
+}

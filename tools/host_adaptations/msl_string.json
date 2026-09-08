@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/MSL/string.c",
+  "source_sha256": "223820def1e079f37d3dd03c91f3223e2b0dca42024e4c4a40f44966e6ec10ef",
+  "adapted_sha256": "bae665a1a68696bd6b0177f842f1dffb5e5df6ef53a3fe87aabc662ee19dbda3",
+  "replacements": [
+    {
+      "old": "#include \"string.h\"",
+      "new": "#if 0\n#include \"string.h\"\n#endif",
+      "count": 1,
+      "reason": "The selected implementations are self-contained and need no MSL string declarations. Excluding this private header allows the provider to compile without adding src/MSL to the shared include graph, where it would shadow native math and string headers."
+    },
+    {
+      "old": "unsigned long(strlen)(const char* s)",
+      "new": "size_t(strlen)(const char* s)",
+      "count": 1,
+      "reason": "Use the native i686 spelling for the same unsigned 32-bit length ABI declared by the host string header; the implementation and return value are unchanged."
+    },
+    {
+      "old": "char* strncpy(char* dst, const char* src, unsigned long n)",
+      "new": "char* strncpy(char* dst, const char* src, size_t n)",
+      "count": 1,
+      "reason": "Use native i686 size_t for the same unsigned 32-bit count ABI while preserving the complete MSL strncpy loop."
+    },
+    {
+      "old": "int strncmp(const char* str1, const char* str2, unsigned long n)",
+      "new": "int strncmp(const char* str1, const char* str2, size_t n)",
+      "count": 1,
+      "reason": "Use native i686 size_t for the same unsigned 32-bit count ABI while preserving the complete MSL strncmp comparison order."
+    },
+    {
+      "old": "#include \"stdio.h\"",
+      "new": "#if 0\n#include \"stdio.h\"\n#endif",
+      "count": 1,
+      "reason": "The CodeWarrior stdio ABI is used only by the unselected __StringRead helper and conflicts with native GCC va_list. Keep that private dependency out of this provider while preserving every string implementation unchanged."
+    },
+    {
+      "old": "int __StringRead(void* isc, int ch, int Action)",
+      "new": "#if 0\nint __StringRead(void* isc, int ch, int Action)",
+      "count": 1,
+      "reason": "Bound the unselected MSL formatted-input helper whose private CodeWarrior stdio control types are not part of the gameplay string-provider contract. A later root for __StringRead remains unresolved and must receive its own audited native ABI adaptation."
+    },
+    {
+      "old": "}\n\n#ifdef __MWERKS__\n#pragma pop",
+      "new": "}\n#endif\n\n#ifdef __MWERKS__\n#pragma pop",
+      "count": 1,
+      "reason": "Close the source-scoped exclusion immediately after __StringRead without changing the surrounding string functions or CodeWarrior pragma boundary."
+    }
+  ]
+}

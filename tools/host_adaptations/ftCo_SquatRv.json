@@ -1,0 +1,27 @@
+{
+  "adapted_sha256": "459f497b32ab2ca733bf000db9da71480c5037a2a7101bcb1dab538f4c1d3cc1",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    }
+  ],
+  "replacements": [
+    {
+      "count": 1,
+      "new": "#include \"ftCo_SquatRv.h\"\n\n#include \"native_pad_input.h\"\n",
+      "old": "#include \"ftCo_SquatRv.h\"\n",
+      "reason": "Expose the native UCF 0.84 DBOOC helper to the source SquatRv callback at the original 0x800D65EC threshold-load injection point."
+    },
+    {
+      "count": 1,
+      "new": "bool ftCo_SquatRv_CheckInput(Fighter_GObj* gobj)\n{\n    Fighter* fp = GET_FIGHTER(gobj);\n    float release_threshold =\n        pf_ssbm_native_ucf084_dbooc_squatrv_release_threshold(\n            fp, p_ftCommonData->x94);\n    if (fp->input.lstick[0].y > -release_threshold) {",
+      "old": "bool ftCo_SquatRv_CheckInput(Fighter_GObj* gobj)\n{\n    Fighter* fp = GET_FIGHTER(gobj);\n    if (fp->input.lstick[0].y > -p_ftCommonData->x94) {",
+      "reason": "Translate the pinned UCF 0.84 DBOOC SquatRv Fix hook at GALE01 address 0x800D65EC. The predicate retains the exact fresh X-tilt (unsigned x670 byte < 1) and adjusted-radial (sum of squares strictly greater than 80*80) boundaries, then relaxes the crouch-release threshold from p_ftCommonData->x94 to binary32 0.59 (payload word 0x3F170A3D). The shared CheckInput carries the fix to every SquatWait, Squat, and landing caller."
+    }
+  ],
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_SquatRv.c",
+  "source_sha256": "7a31e8bda702f6448ebeda5613f71f75a220ae302f1f3713bab4db26e6f9d4b3"
+}

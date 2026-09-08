@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_SpecialS.c",
+  "source_sha256": "f714f2e7dbc5a4e3b7d1aaffda7d45cbd433e95855e22ba9d082affa8f02ddd4",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "function": "ftCo_SpecialS.c:doEnter",
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "instructions": "GALE01 0x80096614 fsubs, 0x8009661c fmuls, 0x80096620 fneg, 0x80096624 fmadds; friction lookup occurs first at 0x800965fc",
+    "witness": "0e2b93c12fc5 frame 1119 shared side-special entry ground velocity"
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftCo_SpecialS.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftCo_SpecialS.h\"",
+      "count": 1,
+      "reason": "Use the existing shared Slippi binary32 multiply-add contract."
+    },
+    {
+      "old": "    fp->gr_vel +=\n        -(fp->gr_vel * (1 - fp->co_attrs.specials_ground_speed_retention)) *\n        ft_GetGroundFrictionMultiplier(fp);",
+      "new": "    const float friction = ft_GetGroundFrictionMultiplier(fp);\n    const float loss = fp->gr_vel *\n        (1.0F - fp->co_attrs.specials_ground_speed_retention);\n    fp->gr_vel = PF_SlippiMulAddF32(-loss, friction, fp->gr_vel);",
+      "count": 1,
+      "reason": "Preserve original friction lookup order, separately rounded speed-loss product, then fused accumulation for every fighter using shared side-special entry. Same momentum-friction arithmetic class as the audited dash-exit adaptation; no replay or fighter conditional."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "adapted_sha256": "fdce120b4361ede9b6a89de999b0108ee9ea00f76494746e9e6932027c33f162"
+}

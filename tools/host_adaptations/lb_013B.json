@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lb_013B.c",
+  "source_sha256": "2120012ec2deb50f78b47a774c6b51a54c1a277771ca488729cbb14ee3990d2c",
+  "adapted_sha256": "8675c7bfd430a3e24ce862157fc6b45d60cfc66e81056a33bfa73b46a34458ac",
+  "replacements": [
+    {
+      "old": "    arg0->x8_ptr1 = NULL;\n",
+      "new": "    arg0->x8_ptr1 = (union ColorOverlay_x8_t*) NULL;\n",
+      "count": 1,
+      "reason": "Express the unchanged null pointer with the reverse-scalar-order command overlay type required by GCC after the PowerPC color-command layout is made explicit."
+    },
+    {
+      "old": "        arg0->x8_ptr1 = arg1[arg2].unk;\n",
+      "new": "        arg0->x8_ptr1 =\n            (union ColorOverlay_x8_t*) arg1[arg2].unk;\n",
+      "count": 1,
+      "reason": "Convert the source-owned untyped color-command pointer to its exact immutable overlay type without changing its native pointer value or the original assignment order."
+    }
+  ]
+}

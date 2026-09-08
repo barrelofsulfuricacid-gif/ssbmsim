@@ -1,0 +1,378 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lbcollision.c",
+  "source_sha256": "59705ddc7a8a20fe40598b9e97251bb5cbd3f4ede890e3f6fa3ed5bc34dbd36b",
+  "adapted_sha256": "78971910f8ee6880dcacf331c0cc79e4a4de733d0ffae3cdaa03f98d8b189f9e",
+  "replacements": [
+    {
+      "old": "void lbColl_800077A0(Vec3* a, MtxPtr arg1, Vec3* b, Vec3* c, Vec3* d, Vec3* e,",
+      "new": "void lbColl_800077A0(Vec3* a, Mtx arg1, Vec3* b, Vec3* c, Vec3* d, Vec3* e,",
+      "count": 1,
+      "reason": "Spell the matrix parameter exactly like the existing public declaration; C adjusts both forms to the same pointer type, so this removes the host diagnostic without changing the function type or behavior."
+    },
+    {
+      "old": "GXSetArray(GX_VA_POS, lbColl_SpherePositions, 6);",
+      "new": "GXSETARRAY(GX_VA_POS, lbColl_SpherePositions, sizeof(lbColl_SpherePositions), 6, false);",
+      "count": 4,
+      "reason": "Use Aurora's cross-target SDK compatibility macro and provide the complete source-owned big-endian byte-buffer extent required by its native array registration contract."
+    },
+    {
+      "old": "GXSetArray(GX_VA_NRM, lbColl_SphereNormals, 6);",
+      "new": "GXSETARRAY(GX_VA_NRM, lbColl_SphereNormals, sizeof(lbColl_SphereNormals), 6, false);",
+      "count": 4,
+      "reason": "Use Aurora's cross-target SDK compatibility macro and provide the complete source-owned big-endian byte-buffer extent required by its native array registration contract."
+    },
+    {
+      "old": "GXSetArray(GX_VA_POS, lbColl_CylinderPositions, 6);",
+      "new": "GXSETARRAY(GX_VA_POS, lbColl_CylinderPositions, sizeof(lbColl_CylinderPositions), 6, false);",
+      "count": 2,
+      "reason": "Use Aurora's cross-target SDK compatibility macro and provide the complete source-owned big-endian byte-buffer extent required by its native array registration contract."
+    },
+    {
+      "old": "GXSetArray(GX_VA_NRM, lbColl_CylinderNormals, 6);",
+      "new": "GXSETARRAY(GX_VA_NRM, lbColl_CylinderNormals, sizeof(lbColl_CylinderNormals), 6, false);",
+      "count": 2,
+      "reason": "Use Aurora's cross-target SDK compatibility macro and provide the complete source-owned big-endian byte-buffer extent required by its native array registration contract."
+    },
+    {
+      "old": "bool lbColl_8000A584(HurtCapsule* hurt, u32 arg1, u32 arg2, Mtx arg3, f32 arg8)",
+      "new": "bool lbColl_8000A584(HurtCapsule* hurt, u32 arg1, u32 arg2, MtxPtr arg3, f32 arg8)",
+      "count": 1,
+      "reason": "Spell the matrix parameter exactly like the existing public declaration; C adjusts the original array parameter to this same pointer type, so behavior and ABI remain unchanged."
+    },
+    {
+      "old": "bool lbColl_8000AB2C(HitResult* hit, u32 arg1, MtxPtr arg2, f32 pos_z)",
+      "new": "bool lbColl_8000AB2C(HitResult* hit, u32 arg1, Mtx arg2, f32 pos_z)",
+      "count": 1,
+      "reason": "Spell the matrix parameter exactly like the existing public declaration; C adjusts both forms to the same pointer type, so behavior and ABI remain unchanged."
+    },
+    {
+      "old": "#include \"lbcollision.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"lbcollision.h\"",
+      "count": 1,
+      "reason": "Use the shared audited binary32 multiply-add contract."
+    },
+    {
+      "old": "d1_len_sq =\n                            (d1_z * d1_z) + ((d1_x * d1_x) + (d1_y * d1_y));",
+      "new": "d1_len_sq = PF_SlippiMulAddF32(d1_z, d1_z, PF_SlippiMulAddF32(d1_x, d1_x, d1_y * d1_y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "d2_len_sq =\n                            (d2_z * d2_z) + ((d2_x * d2_x) + (d2_y * d2_y));",
+      "new": "d2_len_sq = PF_SlippiMulAddF32(d2_z, d2_z, PF_SlippiMulAddF32(d2_x, d2_x, d2_y * d2_y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "d1_dot_d2 =\n                            (d1_z * d2_z) + ((d1_x * d2_x) + (d1_y * d2_y));",
+      "new": "d1_dot_d2 = PF_SlippiMulAddF32(d1_z, d2_z, PF_SlippiMulAddF32(d1_x, d2_x, d1_y * d2_y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "d2_dot_offset_delta = (d2_z * offset_delta_z) +\n                                              ((d2_x * offset_delta_x) +\n                                               (d2_y * offset_delta_y));",
+      "new": "d2_dot_offset_delta = PF_SlippiMulAddF32(d2_z, offset_delta_z, PF_SlippiMulAddF32(d2_x, offset_delta_x, d2_y * offset_delta_y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "d1_dot_offset_delta = (d1_z * offset_delta_z) +\n                                              ((d1_x * offset_delta_x) +\n                                               (d1_y * offset_delta_y));",
+      "new": "d1_dot_offset_delta = PF_SlippiMulAddF32(d1_z, offset_delta_z, PF_SlippiMulAddF32(d1_x, offset_delta_x, d1_y * offset_delta_y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "denom =\n                            (d1_len_sq * d2_len_sq) - (d1_dot_d2 * d1_dot_d2);",
+      "new": "denom = PF_SlippiMulAddF32(d1_len_sq, d2_len_sq, -(d1_dot_d2 * d1_dot_d2));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "sqdist2_ba =\n                            diff_ba.x * diff_ba.x + diff_ba.y * diff_ba.y;",
+      "new": "sqdist2_ba = PF_SlippiMulAddF32(diff_ba.x, diff_ba.x, diff_ba.y * diff_ba.y);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "sqdist2_dc =\n                            diff_dc.x * diff_dc.x + diff_dc.y * diff_dc.y;",
+      "new": "sqdist2_dc = PF_SlippiMulAddF32(diff_dc.x, diff_dc.x, diff_dc.y * diff_dc.y);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "dot2_diff_ba_dc =\n                            diff_ba.x * diff_dc.x + diff_ba.y * diff_dc.y;",
+      "new": "dot2_diff_ba_dc = PF_SlippiMulAddF32(diff_ba.x, diff_dc.x, diff_ba.y * diff_dc.y);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "dot2_diff_dc_ac =\n                            diff_dc.x * diff_ac_x + diff_dc.y * diff_ac_y;",
+      "new": "dot2_diff_dc_ac = PF_SlippiMulAddF32(diff_dc.x, diff_ac_x, diff_dc.y * diff_ac_y);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "dot2_diff_ba_ac =\n                                diff_ba.x * diff_ac_x + y_product;",
+      "new": "dot2_diff_ba_ac = PF_SlippiMulAddF32(diff_ba.x, diff_ac_x, y_product);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "determinant =\n                                sqdist2_ba * sqdist2_dc - dot_squared;",
+      "new": "determinant = PF_SlippiMulAddF32(sqdist2_ba, sqdist2_dc, -dot_squared);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "hurt_start_dot =\n        axis.z * offset.z + (axis.x * offset.x + axis.y * offset.y);",
+      "new": "hurt_start_dot = PF_SlippiMulAddF32(axis.z, offset.z, PF_SlippiMulAddF32(axis.x, offset.x, axis.y * offset.y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "segment_dot =\n        hit_delta.z * axis.z + (hit_delta.x * axis.x + midpoint.y * axis.y);",
+      "new": "segment_dot = PF_SlippiMulAddF32(hit_delta.z, axis.z, PF_SlippiMulAddF32(hit_delta.x, axis.x, midpoint.y * axis.y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "hit_start_dot = hit_delta.z * offset.z +\n                        (hit_delta.x * offset.x + midpoint.y * offset.y);",
+      "new": "hit_start_dot = PF_SlippiMulAddF32(hit_delta.z, offset.z, PF_SlippiMulAddF32(hit_delta.x, offset.x, midpoint.y * offset.y));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "hurt_len_sq = axis.x * axis.x + hurt_len_sq;",
+      "new": "hurt_len_sq = PF_SlippiMulAddF32(axis.x, axis.x, hurt_len_sq);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "hurt_len_sq = axis.z * axis.z + hurt_len_sq;",
+      "new": "hurt_len_sq = PF_SlippiMulAddF32(axis.z, axis.z, hurt_len_sq);",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "closest_denom = (hit_len_sq * hurt_len_sq) - (segment_dot * segment_dot);",
+      "new": "closest_denom = PF_SlippiMulAddF32(hit_len_sq, hurt_len_sq, -(segment_dot * segment_dot));",
+      "count": 1,
+      "reason": "Preserve retail binary32 dot-product and determinant operations before the shared capsule solver chooses its degenerate or nonparallel branch; no tolerance changes."
+    },
+    {
+      "old": "((d1_dot_d2 * d2_dot_offset_delta) -\n                                         (d2_len_sq * d1_dot_offset_delta))",
+      "new": "PF_SlippiMulAddF32(d1_dot_d2, d2_dot_offset_delta, -(d2_len_sq * d1_dot_offset_delta))",
+      "count": 1,
+      "reason": "Preserve the paired retail fmsubs numerators in each nonparallel segment solver before division and endpoint selection (80006654/658, 80006CD8/CDC, 80007420/424)."
+    },
+    {
+      "old": "((d1_len_sq * d2_dot_offset_delta) -\n                                         (d1_dot_d2 * d1_dot_offset_delta))",
+      "new": "PF_SlippiMulAddF32(d1_len_sq, d2_dot_offset_delta, -(d1_dot_d2 * d1_dot_offset_delta))",
+      "count": 1,
+      "reason": "Preserve the paired retail fmsubs numerators in each nonparallel segment solver before division and endpoint selection (80006654/658, 80006CD8/CDC, 80007420/424)."
+    },
+    {
+      "old": "((dot2_diff_ba_dc * dot2_diff_dc_ac) -\n                                         (sqdist2_dc * dot2_diff_ba_ac))",
+      "new": "PF_SlippiMulAddF32(dot2_diff_ba_dc, dot2_diff_dc_ac, -(sqdist2_dc * dot2_diff_ba_ac))",
+      "count": 1,
+      "reason": "Preserve the paired retail fmsubs numerators in each nonparallel segment solver before division and endpoint selection (80006654/658, 80006CD8/CDC, 80007420/424)."
+    },
+    {
+      "old": "((sqdist2_ba * dot2_diff_dc_ac) -\n                                         (dot2_diff_ba_dc * dot2_diff_ba_ac))",
+      "new": "PF_SlippiMulAddF32(sqdist2_ba, dot2_diff_dc_ac, -(dot2_diff_ba_dc * dot2_diff_ba_ac))",
+      "count": 1,
+      "reason": "Preserve the paired retail fmsubs numerators in each nonparallel segment solver before division and endpoint selection (80006654/658, 80006CD8/CDC, 80007420/424)."
+    },
+    {
+      "old": "((segment_dot * hurt_start_dot) -\n                         (hurt_len_sq * hit_start_dot))",
+      "new": "PF_SlippiMulAddF32(segment_dot, hurt_start_dot, -(hurt_len_sq * hit_start_dot))",
+      "count": 1,
+      "reason": "Preserve the paired retail fmsubs numerators in each nonparallel segment solver before division and endpoint selection (80006654/658, 80006CD8/CDC, 80007420/424)."
+    },
+    {
+      "old": "((hit_len_sq * hurt_start_dot) -\n                          (segment_dot * hit_start_dot))",
+      "new": "PF_SlippiMulAddF32(hit_len_sq, hurt_start_dot, -(segment_dot * hit_start_dot))",
+      "count": 1,
+      "reason": "Preserve the paired retail fmsubs numerators in each nonparallel segment solver before division and endpoint selection (80006654/658, 80006CD8/CDC, 80007420/424)."
+    },
+    {
+      "old": "sqrt_tmp - 1",
+      "new": "&sqrt_tmp[1]",
+      "count": 1,
+      "reason": "Use the otherwise unused final scratch element for the source sqrtf_store volatile binary32 round trip. Negative array indexing reconstructs a retail compiler stack layout and is undefined on the native host. Preserve helper arithmetic, caller order, all existing scratch slots and outputs. This completes the negative sqrt scratch-index repair across every occurrence in the pinned source tree."
+    },
+    {
+      "old": "            // The second sqrtf spill is allocated just below the scratch\n            // array.",
+      "new": "            // Native volatile spill uses the reserved second scratch slot.",
+      "count": 1,
+      "reason": "Remove the obsolete retail stack-layout comment after the storage adaptation."
+    },
+    {
+      "old": "d1_x * arg4_scl + arg4_offset.x",
+      "new": "PF_SlippiMulAddF32(d1_x, arg4_scl, arg4_offset.x)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "d2_x * arg5_scl + arg5_offset.x",
+      "new": "PF_SlippiMulAddF32(d2_x, arg5_scl, arg5_offset.x)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(hit_delta.x * hit_param) + hit_start_copy.x",
+      "new": "PF_SlippiMulAddF32(hit_delta.x, hit_param, hit_start_copy.x)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(axis.x * hurt_param) + hurt_start_copy.x",
+      "new": "PF_SlippiMulAddF32(axis.x, hurt_param, hurt_start_copy.x)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(contact_lerp * (hit_closest->x - hurt_closest_x)) + hurt_closest_x",
+      "new": "PF_SlippiMulAddF32(contact_lerp, hit_closest->x - hurt_closest_x, hurt_closest_x)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "d1_y * arg4_scl + arg4_offset.y",
+      "new": "PF_SlippiMulAddF32(d1_y, arg4_scl, arg4_offset.y)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "d2_y * arg5_scl + arg5_offset.y",
+      "new": "PF_SlippiMulAddF32(d2_y, arg5_scl, arg5_offset.y)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(hit_delta.y * hit_param) + hit_start_copy.y",
+      "new": "PF_SlippiMulAddF32(hit_delta.y, hit_param, hit_start_copy.y)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(axis.y * hurt_param) + hurt_start_y",
+      "new": "PF_SlippiMulAddF32(axis.y, hurt_param, hurt_start_y)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(contact_lerp * (hit_closest->y - hurt_closest_y)) + hurt_closest_y",
+      "new": "PF_SlippiMulAddF32(contact_lerp, hit_closest->y - hurt_closest_y, hurt_closest_y)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "d1_z * arg4_scl + arg4_offset.z",
+      "new": "PF_SlippiMulAddF32(d1_z, arg4_scl, arg4_offset.z)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "d2_z * arg5_scl + arg5_offset.z",
+      "new": "PF_SlippiMulAddF32(d2_z, arg5_scl, arg5_offset.z)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(hit_delta.z * hit_param) + hit_start_copy.z",
+      "new": "PF_SlippiMulAddF32(hit_delta.z, hit_param, hit_start_copy.z)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(axis.z * hurt_param) + hurt_start_z",
+      "new": "PF_SlippiMulAddF32(axis.z, hurt_param, hurt_start_z)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "(contact_lerp * (hit_closest->z - hurt_closest_z)) + hurt_closest_z",
+      "new": "PF_SlippiMulAddF32(contact_lerp, hit_closest->z - hurt_closest_z, hurt_closest_z)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "diff_ba.x * scl_e + a1.x",
+      "new": "PF_SlippiMulAddF32(diff_ba.x, scl_e, a1.x)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "diff_dc.x * scl_f + c1.x",
+      "new": "PF_SlippiMulAddF32(diff_dc.x, scl_f, c1.x)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "diff_ba.y * scl_e + a1_y",
+      "new": "PF_SlippiMulAddF32(diff_ba.y, scl_e, a1_y)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "diff_dc.y * scl_f + c1_y",
+      "new": "PF_SlippiMulAddF32(diff_dc.y, scl_f, c1_y)",
+      "count": 1,
+      "reason": "Preserve retail binary32 contraction when constructing closest points and contact positions in all three shared capsule solvers; source subtraction and final storage order stay unchanged."
+    },
+    {
+      "old": "z * z + (x * x + y * y)",
+      "new": "PF_SlippiMulAddF32(z, z, PF_SlippiMulAddF32(x, x, y * y))",
+      "count": 1,
+      "reason": "Preserve retail squared-distance accumulation: rounded Y product, fused X square, then fused Z square where present. Covers all shared capsule result tests and both world/local contact distances."
+    },
+    {
+      "old": "distance_sq = x * x + y * y;",
+      "new": "distance_sq = PF_SlippiMulAddF32(x, x, y * y);",
+      "count": 1,
+      "reason": "Preserve retail squared-distance accumulation: rounded Y product, fused X square, then fused Z square where present. Covers all shared capsule result tests and both world/local contact distances."
+    },
+    {
+      "old": "(separation.z * separation.z) +\n        ((separation.x * separation.x) + (separation.y * separation.y))",
+      "new": "PF_SlippiMulAddF32(separation.z, separation.z,\n            PF_SlippiMulAddF32(separation.x, separation.x, separation.y * separation.y))",
+      "count": 2,
+      "reason": "Preserve retail squared-distance accumulation: rounded Y product, fused X square, then fused Z square where present. Covers all shared capsule result tests and both world/local contact distances."
+    },
+    {
+      "old": "float lbColl_80005EBC(const Vec3* arg0, const Vec3* arg1, const Vec3* arg2,\n                      float* arg3)\n{\n    Vec3 sp50;\n    Vec3 d1;\n    Vec3 sp38;\n    Vec3 d2;\n    float scale;\n    float d1_dot_d1;\n    float d1_dot_d2;\n    float x;\n    float y;\n    float z;\n\n    sp50 = *arg0;\n    d1.x = arg1->x - arg0->x;\n    d1.y = arg1->y - arg0->y;\n    d1.z = arg1->z - arg0->z;\n\n    sp38 = *arg2;\n    d2.x = sp50.x - sp38.x;\n    d2.y = sp50.y - sp38.y;\n    d2.z = sp50.z - sp38.z;\n\n    d1_dot_d1 = d1.x * d1.x + d1.y * d1.y + d1.z * d1.z;\n    d1_dot_d2 = d1.x * d2.x + d1.y * d2.y + d1.z * d2.z;\n\n    scale = -d1_dot_d2 / d1_dot_d1;\n    if (scale > 1.0) {\n        scale = 1.0F;\n    } else if (scale < 0.0) {\n        scale = 0.0F;\n    }\n\n    x = d1.x * scale + sp50.x - arg2->x;\n    y = d1.y * scale + sp50.y - arg2->y;\n    z = d1.z * scale + sp50.z - arg2->z;\n\n    *arg3 = scale;\n    return x * x + y * y + z * z;\n}",
+      "new": "float lbColl_80005EBC(const Vec3* arg0, const Vec3* arg1, const Vec3* arg2,\n                      float* arg3)\n{\n    Vec3 sp50;\n    Vec3 d1;\n    Vec3 sp38;\n    Vec3 d2;\n    float scale;\n    float d1_dot_d1;\n    float d1_dot_d2;\n    float x;\n    float y;\n    float z;\n\n    sp50 = *arg0;\n    d1.x = arg1->x - arg0->x;\n    d1.y = arg1->y - arg0->y;\n    d1.z = arg1->z - arg0->z;\n\n    sp38 = *arg2;\n    d2.x = sp50.x - sp38.x;\n    d2.y = sp50.y - sp38.y;\n    d2.z = sp50.z - sp38.z;\n\n    d1_dot_d1 = PF_SlippiMulAddF32(d1.z, d1.z, PF_SlippiMulAddF32(d1.x, d1.x, d1.y * d1.y));\n    d1_dot_d2 = PF_SlippiMulAddF32(d1.z, d2.z, PF_SlippiMulAddF32(d1.x, d2.x, d1.y * d2.y));\n\n    scale = -d1_dot_d2 / d1_dot_d1;\n    if (scale > 1.0) {\n        scale = 1.0F;\n    } else if (scale < 0.0) {\n        scale = 0.0F;\n    }\n\n    x = PF_SlippiMulAddF32(d1.x, scale, sp50.x) - arg2->x;\n    y = PF_SlippiMulAddF32(d1.y, scale, sp50.y) - arg2->y;\n    z = PF_SlippiMulAddF32(d1.z, scale, sp50.z) - arg2->z;\n\n    *arg3 = scale;\n    return PF_SlippiMulAddF32(z, z, PF_SlippiMulAddF32(x, x, y * y));\n}",
+      "count": 1,
+      "reason": "Preserve all target fused dot products, projected points and squared distances in both shared endpoint projection helpers (80005EBC-80006094)."
+    },
+    {
+      "old": "float lbColl_80005FC0(Vec3* arg0, Vec3* arg1, Vec3* arg2, float* arg3)\n{\n    Vec3 sp50;\n    Vec3 d1;\n    Vec3 sp38;\n    Vec3 d2;\n    float scale;\n    float d1_dot_d1;\n    float d1_dot_d2;\n    float x;\n    float y;\n    float z;\n\n    sp50 = *arg0;\n    d1.x = arg1->x - arg0->x;\n    d1.y = arg1->y - arg0->y;\n\n    sp38 = *arg2;\n    d2.x = sp50.x - sp38.x;\n    d2.y = sp50.y - sp38.y;\n\n    d1_dot_d1 = d1.x * d1.x + d1.y * d1.y;\n    d1_dot_d2 = d1.x * d2.x + d1.y * d2.y;\n\n    scale = -d1_dot_d2 / d1_dot_d1;\n    if (scale > 1.0) {\n        scale = 1.0F;\n    } else if (scale < 0.0) {\n        scale = 0.0F;\n    }\n\n    x = d1.x * scale + sp50.x - arg2->x;\n    y = d1.y * scale + sp50.y - arg2->y;\n\n    *arg3 = scale;\n    return x * x + y * y;\n}",
+      "new": "float lbColl_80005FC0(Vec3* arg0, Vec3* arg1, Vec3* arg2, float* arg3)\n{\n    Vec3 sp50;\n    Vec3 d1;\n    Vec3 sp38;\n    Vec3 d2;\n    float scale;\n    float d1_dot_d1;\n    float d1_dot_d2;\n    float x;\n    float y;\n    float z;\n\n    sp50 = *arg0;\n    d1.x = arg1->x - arg0->x;\n    d1.y = arg1->y - arg0->y;\n\n    sp38 = *arg2;\n    d2.x = sp50.x - sp38.x;\n    d2.y = sp50.y - sp38.y;\n\n    d1_dot_d1 = PF_SlippiMulAddF32(d1.x, d1.x, d1.y * d1.y);\n    d1_dot_d2 = PF_SlippiMulAddF32(d1.x, d2.x, d1.y * d2.y);\n\n    scale = -d1_dot_d2 / d1_dot_d1;\n    if (scale > 1.0) {\n        scale = 1.0F;\n    } else if (scale < 0.0) {\n        scale = 0.0F;\n    }\n\n    x = PF_SlippiMulAddF32(d1.x, scale, sp50.x) - arg2->x;\n    y = PF_SlippiMulAddF32(d1.y, scale, sp50.y) - arg2->y;\n\n    *arg3 = scale;\n    return PF_SlippiMulAddF32(x, x, y * y);\n}",
+      "count": 1,
+      "reason": "Preserve all target fused dot products, projected points and squared distances in both shared endpoint projection helpers (80005EBC-80006094)."
+    },
+    {
+      "old": "bool lbColl_80006E58(Vec3* hit_start, Vec3* hit_end, Vec3* hurt_start,\n                     Vec3* hurt_end, Vec3* hit_closest, Vec3* hurt_closest,\n                     MtxPtr hurt_mtx, Vec3* out_contact_pos,\n                     float* out_overlap, float hit_radius, float hurt_radius,\n                     float broadphase_scale)\n{\n    Vec3 hit_start_copy;\n    Vec3 hurt_start_copy;\n    Vec3 hit_delta;\n    Vec3 axis;\n    Vec3 offset;\n    Vec3 midpoint;\n    Vec3 separation;\n    float scaled_hurt_radius;\n    float hit_start_dot;\n    float hit_len_sq;\n    float hurt_start_dot;\n    float local_dist_sq;\n    float allowed_distance;\n    float hurt_closest_x;\n    float hurt_end_x;\n    float hurt_closest_y;\n    float closest_dist_sq;\n    float hurt_param_from_hit_start;\n    float closest_denom;\n    float contact_lerp;\n    float broadphase_radius;\n    float hit_end_x;\n    float hurt_end_y;\n    float hit_start_y;\n    float hurt_closest_z;\n    float hit_start_z;\n    float hurt_end_z;\n    float hurt_len_sq;\n    float hit_param;\n    float hurt_param;\n    float hurt_param_from_hit_end;\n    float segment_dot;\n    float candidate_hurt_param;\n    float candidate_hit_param;\n    Mtx inv_hurt_mtx;\n    float hurt_start_y;\n    float hurt_start_z;\n    PAD_STACK(4);\n    // Fast reject when the expanded hit segment AABB misses both hurt\n    // endpoints.\n    broadphase_radius = (hurt_radius * broadphase_scale) + hit_radius;\n    hit_start_copy = *hit_start;\n    hurt_start_copy = *hurt_start;\n    hit_end_x = hit_end->x;\n    if (hit_start_copy.x > hit_end_x) {\n        float bound = hit_start_copy.x + broadphase_radius;\n        if (bound < hurt_start_copy.x && bound < hurt_end->x) {\n            return false;\n        }\n        bound = hit_end_x - broadphase_radius;\n        if (bound > hurt_start_copy.x && bound > hurt_end->x) {\n            return false;\n        }\n    } else {\n        float bound = hit_start_copy.x - broadphase_radius;\n        if (bound > hurt_start_copy.x && bound > hurt_end->x) {\n            return false;\n        }\n        bound = hit_end_x + broadphase_radius;\n        if (bound < hurt_start_copy.x && bound < hurt_end->x) {\n            return false;\n        }\n    }\n    hit_start_y = hit_start_copy.y;\n    if (hit_start_y > hit_end->y) {\n        float bound = hit_start_y + broadphase_radius;\n        if (bound < hurt_start_copy.y && bound < hurt_end->y) {\n            return false;\n        }\n        bound = hit_end->y - broadphase_radius;\n        if (bound > hurt_start_copy.y && bound > hurt_end->y) {\n            return false;\n        }\n    } else {\n        float bound = hit_start_y - broadphase_radius;\n        if (bound > hurt_start_copy.y && bound > hurt_end->y) {\n            return false;\n        }\n        bound = hit_end->y + broadphase_radius;\n        if (bound < hurt_start_copy.y && bound < hurt_end->y) {\n            return false;\n        }\n    }\n    hit_start_z = hit_start_copy.z;\n    if (hit_start_z > hit_end->z) {\n        float bound = hit_start_z + broadphase_radius;\n        if (bound < hurt_start_copy.z && bound < hurt_end->z) {\n            return false;\n        }\n        bound = hit_end->z - broadphase_radius;\n        if (bound > hurt_start_copy.z && bound > hurt_end->z) {\n            return false;\n        }\n    } else {\n        float bound = hit_start_z - broadphase_radius;\n        if (bound > hurt_start_copy.z && bound > hurt_end->z) {\n            return false;\n        }\n        bound = hit_end->z;\n        bound += broadphase_radius;\n        if (bound < hurt_start_copy.z && bound < hurt_end->z) {\n            return false;\n        }\n    }\n    // Solve closest points between the two segment axes.\n    hit_delta.x = hit_end_x - hit_start_copy.x;\n    hit_delta.y = hit_end->y - hit_start_copy.y;\n    hit_delta.z = hit_end->z - hit_start_copy.z;\n    hurt_end_x = hurt_end->x;\n    axis.x = hurt_end_x - (offset.x = hurt_start_copy.x);\n    hurt_end_y = hurt_end->y;\n    hurt_start_y = hurt_start_copy.y;\n    axis.y = hurt_end_y - hurt_start_y;\n    hurt_end_z = hurt_end->z;\n    hurt_start_z = hurt_start_copy.z;\n    axis.z = hurt_end_z - hurt_start_z;\n    midpoint.y = hit_delta.y;\n    separation.y = midpoint.y * midpoint.y;\n    separation.x = hit_delta.x * hit_delta.x;\n    {\n        PAD_STACK(4);\n        separation.z = hit_delta.z * hit_delta.z;\n    }\n    hit_len_sq = separation.z + (separation.x + separation.y);\n    offset.x = hit_start_copy.x - offset.x;\n    offset.y = hit_start_copy.y - hurt_start_y;\n    (void) hurt_end_z;\n    offset.z = hit_start_copy.z - hurt_start_z;\n    hurt_start_dot = PF_SlippiMulAddF32(axis.z, offset.z, PF_SlippiMulAddF32(axis.x, offset.x, axis.y * offset.y));\n    (void) hurt_end_y;\n    (void) hurt_end_x;\n    segment_dot = PF_SlippiMulAddF32(hit_delta.z, axis.z, PF_SlippiMulAddF32(hit_delta.x, axis.x, midpoint.y * axis.y));\n    {\n        PAD_STACK(4);\n        hit_start_dot = PF_SlippiMulAddF32(hit_delta.z, offset.z, PF_SlippiMulAddF32(hit_delta.x, offset.x, midpoint.y * offset.y));\n    }\n    hurt_len_sq = axis.y * axis.y;\n    hurt_len_sq = PF_SlippiMulAddF32(axis.x, axis.x, hurt_len_sq);\n    hurt_len_sq = PF_SlippiMulAddF32(axis.z, axis.z, hurt_len_sq);\n    closest_denom = PF_SlippiMulAddF32(hit_len_sq, hurt_len_sq, -(segment_dot * segment_dot));\n    (void) hit_len_sq;\n    if (approximatelyZero(hurt_len_sq)) {\n        if (approximatelyZero(hit_len_sq)) {\n            hit_param = 0.0F;\n            hurt_param = hit_param;\n        } else {\n            hurt_param = 0.0F;\n            hit_param = -hit_start_dot / hit_len_sq;\n            if (hit_param > 1.0) {\n                hit_param = 1.0F;\n            } else if (hit_param < 0.0) {\n                hit_param = hurt_param;\n            }\n        }\n    } else {\n        if (approximatelyZero(closest_denom)) {\n            midpoint.x = 0.5 * axis.x + hurt_start_copy.x;\n            midpoint.y = 0.5 * axis.y + hurt_start_y;\n            midpoint.z = 0.5 * axis.z + hurt_start_z;\n            separation.x = hit_start_copy.x - midpoint.x;\n            midpoint.x = hit_end->x - midpoint.x;\n            separation.y = hit_start_copy.y - midpoint.y;\n            midpoint.y = hit_end->y - midpoint.y;\n            separation.z = hit_start_copy.z - midpoint.z;\n            midpoint.z = hit_end->z - midpoint.z;\n            if (((separation.z * separation.z) +\n                 ((separation.x * separation.x) +\n                  (separation.y * separation.y))) <\n                ((midpoint.z * midpoint.z) +\n                 ((midpoint.x * midpoint.x) + (midpoint.y * midpoint.y))))\n            {\n                Vec3 a2;\n                Vec3 d1;\n                Vec3 c3;\n                PAD_STACK(4);\n                c3 = *hurt_start;\n                hit_param = 0.0F;\n                d1.x = hurt_end_x - hurt_start->x;\n                d1.y = hurt_end_y - hurt_start->y;\n                d1.z = hurt_end_z - hurt_start->z;\n                {\n                    float dot;\n\n                    a2 = *hit_start;\n                    dot = (d1.z * (c3.z - a2.z)) +\n                          ((d1.x * (c3.x - a2.x)) + (d1.y * (c3.y - a2.y)));\n                    hurt_param_from_hit_start =\n                        -dot /\n                        ((d1.z * d1.z) + ((d1.x * d1.x) + (d1.y * d1.y)));\n                }\n                if (hurt_param_from_hit_start > 1.0) {\n                    hurt_param_from_hit_start = 1.0F;\n                } else if (hurt_param_from_hit_start < 0.0) {\n                    hurt_param_from_hit_start = hit_param;\n                }\n                hurt_param = hurt_param_from_hit_start;\n            } else {\n                float dot;\n                Vec3 b0;\n                Vec3 d1;\n                Vec3 c2;\n                c2 = *hurt_start;\n                hit_param = 1.0F;\n                d1.x = hurt_end_x - hurt_start->x;\n                d1.y = hurt_end_y - hurt_start->y;\n                d1.z = hurt_end_z - hurt_start->z;\n                {\n                    b0 = *hit_end;\n                    dot = (d1.z * (c2.z - b0.z)) +\n                          ((d1.x * (c2.x - b0.x)) + (d1.y * (c2.y - b0.y)));\n                    hurt_param_from_hit_end =\n                        -dot /\n                        ((d1.z * d1.z) + ((d1.x * d1.x) + (d1.y * d1.y)));\n                }\n                if (hurt_param_from_hit_end > 1.0) {\n                    hurt_param_from_hit_end = hit_param;\n                } else if (hurt_param_from_hit_end < 0.0) {\n                    hurt_param_from_hit_end = 0.0F;\n                }\n                hurt_param = hurt_param_from_hit_end;\n            }\n        } else {\n            hit_param = PF_SlippiMulAddF32(segment_dot, hurt_start_dot, -(hurt_len_sq * hit_start_dot)) /\n                        closest_denom;\n            hurt_param = PF_SlippiMulAddF32(hit_len_sq, hurt_start_dot, -(segment_dot * hit_start_dot)) /\n                         closest_denom;\n            if ((hit_param > 1.0) || (hit_param < 0.0) || (hurt_param > 1.0) ||\n                (hurt_param < 0.0))\n            {\n                float hit_endpoint_dist_sq;\n                float hit_endpoint_param;\n                float hurt_endpoint_param;\n                float hurt_endpoint_dist_sq;\n\n                // If the unconstrained solution leaves either segment, compare\n                // the nearest endpoint projection from each axis.\n                if (hit_param < 0.0) {\n                    hit_endpoint_param = 0.0F;\n                    hit_endpoint_dist_sq =\n                        lbColl_80005EBC(hurt_start, hurt_end, hit_start,\n                                        &candidate_hurt_param);\n                } else {\n                    hit_endpoint_param = 1.0F;\n                    hit_endpoint_dist_sq = lbColl_80005EBC(\n                        hurt_start, hurt_end, hit_end, &candidate_hurt_param);\n                }\n                if (hurt_param < 0.0) {\n                    hurt_endpoint_param = 0.0F;\n                    hurt_endpoint_dist_sq = lbColl_80005EBC(\n                        hit_start, hit_end, hurt_start, &candidate_hit_param);\n                } else {\n                    hurt_endpoint_param = 1.0F;\n                    hurt_endpoint_dist_sq = lbColl_80005EBC(\n                        hit_start, hit_end, hurt_end, &candidate_hit_param);\n                }\n                if (hit_endpoint_dist_sq < hurt_endpoint_dist_sq) {\n                    hit_param = hit_endpoint_param;\n                    hurt_param = candidate_hurt_param;\n                } else {\n                    hit_param = candidate_hit_param;\n                    hurt_param = hurt_endpoint_param;\n                }\n            }\n        }\n    }\n    hit_closest->x = PF_SlippiMulAddF32(hit_delta.x, hit_param, hit_start_copy.x);\n    hit_closest->y = PF_SlippiMulAddF32(hit_delta.y, hit_param, hit_start_copy.y);\n    hit_closest->z = PF_SlippiMulAddF32(hit_delta.z, hit_param, hit_start_copy.z);\n    hurt_closest->x = PF_SlippiMulAddF32(axis.x, hurt_param, hurt_start_copy.x);\n    hurt_closest->y = PF_SlippiMulAddF32(axis.y, hurt_param, hurt_start_y);\n    hurt_closest->z = PF_SlippiMulAddF32(axis.z, hurt_param, hurt_start_z);\n    separation.x = hit_closest->x - hurt_closest->x;\n    separation.y = hit_closest->y - hurt_closest->y;\n    separation.z = hit_closest->z - hurt_closest->z;\n    closest_dist_sq =\n        PF_SlippiMulAddF32(separation.z, separation.z,\n            PF_SlippiMulAddF32(separation.x, separation.x, separation.y * separation.y));\n    axis.x = sqrtf(closest_dist_sq);\n    if (approximatelyZero(axis.x)) {\n        *out_overlap = (hit_radius + hurt_radius) - axis.x;\n        *out_contact_pos = *hit_closest;\n        return true;\n    }\n\n    // Measure the hurt radius in the matrix's local space for scaled bones.\n    HSD_MtxInverse(hurt_mtx, inv_hurt_mtx);\n    PSMTXMultVec(inv_hurt_mtx, hit_closest, &hit_start_copy);\n    PSMTXMultVec(inv_hurt_mtx, hurt_closest, &hit_delta);\n    separation.x = hit_start_copy.x - hit_delta.x;\n    separation.y = hit_start_copy.y - hit_delta.y;\n    separation.z = hit_start_copy.z - hit_delta.z;\n    local_dist_sq =\n        PF_SlippiMulAddF32(separation.z, separation.z,\n            PF_SlippiMulAddF32(separation.x, separation.x, separation.y * separation.y));\n    local_dist_sq = sqrtf(local_dist_sq);\n    scaled_hurt_radius = (hurt_radius * axis.x) / local_dist_sq;\n    contact_lerp = scaled_hurt_radius / axis.x;\n    allowed_distance = hit_radius + scaled_hurt_radius;\n    *out_overlap = allowed_distance - axis.x;\n    hurt_closest_x = hurt_closest->x;\n    out_contact_pos->x =\n        PF_SlippiMulAddF32(contact_lerp, hit_closest->x - hurt_closest_x, hurt_closest_x);\n    hurt_closest_y = hurt_closest->y;\n    out_contact_pos->y =\n        PF_SlippiMulAddF32(contact_lerp, hit_closest->y - hurt_closest_y, hurt_closest_y);\n    hurt_closest_z = hurt_closest->z;\n    out_contact_pos->z =\n        PF_SlippiMulAddF32(contact_lerp, hit_closest->z - hurt_closest_z, hurt_closest_z);\n    if (allowed_distance < axis.x) {\n        return false;\n    }\n    return true;\n}",
+      "new": "bool lbColl_80006E58(Vec3* hit_start, Vec3* hit_end, Vec3* hurt_start,\n                     Vec3* hurt_end, Vec3* hit_closest, Vec3* hurt_closest,\n                     MtxPtr hurt_mtx, Vec3* out_contact_pos,\n                     float* out_overlap, float hit_radius, float hurt_radius,\n                     float broadphase_scale)\n{\n    Vec3 hit_start_copy;\n    Vec3 hurt_start_copy;\n    Vec3 hit_delta;\n    Vec3 axis;\n    Vec3 offset;\n    Vec3 midpoint;\n    Vec3 separation;\n    float scaled_hurt_radius;\n    float hit_start_dot;\n    float hit_len_sq;\n    float hurt_start_dot;\n    float local_dist_sq;\n    float allowed_distance;\n    float hurt_closest_x;\n    float hurt_end_x;\n    float hurt_closest_y;\n    float closest_dist_sq;\n    float hurt_param_from_hit_start;\n    float closest_denom;\n    float contact_lerp;\n    float broadphase_radius;\n    float hit_end_x;\n    float hurt_end_y;\n    float hit_start_y;\n    float hurt_closest_z;\n    float hit_start_z;\n    float hurt_end_z;\n    float hurt_len_sq;\n    float hit_param;\n    float hurt_param;\n    float hurt_param_from_hit_end;\n    float segment_dot;\n    float candidate_hurt_param;\n    float candidate_hit_param;\n    Mtx inv_hurt_mtx;\n    float hurt_start_y;\n    float hurt_start_z;\n    PAD_STACK(4);\n    // Fast reject when the expanded hit segment AABB misses both hurt\n    // endpoints.\n    broadphase_radius = PF_SlippiMulAddF32(hurt_radius, broadphase_scale, hit_radius);\n    hit_start_copy = *hit_start;\n    hurt_start_copy = *hurt_start;\n    hit_end_x = hit_end->x;\n    if (hit_start_copy.x > hit_end_x) {\n        float bound = hit_start_copy.x + broadphase_radius;\n        if (bound < hurt_start_copy.x && bound < hurt_end->x) {\n            return false;\n        }\n        bound = hit_end_x - broadphase_radius;\n        if (bound > hurt_start_copy.x && bound > hurt_end->x) {\n            return false;\n        }\n    } else {\n        float bound = hit_start_copy.x - broadphase_radius;\n        if (bound > hurt_start_copy.x && bound > hurt_end->x) {\n            return false;\n        }\n        bound = hit_end_x + broadphase_radius;\n        if (bound < hurt_start_copy.x && bound < hurt_end->x) {\n            return false;\n        }\n    }\n    hit_start_y = hit_start_copy.y;\n    if (hit_start_y > hit_end->y) {\n        float bound = hit_start_y + broadphase_radius;\n        if (bound < hurt_start_copy.y && bound < hurt_end->y) {\n            return false;\n        }\n        bound = hit_end->y - broadphase_radius;\n        if (bound > hurt_start_copy.y && bound > hurt_end->y) {\n            return false;\n        }\n    } else {\n        float bound = hit_start_y - broadphase_radius;\n        if (bound > hurt_start_copy.y && bound > hurt_end->y) {\n            return false;\n        }\n        bound = hit_end->y + broadphase_radius;\n        if (bound < hurt_start_copy.y && bound < hurt_end->y) {\n            return false;\n        }\n    }\n    hit_start_z = hit_start_copy.z;\n    if (hit_start_z > hit_end->z) {\n        float bound = hit_start_z + broadphase_radius;\n        if (bound < hurt_start_copy.z && bound < hurt_end->z) {\n            return false;\n        }\n        bound = hit_end->z - broadphase_radius;\n        if (bound > hurt_start_copy.z && bound > hurt_end->z) {\n            return false;\n        }\n    } else {\n        float bound = hit_start_z - broadphase_radius;\n        if (bound > hurt_start_copy.z && bound > hurt_end->z) {\n            return false;\n        }\n        bound = hit_end->z;\n        bound += broadphase_radius;\n        if (bound < hurt_start_copy.z && bound < hurt_end->z) {\n            return false;\n        }\n    }\n    // Solve closest points between the two segment axes.\n    hit_delta.x = hit_end_x - hit_start_copy.x;\n    hit_delta.y = hit_end->y - hit_start_copy.y;\n    hit_delta.z = hit_end->z - hit_start_copy.z;\n    hurt_end_x = hurt_end->x;\n    axis.x = hurt_end_x - (offset.x = hurt_start_copy.x);\n    hurt_end_y = hurt_end->y;\n    hurt_start_y = hurt_start_copy.y;\n    axis.y = hurt_end_y - hurt_start_y;\n    hurt_end_z = hurt_end->z;\n    hurt_start_z = hurt_start_copy.z;\n    axis.z = hurt_end_z - hurt_start_z;\n    midpoint.y = hit_delta.y;\n    separation.y = midpoint.y * midpoint.y;\n    separation.x = hit_delta.x * hit_delta.x;\n    {\n        PAD_STACK(4);\n        separation.z = hit_delta.z * hit_delta.z;\n    }\n    hit_len_sq = separation.z + (separation.x + separation.y);\n    offset.x = hit_start_copy.x - offset.x;\n    offset.y = hit_start_copy.y - hurt_start_y;\n    (void) hurt_end_z;\n    offset.z = hit_start_copy.z - hurt_start_z;\n    hurt_start_dot = PF_SlippiMulAddF32(axis.z, offset.z, PF_SlippiMulAddF32(axis.x, offset.x, axis.y * offset.y));\n    (void) hurt_end_y;\n    (void) hurt_end_x;\n    segment_dot = PF_SlippiMulAddF32(hit_delta.z, axis.z, PF_SlippiMulAddF32(hit_delta.x, axis.x, midpoint.y * axis.y));\n    {\n        PAD_STACK(4);\n        hit_start_dot = PF_SlippiMulAddF32(hit_delta.z, offset.z, PF_SlippiMulAddF32(hit_delta.x, offset.x, midpoint.y * offset.y));\n    }\n    hurt_len_sq = axis.y * axis.y;\n    hurt_len_sq = PF_SlippiMulAddF32(axis.x, axis.x, hurt_len_sq);\n    hurt_len_sq = PF_SlippiMulAddF32(axis.z, axis.z, hurt_len_sq);\n    closest_denom = PF_SlippiMulAddF32(hit_len_sq, hurt_len_sq, -(segment_dot * segment_dot));\n    (void) hit_len_sq;\n    if (approximatelyZero(hurt_len_sq)) {\n        if (approximatelyZero(hit_len_sq)) {\n            hit_param = 0.0F;\n            hurt_param = hit_param;\n        } else {\n            hurt_param = 0.0F;\n            hit_param = -hit_start_dot / hit_len_sq;\n            if (hit_param > 1.0) {\n                hit_param = 1.0F;\n            } else if (hit_param < 0.0) {\n                hit_param = hurt_param;\n            }\n        }\n    } else {\n        if (approximatelyZero(closest_denom)) {\n            midpoint.x = (float) PF_SlippiMulAddF64(0.5, axis.x, hurt_start_copy.x);\n            midpoint.y = (float) PF_SlippiMulAddF64(0.5, axis.y, hurt_start_y);\n            midpoint.z = (float) PF_SlippiMulAddF64(0.5, axis.z, hurt_start_z);\n            separation.x = hit_start_copy.x - midpoint.x;\n            midpoint.x = hit_end->x - midpoint.x;\n            separation.y = hit_start_copy.y - midpoint.y;\n            midpoint.y = hit_end->y - midpoint.y;\n            separation.z = hit_start_copy.z - midpoint.z;\n            midpoint.z = hit_end->z - midpoint.z;\n            if ((PF_SlippiMulAddF32(separation.z, separation.z, PF_SlippiMulAddF32(separation.x, separation.x, separation.y * separation.y))) <\n                (PF_SlippiMulAddF32(midpoint.z, midpoint.z, PF_SlippiMulAddF32(midpoint.x, midpoint.x, midpoint.y * midpoint.y))))\n            {\n                Vec3 a2;\n                Vec3 d1;\n                Vec3 c3;\n                PAD_STACK(4);\n                c3 = *hurt_start;\n                hit_param = 0.0F;\n                d1.x = hurt_end_x - hurt_start->x;\n                d1.y = hurt_end_y - hurt_start->y;\n                d1.z = hurt_end_z - hurt_start->z;\n                {\n                    float dot;\n\n                    a2 = *hit_start;\n                    dot = PF_SlippiMulAddF32(d1.z, c3.z - a2.z, PF_SlippiMulAddF32(d1.x, c3.x - a2.x, d1.y * (c3.y - a2.y)));\n                    hurt_param_from_hit_start =\n                        -dot /\n                        (PF_SlippiMulAddF32(d1.z, d1.z, PF_SlippiMulAddF32(d1.x, d1.x, d1.y * d1.y)));\n                }\n                if (hurt_param_from_hit_start > 1.0) {\n                    hurt_param_from_hit_start = 1.0F;\n                } else if (hurt_param_from_hit_start < 0.0) {\n                    hurt_param_from_hit_start = hit_param;\n                }\n                hurt_param = hurt_param_from_hit_start;\n            } else {\n                float dot;\n                Vec3 b0;\n                Vec3 d1;\n                Vec3 c2;\n                c2 = *hurt_start;\n                hit_param = 1.0F;\n                d1.x = hurt_end_x - hurt_start->x;\n                d1.y = hurt_end_y - hurt_start->y;\n                d1.z = hurt_end_z - hurt_start->z;\n                {\n                    b0 = *hit_end;\n                    dot = PF_SlippiMulAddF32(d1.z, c2.z - b0.z, PF_SlippiMulAddF32(d1.x, c2.x - b0.x, d1.y * (c2.y - b0.y)));\n                    hurt_param_from_hit_end =\n                        -dot /\n                        (PF_SlippiMulAddF32(d1.z, d1.z, PF_SlippiMulAddF32(d1.x, d1.x, d1.y * d1.y)));\n                }\n                if (hurt_param_from_hit_end > 1.0) {\n                    hurt_param_from_hit_end = hit_param;\n                } else if (hurt_param_from_hit_end < 0.0) {\n                    hurt_param_from_hit_end = 0.0F;\n                }\n                hurt_param = hurt_param_from_hit_end;\n            }\n        } else {\n            hit_param = PF_SlippiMulAddF32(segment_dot, hurt_start_dot, -(hurt_len_sq * hit_start_dot)) /\n                        closest_denom;\n            hurt_param = PF_SlippiMulAddF32(hit_len_sq, hurt_start_dot, -(segment_dot * hit_start_dot)) /\n                         closest_denom;\n            if ((hit_param > 1.0) || (hit_param < 0.0) || (hurt_param > 1.0) ||\n                (hurt_param < 0.0))\n            {\n                float hit_endpoint_dist_sq;\n                float hit_endpoint_param;\n                float hurt_endpoint_param;\n                float hurt_endpoint_dist_sq;\n\n                // If the unconstrained solution leaves either segment, compare\n                // the nearest endpoint projection from each axis.\n                if (hit_param < 0.0) {\n                    hit_endpoint_param = 0.0F;\n                    hit_endpoint_dist_sq =\n                        lbColl_80005EBC(hurt_start, hurt_end, hit_start,\n                                        &candidate_hurt_param);\n                } else {\n                    hit_endpoint_param = 1.0F;\n                    hit_endpoint_dist_sq = lbColl_80005EBC(\n                        hurt_start, hurt_end, hit_end, &candidate_hurt_param);\n                }\n                if (hurt_param < 0.0) {\n                    hurt_endpoint_param = 0.0F;\n                    hurt_endpoint_dist_sq = lbColl_80005EBC(\n                        hit_start, hit_end, hurt_start, &candidate_hit_param);\n                } else {\n                    hurt_endpoint_param = 1.0F;\n                    hurt_endpoint_dist_sq = lbColl_80005EBC(\n                        hit_start, hit_end, hurt_end, &candidate_hit_param);\n                }\n                if (hit_endpoint_dist_sq < hurt_endpoint_dist_sq) {\n                    hit_param = hit_endpoint_param;\n                    hurt_param = candidate_hurt_param;\n                } else {\n                    hit_param = candidate_hit_param;\n                    hurt_param = hurt_endpoint_param;\n                }\n            }\n        }\n    }\n    hit_closest->x = PF_SlippiMulAddF32(hit_delta.x, hit_param, hit_start_copy.x);\n    hit_closest->y = PF_SlippiMulAddF32(hit_delta.y, hit_param, hit_start_copy.y);\n    hit_closest->z = PF_SlippiMulAddF32(hit_delta.z, hit_param, hit_start_copy.z);\n    hurt_closest->x = PF_SlippiMulAddF32(axis.x, hurt_param, hurt_start_copy.x);\n    hurt_closest->y = PF_SlippiMulAddF32(axis.y, hurt_param, hurt_start_y);\n    hurt_closest->z = PF_SlippiMulAddF32(axis.z, hurt_param, hurt_start_z);\n    separation.x = hit_closest->x - hurt_closest->x;\n    separation.y = hit_closest->y - hurt_closest->y;\n    separation.z = hit_closest->z - hurt_closest->z;\n    closest_dist_sq =\n        PF_SlippiMulAddF32(separation.z, separation.z,\n            PF_SlippiMulAddF32(separation.x, separation.x, separation.y * separation.y));\n    axis.x = sqrtf(closest_dist_sq);\n    if (approximatelyZero(axis.x)) {\n        *out_overlap = (hit_radius + hurt_radius) - axis.x;\n        *out_contact_pos = *hit_closest;\n        return true;\n    }\n\n    // Measure the hurt radius in the matrix's local space for scaled bones.\n    HSD_MtxInverse(hurt_mtx, inv_hurt_mtx);\n    PSMTXMultVec(inv_hurt_mtx, hit_closest, &hit_start_copy);\n    PSMTXMultVec(inv_hurt_mtx, hurt_closest, &hit_delta);\n    separation.x = hit_start_copy.x - hit_delta.x;\n    separation.y = hit_start_copy.y - hit_delta.y;\n    separation.z = hit_start_copy.z - hit_delta.z;\n    local_dist_sq =\n        PF_SlippiMulAddF32(separation.z, separation.z,\n            PF_SlippiMulAddF32(separation.x, separation.x, separation.y * separation.y));\n    local_dist_sq = sqrtf(local_dist_sq);\n    scaled_hurt_radius = (hurt_radius * axis.x) / local_dist_sq;\n    contact_lerp = scaled_hurt_radius / axis.x;\n    allowed_distance = hit_radius + scaled_hurt_radius;\n    *out_overlap = allowed_distance - axis.x;\n    hurt_closest_x = hurt_closest->x;\n    out_contact_pos->x =\n        PF_SlippiMulAddF32(contact_lerp, hit_closest->x - hurt_closest_x, hurt_closest_x);\n    hurt_closest_y = hurt_closest->y;\n    out_contact_pos->y =\n        PF_SlippiMulAddF32(contact_lerp, hit_closest->y - hurt_closest_y, hurt_closest_y);\n    hurt_closest_z = hurt_closest->z;\n    out_contact_pos->z =\n        PF_SlippiMulAddF32(contact_lerp, hit_closest->z - hurt_closest_z, hurt_closest_z);\n    if (allowed_distance < axis.x) {\n        return false;\n    }\n    return true;\n}",
+      "count": 1,
+      "reason": "Complete capsule contact solver broadphase, parallel-midpoint and endpoint-projection arithmetic from retail 80006E80 and 80007238-800073E0. Preserve explicitly unfused hit_len_sq and source branch thresholds."
+    }
+  ],
+  "evidence": {
+    "class": "capsule solver branch coefficients in all three shared segment solvers",
+    "retail_ranges": [
+      "80006358-800063B0",
+      "80006A08-80006A44",
+      "80007114-80007174",
+      "80006648-80006660",
+      "80006CCC-80006CE4",
+      "80007414-8000742C"
+    ],
+    "retained_unfused": "80006E58 hit_len_sq uses separate products and additions (80007138-8000715C)",
+    "witness": "Falcon/Falco frame 491: overlapping near-parallel detector/projectile capsule pair incorrectly takes the nonparallel branch",
+    "scope": "shared segment-solver coefficients and parameter numerators; downstream contact interpolation remains separately auditable",
+    "contact_construction": "80006730-80006794, 80006DB0-80006E04, 80007500-80007578, 8000768C-80007690, 8000771C-80007744"
+  }
+}

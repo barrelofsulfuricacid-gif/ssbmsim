@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/grlast.c",
+  "source_sha256": "d55ce4dc770d023838915cff1225c676643863c1d6f4f4e98391078decdaa198",
+  "adapted_sha256": "7bd18126a6ecde5411badba367473005451b73262f33089f174541e02037f4f6",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "/* 21B5C4 */ static bool grLast_8021B5C4(Ground_GObj*);",
+      "new": "/* 21B5C4 */ static int grLast_8021B5C4(Ground_GObj*);",
+      "count": 1,
+      "reason": "Match the translation-unit-local forward declaration to the source definition and sole caller, which observes integer transition codes rather than a boolean. This restores the decomp-owned 0 through 11 state result without changing the function body."
+    },
+    {
+      "old": "#include \"grlast.h\"",
+      "new": "#include \"grlast.h\"\n#include \"native_fd_scene.h\"",
+      "count": 1,
+      "reason": "Expose the explicit replay-derived Final Destination scene-update mode."
+    },
+    {
+      "old": "        grLast_8021B2E8(gobj);",
+      "new": "        pf_ssbm_native_fd_scene_update(gobj, grLast_8021B2E8);",
+      "count": 1,
+      "reason": "Match the exact Slippi 0x8021AAE4 call-site variants: original call, recorded NOP, or source-owned RNG-preserving transformation hook. Preserve other stage callbacks and their RNG."
+    },
+    {
+      "old": "#include \"native_fd_scene.h\"",
+      "new": "#include \"native_fd_scene.h\"\n#include \"native_numeric.h\"",
+      "count": 1,
+      "reason": "Use the shared retail single-result fused arithmetic helper for every background rotation acceleration calculation."
+    },
+    {
+      "old": "gp->u.last.xD4 = HSD_Randf() * grLast_804DBB80 + grLast_804DBB7C;",
+      "new": "gp->u.last.xD4 = PF_SlippiMulAddF32(HSD_Randf(), grLast_804DBB80, grLast_804DBB7C);",
+      "count": 1,
+      "reason": "Retail grLast_8021AC30 and grLast_8021ADD0 use fmadds/fmsubs on both axes, during initialization and both direction reversals. Preserve one final binary32 rounding."
+    },
+    {
+      "old": "gp->u.last.xD4 = grLast_804DBB80 * -randf - grLast_804DBB7C;",
+      "new": "gp->u.last.xD4 = PF_SlippiMulAddF32(grLast_804DBB80, -randf, -grLast_804DBB7C);",
+      "count": 1,
+      "reason": "Retail grLast_8021AC30 and grLast_8021ADD0 use fmadds/fmsubs on both axes, during initialization and both direction reversals. Preserve one final binary32 rounding."
+    },
+    {
+      "old": "gp->u.last.xD4 = grLast_804DBB80 * HSD_Randf() + grLast_804DBB7C;",
+      "new": "gp->u.last.xD4 = PF_SlippiMulAddF32(grLast_804DBB80, HSD_Randf(), grLast_804DBB7C);",
+      "count": 1,
+      "reason": "Retail grLast_8021AC30 and grLast_8021ADD0 use fmadds/fmsubs on both axes, during initialization and both direction reversals. Preserve one final binary32 rounding."
+    },
+    {
+      "old": "gp->u.last.xD8 = HSD_Randf() * grLast_804DBB80 + grLast_804DBB7C;",
+      "new": "gp->u.last.xD8 = PF_SlippiMulAddF32(HSD_Randf(), grLast_804DBB80, grLast_804DBB7C);",
+      "count": 1,
+      "reason": "Retail grLast_8021AC30 and grLast_8021ADD0 use fmadds/fmsubs on both axes, during initialization and both direction reversals. Preserve one final binary32 rounding."
+    },
+    {
+      "old": "gp->u.last.xD8 = grLast_804DBB80 * -randf - grLast_804DBB7C;",
+      "new": "gp->u.last.xD8 = PF_SlippiMulAddF32(grLast_804DBB80, -randf, -grLast_804DBB7C);",
+      "count": 1,
+      "reason": "Retail grLast_8021AC30 and grLast_8021ADD0 use fmadds/fmsubs on both axes, during initialization and both direction reversals. Preserve one final binary32 rounding."
+    },
+    {
+      "old": "gp->u.last.xD8 = grLast_804DBB80 * HSD_Randf() + grLast_804DBB7C;",
+      "new": "gp->u.last.xD8 = PF_SlippiMulAddF32(grLast_804DBB80, HSD_Randf(), grLast_804DBB7C);",
+      "count": 1,
+      "reason": "Retail grLast_8021AC30 and grLast_8021ADD0 use fmadds/fmsubs on both axes, during initialization and both direction reversals. Preserve one final binary32 rounding."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_fd_scene.h",
+      "sha256": "6d4fc7893bdae3a0748e14b017720065cc61a1b5ea0f5475a4361f7a577a104d"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_fd_scene.c",
+      "sha256": "bab17c7c21decc6dd239b73bcbba243a8d7cfd65dfc22f3de247157444392aa7"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    }
+  ]
+}

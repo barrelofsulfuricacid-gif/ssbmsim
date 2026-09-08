@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/ftmaterial.c",
+  "source_sha256": "8d21483af078701296c0c80498f8fa2cd2fef0b63ccd26bf8cbb5a11ffe19d67",
+  "adapted_sha256": "6e85b199d933be692a9b34d371155f31e22609c1875740e53918cad2ff4fd9a5",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "struct ft_MObjInfo {\n    HSD_MObjInfo parent;\n    HSD_TevDesc tevdesc_tmpl;\n    HSD_TECnst texp_tmpl;\n};\n",
+      "new": "",
+      "count": 1,
+      "reason": "Replace original-DOL adjacent-global layout reconstruction with direct named template ownership on native ELF. Preserve each template value and assignment order; never read beyond the standalone ftMObj object."
+    },
+    {
+      "old": "    struct ft_MObjInfo* info = (struct ft_MObjInfo*) &ftMObj;\n",
+      "new": "",
+      "count": 2,
+      "reason": "Replace original-DOL adjacent-global layout reconstruction with direct named template ownership on native ELF. Preserve each template value and assignment order; never read beyond the standalone ftMObj object."
+    },
+    {
+      "old": "info->texp_tmpl",
+      "new": "ftMaterial_803C6A44",
+      "count": 3,
+      "reason": "Replace original-DOL adjacent-global layout reconstruction with direct named template ownership on native ELF. Preserve each template value and assignment order; never read beyond the standalone ftMObj object."
+    },
+    {
+      "old": "info->tevdesc_tmpl",
+      "new": "ftMaterial_803C69D0",
+      "count": 2,
+      "reason": "Replace original-DOL adjacent-global layout reconstruction with direct named template ownership on native ELF. Preserve each template value and assignment order; never read beyond the standalone ftMObj object."
+    }
+  ]
+}

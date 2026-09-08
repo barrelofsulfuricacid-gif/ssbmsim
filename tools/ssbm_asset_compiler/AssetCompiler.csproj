@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepoRoot>
+    <HSDLibSourceDir Condition="'$(HSDLibSourceDir)' == ''">$(RepoRoot)build\prior-art\HSDLib</HSDLibSourceDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(HSDLibSourceDir)\HSDRaw\HSDRaw.csproj" />
+  </ItemGroup>
+  <Target Name="RequireHSDLib" BeforeTargets="PrepareForBuild">
+    <Error
+      Condition="!Exists('$(HSDLibSourceDir)\HSDRaw\HSDRaw.csproj')"
+      Text="HSDLib is required at $(HSDLibSourceDir). Pass /p:HSDLibSourceDir=... with pinned fork revision 5cf0c4d2d2f0d8d9301f3ed56c3cb826ee80536b." />
+  </Target>
+</Project>

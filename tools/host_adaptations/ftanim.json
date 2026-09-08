@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ftanim.c",
+  "source_sha256": "b201785fc4489eb074398c8e9a65bf6820c985770e6cd79d6218284300bb2fac",
+  "adapted_sha256": "fbabc8e050e8d812dad6168b50028a2cd992ab47960f9cf8ffece9b24133eb44",
+  "replacements": [
+    {
+      "old": "    } else {\n        return lbGetJObjCurrFrame(fp->x8AC_animSkeleton);\n    }\n}\n\nfloat ftAnim_8006F484",
+      "new": "    } else {\n        return lbGetJObjCurrFrame(fp->x8AC_animSkeleton);\n    }\n    return 100.0F;\n}\n\nfloat ftAnim_8006F484",
+      "count": 1,
+      "reason": "Make GALE01's reached no-AObj PowerPC fallthrough deterministic on native hosts. The complete Yoshi oracle corpus observes 100.0 for GuardDamage entered from animationless GuardHold, while paths retaining an active GuardOn AObj continue to return that source-owned clock."
+    },
+    {
+      "old": "        ftAnim_GetNextJointInTree(&joint, &depth);\n    }\n}\n\nvoid ftAnim_8006FA58",
+      "new": "        ftAnim_GetNextJointInTree(&joint, &depth);\n    }\n    return NULL;\n}\n\nvoid ftAnim_8006FA58",
+      "count": 1,
+      "reason": "Return no corresponding costume joint when the source tree is exhausted; all three pinned callers pass the result to a traversal helper whose loop already terminates on NULL."
+    }
+  ]
+}

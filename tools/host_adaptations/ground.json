@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gr/ground.c",
+  "source_sha256": "302f2542da48d7aef4d4ee637b2f375e834feb82a36e2f08caae4e810ec4bdc2",
+  "adapted_sha256": "f0d423951d1ed0214126f78c31acffbce573a6c4d360e7b30038394f92cd69ab",
+  "replacements": [
+    {
+      "old": "static StageData* stage_datas[] = {\n    &Ground_StageData,     &grTe_StageData,       &grCs_StageData,\n    &grRc_StageData,       &grKg_StageData,       &grGd_StageData,\n    &grGb_StageData,       &grSh_StageData,       &grZe_StageData,\n    &grKr_StageData,       &grSt_StageData,       &grYt_StageData,\n    &grIz_StageData,       &grGr_StageData,       &grCn_StageData,\n    &grVe_StageData,       &grPs_StageData,       &grPu_StageData,\n    &grMc_StageData,       &grBb_StageData,       &grOt_StageData,\n    &grFs_StageData,       &grIm_StageData,       NULL,\n    &grI1_StageData,       &grI2_StageData,       NULL,\n    &grFz_StageData,       &grOp_StageData,       &grOy_StageData,\n    &grOk_StageData,       &grNKr_StageData,      &grSh_Route_StageData,\n    &grZe_Route_StageData, &grBb_Route_StageData, &grTe_StageData,\n    &grNBa_StageData,      &grNLa_StageData,      &grFigureGet_StageData,\n    &grPushOn_StageData,   &grTMr_StageData,      &grTCa_StageData,\n    &grTCLink_StageData,   &grTDk_StageData,      &grTDr_StageData,\n    &grTFc_StageData,      &grTFx_StageData,      &grTIc_StageData,\n    &grTKb_StageData,      &grTKp_StageData,      &grTLk_StageData,\n    &grTLg_StageData,      &grTMs_StageData,      &grTMewtwo_StageData,\n    &grTNs_StageData,      &grTPe_StageData,      &grTPc_StageData,\n    &grTPk_StageData,      &grTPr_StageData,      &grTSs_StageData,\n    &grTSk_StageData,      &grTYs_StageData,      &grTZd_StageData,\n    &grTGw_StageData,      &grTFe_StageData,      &grTGn_StageData,\n    &grHeal_StageData,     &grHr_StageData,       &grEF1_StageData,\n    &grEF2_StageData,      &grEF3_StageData,      &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n    &grTe_StageData,       &grTe_StageData,       &grTe_StageData,\n};",
+      "new": "static StageData* stage_datas[] = {\n    [Gr_Kind_Unk00] = &Ground_StageData,\n    [Gr_Kind_Story] = &grSt_StageData,\n    [Gr_Kind_Izumi] = &grIz_StageData,\n    [Gr_Kind_PStadium] = &grPs_StageData,\n    [Gr_Kind_OldPupupu] = &grOp_StageData,\n    [Gr_Kind_Battle] = &grNBa_StageData,\n    [Gr_Kind_Last] = &grNLa_StageData,\n    [0x71] = NULL,\n};",
+      "count": 1,
+      "reason": "Bound the native stage registry to the six competitive legal stages used by the acceptance corpus while preserving every original GrKind index, the table's 114-entry extent, and the exact original StageData providers for Yoshi's Story, Fountain of Dreams, Pokemon Stadium, Dream Land, Battlefield, and Final Destination. Unsupported stage slots are null just like the original table's invalid slots and remain rejected by replay admission; no legal-stage callback, hazard, collision, or RNG behavior changes."
+    },
+    {
+      "old": "#include <sysdolphin/baselib/cobj.h>",
+      "new": "#include <sysdolphin/baselib/class.h>\n#include <sysdolphin/baselib/cobj.h>",
+      "count": 1,
+      "reason": "Ground user data can be created and destroyed during a match, so the native no-heap step path uses Melee's fixed-size memory-piece pool API."
+    },
+    {
+      "old": "void mem_free(void* ptr)\n{\n    HSD_Free(ptr);\n}",
+      "new": "void mem_free(void* ptr)\n{\n    hsdFreeMemPiece(ptr, sizeof(Ground));\n}",
+      "count": 1,
+      "reason": "Return dynamic stage-object user data to the same prewarmed size class from which native construction obtains it; source ownership and destruction timing remain unchanged."
+    },
+    {
+      "old": "static Ground* alloc_user_data_ground(void)\n{\n    Ground* gp = HSD_MemAlloc(sizeof(*gp));",
+      "new": "static Ground* alloc_user_data_ground(void)\n{\n    Ground* gp = hsdAllocMemPiece(sizeof(*gp));",
+      "count": 1,
+      "reason": "Melee creates transient legal-stage map objects during active play. Acquire their Ground records from the startup-prewarmed Baselib size-class pool so step performs no heap allocation while retaining the original object lifecycle and failure semantics."
+    },
+    {
+      "old": "typedef struct LightOverrideEntry {\n    /* 0x0 */ HSD_LightDesc* desc;\n    /* 0x4 */ u8 a : 1;\n    /* 0x4 */ u8 b : 1;\n    /* 0x4 */ u8 c : 1;\n    /* 0x4 */ u8 _ : 5;\n    /* 0x5 */ u8 _pad[3];\n} LightOverrideEntry;",
+      "new": "typedef struct LightOverrideEntry {\n    HSD_LightDesc* desc;\n    u32 : 29;\n    u32 c : 1;\n    u32 b : 1;\n    u32 a : 1;\n} LightOverrideEntry;",
+      "count": 1,
+      "reason": "Retail Ground_801C20E0 loads flag byte+4 and extracts bits7/6/5. Map those to bits31/30/29 of the normalized map light-override word, preserving its four-byte storage and all padding bits."
+    }
+  ]
+}

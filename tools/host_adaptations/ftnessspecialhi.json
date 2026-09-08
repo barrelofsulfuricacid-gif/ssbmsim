@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftNess/ftnessspecialhi.c",
+  "source_sha256": "fe2ac9965672992853e8c0af1a6073184d3a628b1198de628d29d892dbbaf39a",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "target_contractions": [
+      {
+        "address": "0x80117c34",
+        "op": "fmadds",
+        "args": "f0, f2, f1, f0",
+        "function": "ftNs_SpecialHi_ItemPKThunder_CheckNessCollide"
+      },
+      {
+        "address": "0x80117d04",
+        "op": "fmadds",
+        "args": "f0, f2, f1, f0",
+        "function": "ftNs_SpecialHi_ItemPKThunder_CheckNessCollide"
+      },
+      {
+        "address": "0x801183dc",
+        "op": "fmadds",
+        "args": "f1, f3, f2, f1",
+        "function": "ftNs_SpecialHi_Enter"
+      },
+      {
+        "address": "0x801184d4",
+        "op": "fmsubs",
+        "args": "f1, f2, f1, f0",
+        "function": "ftNs_SpecialHi_Enter"
+      },
+      {
+        "address": "0x801185b0",
+        "op": "fmadds",
+        "args": "f3, f5, f4, f3",
+        "function": "ftNs_SpecialAirHi_Enter"
+      },
+      {
+        "address": "0x80118678",
+        "op": "fmsubs",
+        "args": "f1, f2, f1, f0",
+        "function": "ftNs_SpecialAirHi_Enter"
+      },
+      {
+        "address": "0x80118c08",
+        "op": "fmadds",
+        "args": "f3, f4, f3, f1",
+        "function": "ftNs_SpecialAirHiHold_Anim"
+      },
+      {
+        "address": "0x80118cd4",
+        "op": "fmsubs",
+        "args": "f1, f2, f1, f0",
+        "function": "ftNs_SpecialAirHiHold_Anim"
+      },
+      {
+        "address": "0x80119048",
+        "op": "fnmsubs",
+        "args": "f0, f1, f0, f2",
+        "function": "ftNs_SpecialHi_Phys"
+      },
+      {
+        "address": "0x80119118",
+        "op": "fmsubs",
+        "args": "f1, f2, f1, f0",
+        "function": "ftNs_SpecialHi_Phys"
+      },
+      {
+        "address": "0x801192b0",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftNs_SpecialAirHi_Phys"
+      },
+      {
+        "address": "0x801192c0",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftNs_SpecialAirHi_Phys"
+      },
+      {
+        "address": "0x801192d0",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftNs_SpecialAirHi_Phys"
+      },
+      {
+        "address": "0x8011938c",
+        "op": "fmsubs",
+        "args": "f1, f2, f1, f0",
+        "function": "ftNs_SpecialAirHi_Phys"
+      }
+    ],
+    "scope": "All target contractions in this unit; inlined sqrtf contractions use the existing shared native MSL adaptation."
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftnessspecialhi.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftnessspecialhi.h\"",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "pos.y += 5.0f * fp->x34_scale.y;",
+      "new": "pos.y = PF_SlippiMulAddF32(5.0f, fp->x34_scale.y, pos.y);",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "pos2.y += 5.0f * fp->x34_scale.y;",
+      "new": "pos2.y = PF_SlippiMulAddF32(5.0f, fp->x34_scale.y, pos2.y);",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(temp_f3 * temp_f2) + fp->cur_pos.y",
+      "new": "PF_SlippiMulAddF32(temp_f3, temp_f2, fp->cur_pos.y)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "((5.0f * fp->x34_scale.y) + fp->cur_pos.y)",
+      "new": "PF_SlippiMulAddF32(5.0f, fp->x34_scale.y, fp->cur_pos.y)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fighter_data2->facing_dir *\n                                       atan2f(fighter_data2->self_vel.x,\n                                              fighter_data2->self_vel.y)) -\n                                          (float) M_PI_2",
+      "new": "PF_SlippiMulAddF32(fighter_data2->facing_dir,\n            atan2f(fighter_data2->self_vel.x, fighter_data2->self_vel.y), -(float) M_PI_2)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fighter_data3->facing_dir *\n         atan2f(fighter_data3->self_vel.x, fighter_data3->self_vel.y)) -\n            (float) M_PI_2",
+      "new": "PF_SlippiMulAddF32(fighter_data3->facing_dir,\n            atan2f(fighter_data3->self_vel.x, fighter_data3->self_vel.y), -(float) M_PI_2)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fp4->facing_dir *\n                                   atan2f(fp4->self_vel.x, fp4->self_vel.y)) -\n                                      (float) M_PI_2",
+      "new": "PF_SlippiMulAddF32(fp4->facing_dir,\n            atan2f(fp4->self_vel.x, fp4->self_vel.y), -(float) M_PI_2)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fp->facing_dir * atan2f(fp->self_vel.x, fp->self_vel.y)) -\n                (float) M_PI_2",
+      "new": "PF_SlippiMulAddF32(fp->facing_dir,\n            atan2f(fp->self_vel.x, fp->self_vel.y), -(float) M_PI_2)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fighter_data2->facing_dir *\n         atan2f(fighter_data2->self_vel.x, fighter_data2->self_vel.y)) -\n            (float) M_PI_2",
+      "new": "PF_SlippiMulAddF32(fighter_data2->facing_dir,\n            atan2f(fighter_data2->self_vel.x, fighter_data2->self_vel.y), -(float) M_PI_2)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "-(ness_attr->x5C_PK_THUNDER_2_DECELERATION_RATE * fp0->facing_dir -\n          ground_vel)",
+      "new": "-PF_SlippiMulAddF32(ness_attr->x5C_PK_THUNDER_2_DECELERATION_RATE,\n                            fp0->facing_dir, -ground_vel)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "adapted_sha256": "63bfbcffc88ad4f1fc6725ab0abdd07b56b0bd779c5b80a77dd6ff6aedcffb9c"
+}

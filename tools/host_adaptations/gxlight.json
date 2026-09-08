@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source_path": "extern/dolphin/src/dolphin/gx/GXLight.c",
+  "source_sha256": "6221578a73fef45fd4e5aa46a906397a0adacb4aec6c3cd8419bc938bbf937e2",
+  "adapted_sha256": "dcce9b74ee32fcb7ca47e28997d11d4bd9c9b6a6d36cb24473c4db156a4b4205",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"__gx.h\"\n\n#include <macros.h>\n#include <math.h>\n#include <dolphin/gx.h>\n#include <dolphin/os.h>",
+      "new": "#include <math.h>\n#include <dolphin/gx.h>\n#ifndef ASSERTMSGLINE\n#define ASSERTMSGLINE(line, cond, msg) ((void) 0)\n#endif\n#define CHECK_GXBEGIN(line, name) ((void) 0)",
+      "count": 1,
+      "reason": "Use native value types for CPU light objects; exclude SDK device state and release-disabled diagnostic macros."
+    },
+    {
+      "old": "#if DEBUG\n#define WRITE_SOME_LIGHT_REG1",
+      "new": "#if 0\n#if DEBUG\n#define WRITE_SOME_LIGHT_REG1",
+      "count": 1,
+      "reason": "Keep all original CPU light constructors/getters; exclude the device-upload and channel-output suffix, whose providers are separate audited boundaries."
+    },
+    {
+      "old": "   GX_WRITE_XF_REG(idx + 14, reg);\n    gx->bpSent = 1;\n    if (chan == GX_COLOR0A0) {\n        GX_WRITE_XF_REG(16, reg);\n    } else if (chan == GX_COLOR1A1) {\n        GX_WRITE_XF_REG(17, reg);\n    }\n}\n",
+      "new": "   GX_WRITE_XF_REG(idx + 14, reg);\n    gx->bpSent = 1;\n    if (chan == GX_COLOR0A0) {\n        GX_WRITE_XF_REG(16, reg);\n    } else if (chan == GX_COLOR1A1) {\n        GX_WRITE_XF_REG(17, reg);\n    }\n}\n\n#endif\n",
+      "count": 1,
+      "reason": "Close exclusion of the device-facing suffix."
+    },
+    {
+      "old": "(color.r << 24)",
+      "new": "((u32) color.r << 24)",
+      "count": 1,
+      "reason": "Preserve packed RGBA bits without signed-left-shift undefined behavior on the native C host."
+    }
+  ]
+}

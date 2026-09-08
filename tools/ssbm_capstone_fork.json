@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/barrelofsulfuricacid-gif/capstone.git",
+  "branch": "codex/ssbm-ppc-fcmpo",
+  "revision": "635d337816ff6a9b4decd71451f94ba8c98e48ae",
+  "upstream_repository": "https://github.com/capstone-engine/capstone.git",
+  "upstream_revision": "6ef3f4856689e340db794cceec23b155eefb541b",
+  "upstream_release": "6.0.0-Alpha10",
+  "license": "BSD-3-Clause",
+  "issue": "https://github.com/capstone-engine/capstone/issues/3051",
+  "fix": "Use upstream v6 ordered-comparison decoder missing from v5, with exhaustive fork regression coverage.",
+  "validation": "32768 valid fcmpo operand combinations across both endian and word modes",
+  "regression_sha256": "8cf0a7906098309fb2ef8bd70a7cee0d5ad750c2a9d508f8ac1d3ac36af87b0d",
+  "scope": "Offline target-code inspection only; never linked into or executed by the native simulator."
+}

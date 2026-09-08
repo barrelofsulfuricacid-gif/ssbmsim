@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/if/ifmagnify.c",
+  "source_sha256": "42c8a7477d15836e4771c4b77944b3e2b136b5203e01ecfa91dc314415d38a2b",
+  "adapted_sha256": "fdffda3277792d617764e9452dbe4659c7d3843af766a7b1a9a74e86d8784665",
+  "replacements": [
+    {
+      "old": "void ifMagnify_802FC870(void)\n{\n    HSD_Archive** archive;\n    s32 i;\n\n    memzero(&ifMagnify_804A1DE0, 0x74);\n    ifMagnify_802FC7C0(&ifMagnify_804A1DE0);\n    archive = ifAll_GetArchive();\n    lbArchive_LoadSections(*archive, (void**) &ifMagnify_804A1DE0,\n                           ifMagnify_804D57E8, 0);\n    i = 0;\n    do {\n        ifMagnify_802FC3C0(i);\n        i++;\n    } while (i < 6);\n    ifMagnify_802FC618();\n}",
+      "new": "void ifMagnify_802FC870(void)\n{\n    memzero(&ifMagnify_804A1DE0, 0x74);\n}",
+      "count": 1,
+      "reason": "Preserve the source-owned 0x74-byte magnifier state initialization at the original HUD startup boundary. The omitted stage-color lookup, IfAll.dat section load, six UI JObjs, image buffers, and GX camera feed only the bounded magnifier renderer; no gameplay consumer observes those objects or color fields."
+    },
+    {
+      "old": "bool ifMagnify_802FC998(s32 ply_slot)\n{\n    return ifMagnify_804A1DE0.player[ply_slot].state.is_offscreen;\n}\n",
+      "new": "bool ifMagnify_802FC998(s32 ply_slot)\n{\n    return ifMagnify_804A1DE0.player[ply_slot].state.is_offscreen;\n}\n\nvoid pf_ifMagnify_headless_post_frame(void)\n{\n    int i;\n    HSD_GObj* camera_gobj;\n    HSD_GObj* fighter_gobj;\n    ifMagnify* magnify = &ifMagnify_804A1DE0;\n\n    camera_gobj = Camera_80030A50();\n    if (camera_gobj != NULL && HSD_CObjSetCurrent(camera_gobj->hsd_obj)) {\n        for (fighter_gobj = HSD_GObj_Entities->fighters; fighter_gobj != NULL;\n             fighter_gobj = fighter_gobj->next)\n        {\n            Fighter* fp = fighter_gobj->user_data;\n            if (!fp->x221F_b3) {\n                ftLib_80086A8C(fighter_gobj);\n            }\n        }\n    }\n\n    for (i = 0; i < 6; i++) {\n        magnify->player[i].state.is_offscreen = 0;\n    }\n    if (!ifMagnify_IsHUDVisible()) {\n        return;\n    }\n    for (i = 0; i < 6; i++) {\n        S32Vec2 screen_pos;\n        Vec2 edge_pos;\n        Vec2 dir;\n        ifMagnifyPlayer* player = &magnify->player[i];\n        HSD_GObj* fighter_gobj = Player_GetEntity(i);\n\n        if (player->state.ignore_offscreen || fighter_gobj == NULL ||\n            !ftLib_80086B64(fighter_gobj) || !ftLib_80086ED0(fighter_gobj))\n        {\n            continue;\n        }\n        player->state.is_offscreen = 1;\n        ftLib_80086A58(fighter_gobj, &screen_pos);\n        dir.x = screen_pos.x - 320.0f;\n        dir.y = -((f32) screen_pos.y - 240.0f);\n        ifMagnify_802FB73C(player, &dir, &edge_pos);\n    }\n}\n",
+      "count": 1,
+      "reason": "Extract the gameplay-visible state mutations from the original main-camera fighter GX pass and the following magnifier GX phase. The main pass selects the source camera through the audited headless cobj subset, refreshes its viewing matrix, and invokes the original ftLib camera-cull predicate in fighter-list order, including the x221F_b3 skip. The magnifier pass then clears and sets is_offscreen and derives edge from the source camera projection. The native post-frame phase preserves that ordering and source math while omitting fighter drawing, JObj, texture, color, arrow, z-list, and GX output."
+    },
+    {
+      "old": "void pf_ifMagnify_headless_post_frame(void)",
+      "new": "bool pf_hsd_cobj_select_headless(HSD_CObj* cobj);\n\nvoid pf_ifMagnify_headless_post_frame(void)",
+      "count": 1,
+      "reason": "Declare the narrow source-owned cobj camera-selection subset used by the headless GX phase without exposing or invoking device-output setup."
+    },
+    {
+      "old": "HSD_CObjSetCurrent(camera_gobj->hsd_obj)",
+      "new": "pf_hsd_cobj_select_headless(camera_gobj->hsd_obj)",
+      "count": 1,
+      "reason": "Select the main camera and refresh its viewing matrix without crossing the fail-closed viewport, scissor, projection, z-list, or GX device-output boundary."
+    },
+    {
+      "old": "camera_gobj = Camera_80030A50();\n    if (camera_gobj != NULL &&",
+      "new": "camera_gobj = Camera_80030A50();\n    if (camera_gobj != NULL) {\n        Camera_8002A4AC(camera_gobj);\n    }\n    if (camera_gobj != NULL &&",
+      "count": 1,
+      "reason": "Preserve the source main-camera GX callback order by applying the frame's source-owned CameraTransformState to the CObj before selecting it and computing fighter visibility. Omitting this call leaves the construction-time CObj view stale and makes offscreen damage begin early."
+    },
+    {
+      "old": "HSD_GObj* fighter_gobj;\n    ifMagnify* magnify = &ifMagnify_804A1DE0;",
+      "new": "HSD_GObj* fighter_gobj;\n    bool prior_main_camera_offscreen[6];\n    S32Vec2 prior_main_camera_screen[6];\n    ifMagnify* magnify = &ifMagnify_804A1DE0;",
+      "count": 1,
+      "reason": "Retain the main-camera cull outputs that the source magnifier GX pass observes. The source GX ordering runs the magnifier camera before the main-camera fighter callbacks, so magnifier state consumes the preceding main-pass flag and screen coordinates."
+    },
+    {
+      "old": "camera_gobj = Camera_80030A50();",
+      "new": "for (i = 0; i < 6; i++) {\n        fighter_gobj = Player_GetEntity(i);\n        prior_main_camera_offscreen[i] =\n            fighter_gobj != NULL && ftLib_80086B64(fighter_gobj);\n        prior_main_camera_screen[i].x = 0;\n        prior_main_camera_screen[i].y = 0;\n        if (fighter_gobj != NULL) {\n            ftLib_80086A58(fighter_gobj, &prior_main_camera_screen[i]);\n        }\n    }\n\n    camera_gobj = Camera_80030A50();",
+      "count": 1,
+      "reason": "Snapshot the prior main-camera fighter GX results before refreshing the headless main-camera pass. A headless source probe at replay frame 2454 proved screen x 641 and fighter cull bit 0x80 while vanilla magnifier state remained false until the following frame."
+    },
+    {
+      "old": "if (player->state.ignore_offscreen || fighter_gobj == NULL ||\n            !ftLib_80086B64(fighter_gobj) || !ftLib_80086ED0(fighter_gobj))\n        {\n            continue;\n        }\n        player->state.is_offscreen = 1;\n        ftLib_80086A58(fighter_gobj, &screen_pos);",
+      "new": "if (player->state.ignore_offscreen || fighter_gobj == NULL ||\n            !prior_main_camera_offscreen[i] || !ftLib_80086ED0(fighter_gobj))\n        {\n            continue;\n        }\n        player->state.is_offscreen = 1;\n        screen_pos = prior_main_camera_screen[i];",
+      "count": 1,
+      "reason": "Publish the magnifier result from the preceding main-camera cull, matching the source GX-link order instead of allowing the current main pass to become visible one simulation frame early."
+    }
+  ]
+}

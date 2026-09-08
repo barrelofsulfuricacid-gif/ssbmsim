@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itseakchain.c",
+  "source_sha256": "634d10bd8564782b00cd9de7730994bf24d5dfe4ab38179e99ec9eb17d34df0a",
+  "adapted_sha256": "42b3695cf7dc0fbaa577a55e4e50cb38c1075b56c636ccb6e268fa2308095eef",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "link->x2C_b2 = 0xF; // weird; gets truncated to 0x1",
+      "new": "link->x2C_b2 = true;",
+      "count": 1,
+      "reason": "ItemLink.x2C_b2 is a one-bit field. Exact GALE01 instructions load 0xF and use rlwimi with mask bit 26, which writes only the low source bit and therefore stores 1; the later non-collision path extracts that single bit, subtracts one, and writes the same bit back. Assigning true expresses the identical one-bit state transition without the host compiler's intentional-overflow diagnostic."
+    }
+  ]
+}

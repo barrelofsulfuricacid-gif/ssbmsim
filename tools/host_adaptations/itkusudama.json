@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itkusudama.c",
+  "source_sha256": "53bdf41c0251c831d260e058aa232aabf0d622162f0ebddf11383b9709227063",
+  "adapted_sha256": "133b4f2c988a27e77ae5b7ca72e85100b9e4df7703113a2b848000d0147b0587",
+  "replacements": [
+    {
+      "old": "        } else {\n            return -1;\n        }\n    }\n}\n\nstatic inline void it_80289BE8_spawn",
+      "new": "        } else {\n            return -1;\n        }\n    }\n    return -1;\n}\n\nstatic inline void it_80289BE8_spawn",
+      "count": 1,
+      "reason": "Return the helper's existing ItemKind failure sentinel when random item selection itself returns -1; consumers store the result in the spawned-kind list."
+    }
+  ]
+}

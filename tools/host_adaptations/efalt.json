@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ef/efalt.c",
+  "source_sha256": "9941dbdc5c1922fd4bbd520a1fc1bdfeaaeac226b4f8294378a414cdb14f5f55",
+  "adapted_sha256": "91c9b8f484e77a37ac0314f7f34722920b12043b5291820e44e3a0c4a34d6a99",
+  "replacements": [
+    {
+      "old": "#define EFALT_VA_ARG(t) (*((t*) __va_arg(vlist_arg, _var_arg_typeof(t))))",
+      "new": "#define EFALT_VA_ARG(t) va_arg(vlist_arg, t)",
+      "count": 1,
+      "reason": "Use the native i686 va_list cursor while preserving the original argument types and consumption order. CodeWarrior's private __va_arg representation is not the host ABI."
+    },
+    {
+      "old": "    void* vlist_arg;\n\n    vlist_arg = vlist;",
+      "new": "    va_list vlist_arg;\n\n    va_copy(vlist_arg, vlist);",
+      "count": 1,
+      "reason": "Maintain a native va_list copy for the dispatcher and helper calls without aliasing it through void pointer arithmetic."
+    },
+    {
+      "old": "    return ret_obj;\n}\n",
+      "new": "    va_end(vlist_arg);\n    return ret_obj;\n}\n",
+      "count": 1,
+      "reason": "Complete the native va_copy lifetime after all source-owned effect dispatch and animation queue work."
+    }
+  ]
+}

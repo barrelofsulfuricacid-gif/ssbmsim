@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lb_0146.c",
+  "source_sha256": "e06c608ad3ee98efc20bf8535017e648e0516821e89a9a440726adb5bc645d7d",
+  "adapted_sha256": "8f449b0a0ee126c66e9043bbce1389eeb52b8a90b51cbcc3a54cafe994785973",
+  "replacements": [
+    {
+      "old": "bool lb_80014770(Vec3* arg0, int arg1)\n{",
+      "new": "#if 0\nbool lb_80014770(Vec3* arg0, int arg1)\n{",
+      "count": 1,
+      "reason": "Begin excluding only the GX visualization of the fighter damage-volume endpoints. The sole caller is inside ftDrawCommon_800805C8 and consumes the return only to invalidate render state; the adjacent lb_80014638 overlap predicate is called from fighter/item gameplay and remains unchanged."
+    },
+    {
+      "old": "\nbool lb_800149E0(Mtx arg0, u32 arg1)\n{",
+      "new": "\n#endif\n\nbool lb_80014770(Vec3* arg0, int arg1)\n{\n    (void) arg0;\n    (void) arg1;\n    return false;\n}\n\nbool lb_800149E0(Mtx arg0, u32 arg1)\n{",
+      "count": 1,
+      "reason": "Supply the renderer-free false contract before resuming original source at the separate matrix-debug renderer. False means no GX state was changed, exactly matching the headless scheduler; no gameplay overlap or fighter/item mutation is removed."
+    }
+  ]
+}

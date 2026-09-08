@@ -1,0 +1,271 @@
+{
+  "schema": 1,
+  "scope": "falcon-common-ucf084-shield-input",
+  "domain": "falcon-common-ucf084-shield-input",
+  "character": "falcon",
+  "oracle": "SSBM GALE01 NTSC-U revision 2 with UCF 0.84",
+  "live_source": {
+    "capture_sha256": "ebe6fe613e4e691adc8fec8f168ade7025ae1898544de1e084c2e59f42475874",
+    "repeat_capture_sha256": "493fe81f07dbcfeeb1674d959f3ed9db1416062e52450f33b379fe1928c58812",
+    "disc_sha256": "0de05981a34156b9cedcef73c73d4244ac05cf6149ab3c9cfed917698819e464",
+    "release_artifact_sha256": "87e9ef6d80ed03354a1647d0616016dbc91399aa9e86a69ae5a398edd0a0c2bd",
+    "launcher_sha256": "9eb024aa9347648f020e2a76666e5c5597b77b32ef26752f563c99f0772b1e82",
+    "decomp_revision": "9509dc04406fb2028bfab01243841ba4787c0fb7",
+    "current_decomp_revision": "ae8d6cbb2bcf1f0e92868613e3ef6a36c1bb42fd",
+    "dolphin_version": "3.5.1",
+    "libmelee_version": "0.47.2",
+    "capture_schema": 14,
+    "oracle": "SSBM GALE01 NTSC-U revision 2 with UCF 0.84 via Dolphin/Slippi",
+    "oracle_gameplay_policy": {
+      "schema": "ssbm-ntsc102-ucf084-oracle-v2",
+      "target": "GALE01 NTSC-U revision 2 with UCF 0.84",
+      "ucf_version": "0.84",
+      "ucf_official_release_tag": "ucf0.84_2024-06-27",
+      "ucf_official_release_revision": "01122231ea97683cf7adea43d732ce0a4784c849",
+      "policy_sha256": "a8368a3901828602833fba82f2c1e2490df6537151ff5cd6a216419a6051b7cc"
+    },
+    "stage": "BATTLEFIELD",
+    "row_count": 137
+  },
+  "checkpoint_pack": {
+    "protocol": "immutable-multislot-slippi-state-file-control-v2",
+    "expected_rows": 137,
+    "warm_budget_seconds": 14.0,
+    "cold_budget_seconds": 20.0,
+    "capture_route": "special-acquisition",
+    "capture_shards": [
+      ["dbooc_radial_over", "dbooc_radial_under", "dbooc_age1"],
+      ["shield_drop_raw_y63", "shield_drop_raw_y64"],
+      ["shield_drop_extended_delta50", "shield_drop_extended_delta44"]
+    ],
+    "merge_setup_suffixes": ["setup", "edge", "observe"],
+    "capture_plan": {
+      "stage": "BATTLEFIELD",
+      "batch_exi_inputs": false,
+      "checkpoint_slot_count": 7,
+      "input_memory_probe_schema": 2,
+      "special_acquisition_cases": [
+        {
+          "id": "dbooc_radial_over",
+          "checkpoint_slot": 0,
+          "source_state": "squat_wait",
+          "edge_main": [25804, 19660],
+          "edge_action": "none",
+          "observe_ticks": 1
+        },
+        {
+          "id": "dbooc_radial_under",
+          "checkpoint_slot": 1,
+          "source_state": "squat_wait",
+          "edge_main": [24575, 19660],
+          "edge_action": "none",
+          "observe_ticks": 1
+        },
+        {
+          "id": "dbooc_age1",
+          "checkpoint_slot": 2,
+          "source_state": "squat_wait",
+          "pre_edge_phases": [
+            {"ticks": 1, "main": [25804, 26214]}
+          ],
+          "edge_main": [25804, 19660],
+          "edge_action": "none",
+          "observe_ticks": 1
+        },
+        {
+          "id": "shield_drop_raw_y63",
+          "checkpoint_slot": 3,
+          "source_state": "platform_guard",
+          "pre_edge_phases": [
+            {"ticks": 12, "main": [19660, 0], "left_trigger": 65535, "digital_left": true}
+          ],
+          "edge_main": [19660, 25804],
+          "edge_action": "none",
+          "edge_left_trigger": 65535,
+          "edge_digital_left": true,
+          "observe_ticks": 1
+        },
+        {
+          "id": "shield_drop_raw_y64",
+          "checkpoint_slot": 4,
+          "source_state": "platform_guard",
+          "pre_edge_phases": [
+            {"ticks": 12, "main": [19660, 0], "left_trigger": 65535, "digital_left": true}
+          ],
+          "edge_main": [19660, 26214],
+          "edge_action": "none",
+          "edge_left_trigger": 65535,
+          "edge_digital_left": true,
+          "observe_ticks": 1
+        },
+        {
+          "id": "shield_drop_extended_delta50",
+          "checkpoint_slot": 5,
+          "source_state": "platform_guard",
+          "pre_edge_phases": [
+            {"ticks": 6, "main": [24985, 0]},
+            {"ticks": 12, "main": [24985, 0], "left_trigger": 65535, "digital_left": true},
+            {"ticks": 1, "main": [24985, 20479], "left_trigger": 65535, "digital_left": true}
+          ],
+          "edge_main": [24985, 20479],
+          "edge_action": "none",
+          "edge_left_trigger": 65535,
+          "edge_digital_left": true,
+          "observe_ticks": 1
+        },
+        {
+          "id": "shield_drop_extended_delta44",
+          "checkpoint_slot": 6,
+          "source_state": "platform_guard",
+          "pre_edge_phases": [
+            {"ticks": 6, "main": [24985, 2458]},
+            {"ticks": 12, "main": [24985, 2458], "left_trigger": 65535, "digital_left": true},
+            {"ticks": 1, "main": [24985, 20479], "left_trigger": 65535, "digital_left": true}
+          ],
+          "edge_main": [24985, 20479],
+          "edge_action": "none",
+          "edge_left_trigger": 65535,
+          "edge_digital_left": true,
+          "observe_ticks": 1
+        }
+      ]
+    }
+  },
+  "checkpoint_cases": [
+    {"id": "dbooc_radial_over", "start_label": "special_acquisition_dbooc_radial_over_setup"},
+    {"id": "dbooc_radial_under", "start_label": "special_acquisition_dbooc_radial_under_setup"},
+    {"id": "dbooc_age1", "start_label": "special_acquisition_dbooc_age1_setup"},
+    {"id": "shield_drop_raw_y63", "start_label": "special_acquisition_shield_drop_raw_y63_setup"},
+    {"id": "shield_drop_raw_y64", "start_label": "special_acquisition_shield_drop_raw_y64_setup"},
+    {"id": "shield_drop_extended_delta50", "start_label": "special_acquisition_shield_drop_extended_delta50_setup"},
+    {"id": "shield_drop_extended_delta44", "start_label": "special_acquisition_shield_drop_extended_delta44_setup"}
+  ],
+  "live_expectations": {
+    "dbooc_radial_over": {"pre_edge_grounded": true, "edge_rows": [{"action": "CROUCHING", "action_frame": 14, "facing": 1, "grounded": true}, {"action": "CROUCH_END", "action_frame": 1, "facing": 1, "grounded": true}]},
+    "dbooc_radial_under": {"pre_edge_grounded": true, "edge_rows": [{"action": "CROUCH_END", "action_frame": 1, "facing": 1, "grounded": true}, {"action": "CROUCH_END", "action_frame": 2, "facing": 1, "grounded": true}]},
+    "dbooc_age1": {"pre_edge_grounded": true, "edge_rows": [{"action": "CROUCH_END", "action_frame": 1, "facing": 1, "grounded": true}, {"action": "CROUCH_END", "action_frame": 2, "facing": 1, "grounded": true}]},
+    "shield_drop_raw_y63": {"pre_edge_grounded": true, "pre_edge_support_line": 2, "edge_rows": [{"action": "PLATFORM_DROP", "action_frame": 0, "facing": 1, "grounded": false}, {"action": "PLATFORM_DROP", "action_frame": 1, "facing": 1, "grounded": false}]},
+    "shield_drop_raw_y64": {"pre_edge_grounded": true, "pre_edge_support_line": 2, "edge_rows": [{"action": "SPOTDODGE", "action_frame": 1, "facing": 1, "grounded": true}, {"action": "SPOTDODGE", "action_frame": 2, "facing": 1, "grounded": true}]},
+    "shield_drop_extended_delta50": {"pre_edge_grounded": true, "pre_edge_support_line": 2, "edge_rows": [{"action": "PLATFORM_DROP", "action_frame": 0, "facing": 1, "grounded": false}, {"action": "PLATFORM_DROP", "action_frame": 1, "facing": 1, "grounded": false}]},
+    "shield_drop_extended_delta44": {"pre_edge_grounded": true, "pre_edge_support_line": 2, "edge_rows": [{"action": "SHIELD", "action_frame": -1, "facing": 1, "grounded": true}, {"action": "SHIELD_RELEASE", "action_frame": 0, "facing": 1, "grounded": true}]}
+  },
+  "selection": {
+    "paths": [
+      "generated/data/ssbm_ucf084_shield_input_oracle.json",
+      "src/sim/sim_internal.h",
+      "src/sim/sim_movement.c",
+      "src/sim/sim_tick.c",
+      "src/tools/movement_trace.c",
+      "tests/tools/test_ssbm_ucf_input_trace.py",
+      "tools/capture_ssbm_checkpoint_shards.py",
+      "tools/capture_ssbm_movement.py",
+      "tools/compare_ssbm_movement.py",
+      "tools/generate_ssbm_stored_trace_oracle.py",
+      "tools/merge_ssbm_checkpoint_captures.py",
+      "tools/ssbm_natural_movement_domain.py",
+      "tools/ssbm_ucf084_shield_input_coverage.json",
+      "tools/verify_ssbm_special_acquisition_domain.py",
+      "tools/verify_ssbm_ucf084_shield_input.py"
+    ]
+  },
+  "stored_oracle": {
+    "kind": "native-csv-trace-v1",
+    "source_trace_sha256": "73198f0ee5ab242d72598c4fa149d6f13e60112d69ddeb1d1f83e0218683c009",
+    "production_trace_sha256": "73198f0ee5ab242d72598c4fa149d6f13e60112d69ddeb1d1f83e0218683c009",
+    "require_exact_source_match": true,
+    "serialized_fields": ["effective_main_x_q15", "effective_main_y_q15", "effective_c_x_q15", "effective_c_y_q15", "action_state", "facing", "grounded", "support", "tilt_x_age", "tilt_y_age", "ucf_tilt_x_age", "ucf_tilt_y_age", "ucf_pad_buffer_count"],
+    "cases": [
+      {
+        "id": "dbooc_radial_over",
+        "runner_arguments": [],
+        "source_label_prefix": "special_acquisition_dbooc_radial_over_",
+        "sample_count": 22,
+        "field_exclusions": {"support": [[0, 22]]},
+        "input_phases": [
+          {"ticks": 20, "lanes": [{"main": [0, -32767], "raw_main": [0, -80], "raw_c": [0, 0]}, {}]},
+          {"ticks": 1, "lanes": [{"main": [25804, -19660], "raw_main": [63, -48], "raw_c": [0, 0]}, {}]},
+          {"ticks": 1, "lanes": [{"raw_main": [0, 0], "raw_c": [0, 0]}, {}]}
+        ]
+      },
+      {
+        "id": "dbooc_radial_under",
+        "runner_arguments": [],
+        "source_label_prefix": "special_acquisition_dbooc_radial_under_",
+        "sample_count": 22,
+        "field_exclusions": {"support": [[0, 22]]},
+        "input_phases": [
+          {"ticks": 20, "lanes": [{"main": [0, -32767], "raw_main": [0, -80], "raw_c": [0, 0]}, {}]},
+          {"ticks": 1, "lanes": [{"main": [24575, -19660], "raw_main": [60, -48], "raw_c": [0, 0]}, {}]},
+          {"ticks": 1, "lanes": [{"raw_main": [0, 0], "raw_c": [0, 0]}, {}]}
+        ]
+      },
+      {
+        "id": "dbooc_age1",
+        "runner_arguments": [],
+        "source_label_prefix": "special_acquisition_dbooc_age1_",
+        "sample_count": 23,
+        "field_exclusions": {"support": [[0, 23]]},
+        "input_phases": [
+          {"ticks": 20, "lanes": [{"main": [0, -32767], "raw_main": [0, -80], "raw_c": [0, 0]}, {}]},
+          {"ticks": 1, "lanes": [{"main": [22937, -23346], "raw_main": [63, -64], "raw_c": [0, 0]}, {}]},
+          {"ticks": 1, "lanes": [{"main": [25804, -19660], "raw_main": [63, -48], "raw_c": [0, 0]}, {}]},
+          {"ticks": 1, "lanes": [{"raw_main": [0, 0], "raw_c": [0, 0]}, {}]}
+        ]
+      },
+      {
+        "id": "shield_drop_raw_y63",
+        "runner_arguments": ["--platform"],
+        "source_label_prefix": "special_acquisition_shield_drop_raw_y63_",
+        "sample_count": 14,
+        "input_phases": [
+          {"ticks": 12, "lanes": [{"main": [19660, 0], "raw_main": [48, 0], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 1, "lanes": [{"main": [19660, -25804], "raw_main": [48, -63], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 1, "lanes": [{"raw_main": [0, 0], "raw_c": [0, 0]}, {}]}
+        ]
+      },
+      {
+        "id": "shield_drop_raw_y64",
+        "runner_arguments": ["--platform"],
+        "source_label_prefix": "special_acquisition_shield_drop_raw_y64_",
+        "sample_count": 14,
+        "input_phases": [
+          {"ticks": 12, "lanes": [{"main": [19660, 0], "raw_main": [48, 0], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 1, "lanes": [{"main": [19660, -26214], "raw_main": [48, -64], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 1, "lanes": [{"raw_main": [0, 0], "raw_c": [0, 0]}, {}]}
+        ]
+      },
+      {
+        "id": "shield_drop_extended_delta50",
+        "runner_arguments": ["--platform"],
+        "source_label_prefix": "special_acquisition_shield_drop_extended_delta50_",
+        "sample_count": 21,
+        "input_phases": [
+          {"ticks": 6, "lanes": [{"main": [24985, 0], "raw_main": [61, 0], "raw_c": [0, 0]}, {}]},
+          {"ticks": 12, "lanes": [{"main": [24985, 0], "raw_main": [61, 0], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 2, "lanes": [{"main": [24985, -20479], "raw_main": [61, -50], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 1, "lanes": [{"raw_main": [0, 0], "raw_c": [0, 0]}, {}]}
+        ]
+      },
+      {
+        "id": "shield_drop_extended_delta44",
+        "runner_arguments": ["--platform"],
+        "source_label_prefix": "special_acquisition_shield_drop_extended_delta44_",
+        "sample_count": 21,
+        "input_phases": [
+          {"ticks": 6, "lanes": [{"main": [24985, 0], "raw_main": [61, -6], "raw_c": [0, 0]}, {}]},
+          {"ticks": 12, "lanes": [{"main": [24985, 0], "raw_main": [61, -6], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 2, "lanes": [{"main": [24985, -20479], "raw_main": [61, -50], "raw_c": [0, 0], "left_trigger": 65535}, {}]},
+          {"ticks": 1, "lanes": [{"raw_main": [0, 0], "raw_c": [0, 0]}, {}]}
+        ]
+      }
+    ],
+    "generator": {
+      "script": "tools/generate_ssbm_stored_trace_oracle.py",
+      "output": "generated/data/ssbm_ucf084_shield_input_oracle.json"
+    },
+    "runner": {
+      "executable": "movement_trace",
+      "arguments": []
+    }
+  }
+}

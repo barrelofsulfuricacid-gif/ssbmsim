@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lbrefract.c",
+  "source_sha256": "4f0960717691c20399fce7fa86171d7760b90801fd523c48404191f94e7945a1",
+  "adapted_sha256": "8df66b138f17b9dec159f50f2b94faec1b587ccb1737f05622adb217f55be576",
+  "replacements": [
+    {
+      "old": "void lbRefract_800222A4(void)\n{\n    int const image_width = 320;\n    int const image_height = 240;\n\n    /// @todo Refactor data members into a struct\n    struct lbRefract_DataLayout {\n        Mtx texture_mtx;\n        f32 texture_offset[6];\n        HSD_ImageDesc imagedesc0;\n    };\n\n    lbRefract_CallbackData cb;\n    struct lbRefract_DataLayout* data =\n        (struct lbRefract_DataLayout*) &texture_mtx;\n    size_t i;\n    void* buf;\n    PAD_STACK(4);\n\n    lbl_804336D0.refractionUserCount = 0;\n    lbArchive_LoadSymbols(\"LbRf.dat\", &refract_data, \"lbRefData\", 0);\n    {\n        size_t buf_size =\n            GXGetTexBufferSize(image_width, image_height, GX_TF_RGB565, 0, 0);\n        lbl_804336D0.image_ptr = HSD_MemAlloc(buf_size);\n        memset(lbl_804336D0.image_ptr, 0, buf_size);\n    }\n    lbl_804336D0.tobj_list =\n        HSD_MemAlloc(refract_data->x0 * sizeof(HSD_TObj*));\n    lbl_804336D0.imagedesc =\n        HSD_MemAlloc(refract_data->x0 * sizeof(HSD_ImageDesc));\n\n    for (i = 0; i < refract_data->x0; i++) {\n        buf = HSD_MemAlloc(GXGetTexBufferSize(32, 32, GX_TF_IA8, 0, 0));\n        lbRefract_8002219C(&cb, buf, GX_TF_IA8, 32, 32);\n        lbRefract_80021CE8(&cb, i);\n\n        lbl_804336D0.imagedesc[i] = data->imagedesc0;\n        tobjdesc1.imagedesc = &lbl_804336D0.imagedesc[i];\n        lbl_804336D0.tobj_list[i] = HSD_TObjLoadDesc(&tobjdesc1);\n\n        imagedesc0.image_ptr = lbl_804336D0.image_ptr;\n        imagedesc0.format = GX_TF_RGB565;\n        imagedesc0.width = image_width;\n        imagedesc0.height = image_height;\n\n        lbl_804336D0.imagedesc[(s32) i].image_ptr = buf;\n        lbl_804336D0.imagedesc[(s32) i].format = GX_TF_IA8;\n        lbl_804336D0.imagedesc[(s32) i].width = 32;\n        lbl_804336D0.imagedesc[(s32) i].height = 32;\n    }\n}\n",
+      "new": "void lbRefract_800222A4(void)\n{\n    lbl_804336D0.refractionUserCount = 0;\n}",
+      "count": 1,
+      "reason": "The LbRf.dat payload, generated texture-coordinate maps, framebuffer texture, and TObj descriptors are consumed only by camera and fighter material rendering. Preserve the source-owned refraction user-count initialization while omitting presentation-only DAT loading, texture generation, and allocation from the headless competitive runtime. Upstream now names the refract_data count and uses sizeof for allocations; the re-audited body still only initializes the render texture resources and reference count."
+    }
+  ]
+}

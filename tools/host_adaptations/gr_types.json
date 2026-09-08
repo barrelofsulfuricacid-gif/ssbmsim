@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/types.h",
+  "source_sha256": "f30252aedcdf7320a4a13ff0b577e16f6e2736f51aaa5678488c9097c5f80837",
+  "adapted_sha256": "5c1f2a48e34cc1e8aa0add97822070aa27d913da5cab3b9a2f53c4a62f2d370c",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "typedef struct StageCallbacks {\n    /*  +0 */ HSD_GObjEvent on_init;\n    /*  +4 */ HSD_GObjPredicate callback1;\n    /*  +8 */ HSD_GObjEvent gobj_proc;\n    /*  +C */ void (*callback3)(Ground_GObj*);\n    /* +10 */ union {\n        /* +10 */ u32 flags;\n        struct {\n            /* +10:0 */ u8 flags_b0 : 1;\n            /* +10:1 */ u8 flags_b1 : 1;\n            /* +10:2 */ u8 flags_b2 : 1;\n            /* +10:3 */ u8 flags_b3 : 1;\n            /* +10:4 */ u8 flags_b4 : 1;\n            /* +10:5 */ u8 flags_b5 : 1;\n            /* +10:6 */ u8 flags_b6 : 1;\n            /* +10:7 */ u8 flags_b7 : 1;\n        };\n    };\n} StageCallbacks;",
+      "new": "typedef struct StageCallbacks {\n    /*  +0 */ HSD_GObjEvent on_init;\n    /*  +4 */ HSD_GObjPredicate callback1;\n    /*  +8 */ HSD_GObjEvent gobj_proc;\n    /*  +C */ void (*callback3)(Ground_GObj*);\n    /* +10 */ union {\n        /* +10 */ u32 flags;\n        struct {\n            u32 : 24;\n            u32 flags_b7 : 1;\n            u32 flags_b6 : 1;\n            u32 flags_b5 : 1;\n            u32 flags_b4 : 1;\n            u32 flags_b3 : 1;\n            u32 flags_b2 : 1;\n            u32 flags_b1 : 1;\n            u32 flags_b0 : 1;\n        };\n    };\n} StageCallbacks;",
+      "count": 1,
+      "reason": "Map all eight source StageCallbacks flag bits to bits31..24 of its native u32 flags member, preserving callback order, native word storage and aggregate size."
+    },
+    {
+      "old": "struct GroundShadowEntry {\n    HSD_LightAnim* unk0;\n    u8 flag : 1;\n};",
+      "new": "struct GroundShadowEntry {\n    HSD_LightAnim* unk0;\n    u32 : 31;\n    u32 flag : 1;\n};",
+      "count": 1,
+      "reason": "Map the source high-byte bit7 to bit31 of the endian-normalized four-byte map animation flag storage. Preserve the pointer and every other storage bit."
+    }
+  ]
+}

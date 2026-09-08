@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/pl/pltrick.c",
+  "source_sha256": "f53b742f7c7b3aa395432faf595f15d26af85ba570c74dbb3dc300b3ea50b35c",
+  "adapted_sha256": "8615dedfe3931190ea031396a782b51e54e2d8960881a5d4dbed7b6704f9bf08",
+  "replacements": [
+    {
+      "old": "    if (idx < 0x64) {\n        return arg0->x504[idx] & (1 << (u8) h_player);\n    }\n}\n\nvoid pl_80037BC0",
+      "new": "    if (idx < 0x64) {\n        return arg0->x504[idx] & (1 << (u8) h_player);\n    }\n    return 0;\n}\n\nvoid pl_80037BC0",
+      "count": 1,
+      "reason": "Return no recorded action for indices outside the fixed 100-entry table; the sole pinned gameplay loop calls this helper only with indices 1 through 16."
+    }
+  ]
+}

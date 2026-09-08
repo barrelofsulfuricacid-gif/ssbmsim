@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gr/grpstadium.c",
+  "source_sha256": "3a69ef5e8bbaa7b5357cd56262cbf3b8d88b6ae432db0a41ce6de1ef0b548c24",
+  "adapted_sha256": "29b5527d2aec6b28df0b59ea85a2943e90101347838efd3a9866d2f9d9deeaf1",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_slippi.h",
+      "sha256": "4da9634e81bae2a376673a32ac597879b88d366f3cda720b50498111604f910c"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi.c",
+      "sha256": "0a5972387ddc6b6f88b8177cdfa698d26f44e27408ec4c4481a4a5d72eae0970"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_archive_root_api.h",
+      "sha256": "8a59f13dee89619ddfcc051d46f31d30ab75f02e238472074822ee71e7ca17fa"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_image_copy.h",
+      "sha256": "4e77210d10add13832627700b9f9044c04255049b0cf2ba3725a2d0db6c26166"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"grpstadium.h\"\n",
+      "new": "#include \"grpstadium.h\"\n\n#include \"native_slippi.h\"\n#include \"native_archive_root_api.h\"\n#include \"native_image_copy.h\"\n",
+      "count": 1,
+      "reason": "Expose native ports of project-slippi/slippi-ssbm-asm revision fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Preload Stadium Transformations and Frozen PS hooks at their original Stadium process boundary."
+    },
+    {
+      "old": "    case 0:\n        temp_r3_4 = temp_r31->u.stadium.xD8;\n        temp_r31->u.stadium.xD8 = temp_r3_4 - 1;\n        if (temp_r3_4 < 0) {\n",
+      "new": "    case 0:\n        (void) pf_ssbm_native_slippi_stadium_preload(\n            temp_r31->u.stadium.xE2);\n        temp_r3_4 = temp_r31->u.stadium.xD8;\n        temp_r31->u.stadium.xD8 = temp_r3_4 - 1;\n        if (pf_ssbm_native_slippi_stadium_is_frozen()) {\n            return;\n        }\n        if (temp_r3_4 < 0) {\n",
+      "count": 1,
+      "reason": "Port the pinned console-core preload hook at GALE01 0x801D45EC and Frozen PS branch at 0x801D45FC. The resident asset pack replaces only asynchronous DAT I/O: transformation selection, isLoaded behavior, RNG order, the original timer decrement, and frozen state-machine bypass remain observable and source-ordered."
+    },
+    {
+      "old": "            Player_8003219C(gp->u.display.xEE) || !grStadium_801D32D0(gobj))\n",
+      "new": "            Player_8003219C(gp->u.display.xEE) ||\n            !pf_ssbm_native_slippi_stadium_monitor(\n                (Fighter*) HSD_GObjGetUserData(\n                    Player_GetEntity(gp->u.display.xEE)),\n                gobj, grStadium_801D32D0))\n",
+      "count": 1,
+      "reason": "Port project-slippi/slippi-ssbm-asm revision fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Common/PSCameraIndependentMonitor at its GALE01 0x801D24FC caller boundary. Preserve the vanilla monitor-position side effects, then use the exact inclusive fighter world bounds so camera configuration cannot change Stadium RNG order."
+    },
+    {
+      "old": "HSD_ArchiveGetPublicAddress(archive->unk0, \"SIS_GrPStadiumData\")",
+      "new": "pf_ssbm_native_archive_public_root_require(archive->unk0, \"SIS_GrPStadiumData\")",
+      "count": 1,
+      "reason": "Resolve the original Stadium SIS root from the startup materialized graph; preserve source text construction and callback registration."
+    },
+    {
+      "old": "lb_800122C8(&wrapper->desc, 0, 0, 1);",
+      "new": "pf_hsd_image_desc_copy_without_pixels(&wrapper->desc, 0, 0, 1, true);",
+      "count": 1,
+      "reason": "Retain original descriptor metadata, copy preparation, sync, callback timing and completion latches; the image feeds the Stadium texture output path. Bound the pixel write at the same audited image-copy boundary used by stage reflection."
+    },
+    {
+      "old": "lb_800122C8(&copy->desc, 0, 36, 0);",
+      "new": "pf_hsd_image_desc_copy_without_pixels(&copy->desc, 0, 36, 0, true);",
+      "count": 1,
+      "reason": "Retain original descriptor metadata, copy preparation, sync, callback timing and completion latches; the image feeds the Stadium texture output path. Bound the pixel write at the same audited image-copy boundary used by stage reflection."
+    },
+    {
+      "old": "lb_800122C8(&new_var->desc, new_var->x1A, new_var->x1C, 0);",
+      "new": "pf_hsd_image_desc_copy_without_pixels(&new_var->desc, new_var->x1A, new_var->x1C, 0, true);",
+      "count": 1,
+      "reason": "Retain original descriptor metadata, copy preparation, sync, callback timing and completion latches; the image feeds the Stadium texture output path. Bound the pixel write at the same audited image-copy boundary used by stage reflection."
+    }
+  ]
+}

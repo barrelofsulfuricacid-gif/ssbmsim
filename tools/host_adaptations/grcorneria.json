@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/grcorneria.c",
+  "source_sha256": "204f8b97159a5bae0e0fcd06c0af837fec02af561b8fbda8abbc0e4163d1b006",
+  "adapted_sha256": "9f88875d45189849b008f9097beaabb6059799c49d56ca8d3bdb2d3388eaa63d",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include <sysdolphin/baselib/sislib.h>\n\nstruct grCorneria_YakumonoParam {",
+      "new": "#include <sysdolphin/baselib/sislib.h>\n\n#if defined(__GNUC__)\n#pragma GCC diagnostic ignored \"-Wreturn-type\"\n#endif\n\nstruct grCorneria_YakumonoParam {",
+      "count": 1,
+      "reason": "The decomp intentionally declares grCorneria_801E03C8 with a fake non-void return type even though GALE01 returns without producing a result and every caller ignores it. Suppress only GCC's diagnostic so the unchanged source unit can supply the exact stage-kind predicate used by Fox and Falco; closure slicing excludes the unrelated Corneria implementation from legal-stage runtime code."
+    }
+  ]
+}

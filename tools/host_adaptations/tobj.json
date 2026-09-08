@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/tobj.c",
+  "source_sha256": "16f2d1f2fe32f92f933fd05a2f68c883b4754134b9a0d06fe2c0931ddec9f195",
+  "adapted_sha256": "b980d1c6e2a8be91e4f330d607abe7cdc2c020a6068e4a1f57b546cb7c289b65",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "        switch (imagedesc->format) {",
+      "new": "        switch ((int) imagedesc->format) {",
+      "count": 1,
+      "reason": "HSD_ImageDesc stores the shared numeric GX texture-format domain, including the color-index values 8, 9, and 10 that the official API names through GXCITexFmt rather than GXTexFmt. Converting the controlling expression to its already-used integer representation preserves every case value and branch while avoiding a host-only enum-domain diagnostic; the field layout and values are unchanged."
+    },
+    {
+      "old": "#include \"tobj.h\"",
+      "new": "#include \"tobj.h\"\n#include \"native_texture_tables.h\"\n#include \"native_image_copy.h\"",
+      "count": 1,
+      "reason": "Declare the startup-reserved per-object palette pointer-table backing; source palette object construction, animation and destruction remain unchanged."
+    },
+    {
+      "old": "                tobj->tluttbl = (HSD_Tlut**) HSD_MemAlloc(\n                    (s32) sizeof(HSD_Tlut*) * (ta->n_tluttbl + 1));",
+      "new": "                tobj->tluttbl = pf_hsd_texture_table(tobj, ta->n_tluttbl);\n                HSD_ASSERT(80, tobj->tluttbl);",
+      "count": 1,
+      "reason": "Use the permanent table belonging to this preassigned object slot; support every source u16 palette count and its terminator without a step-time memory request. Preserve the subsequent load loop and terminator store."
+    },
+    {
+      "old": "HSD_Free(tobj->tluttbl);",
+      "new": "HSD_ASSERT(76, pf_hsd_texture_table_release(tobj));",
+      "count": 2,
+      "reason": "Both animation replacement and TObjRelease still destroy palette objects in source order. Their pointer-array backing has whole-runtime lifetime and remains assigned to this object address; verify ownership instead of freeing or reallocating it."
+    },
+    {
+      "old": "void HSD_ImageDescCopyFromEFB(HSD_ImageDesc* idesc, u16 origx, u16 origy,\n                              GXBool clear, bool sync)\n{\n    if (!idesc) {\n        return;\n    }\n\n    GXSetTexCopySrc(origx, origy, idesc->width, idesc->height);\n    GXSetTexCopyDst(idesc->width, idesc->height, idesc->format,\n                    idesc->mipmap ? GX_TRUE : GX_FALSE);\n    if (clear) {\n        HSD_StateSetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);\n    }\n    GXCopyTex(idesc->image_ptr, clear);\n    if (sync) {\n        GXPixModeSync();\n        GXInvalidateTexAll();\n    }\n}\n",
+      "new": "static void pf_hsd_image_desc_copy(HSD_ImageDesc* idesc, u16 origx, u16 origy,\n                              GXBool clear, bool sync, bool pixel_output)\n{\n    if (!idesc) {\n        return;\n    }\n\n    GXSetTexCopySrc(origx, origy, idesc->width, idesc->height);\n    GXSetTexCopyDst(idesc->width, idesc->height, idesc->format,\n                    idesc->mipmap ? GX_TRUE : GX_FALSE);\n    if (clear) {\n        HSD_StateSetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);\n    }\n    if (pixel_output) {\n        GXCopyTex(idesc->image_ptr, clear);\n    }\n    if (sync) {\n        GXPixModeSync();\n        GXInvalidateTexAll();\n    }\n}\n\nvoid HSD_ImageDescCopyFromEFB(HSD_ImageDesc* idesc, u16 origx, u16 origy,\n                              GXBool clear, bool sync)\n{\n    pf_hsd_image_desc_copy(idesc, origx, origy, clear, sync, true);\n}\n\nvoid pf_hsd_image_desc_copy_without_pixels(HSD_ImageDesc* idesc, u16 origx,\n                                         u16 origy, GXBool clear, bool sync)\n{\n    pf_hsd_image_desc_copy(idesc, origx, origy, clear, sync, false);\n}\n",
+      "count": 1,
+      "reason": "Share the complete original image-copy preparation and CPU Z-state mutation between original and audited texture-only entry points. Only the GXCopyTex pixel write differs; original callers still reach the unsupported boundary. Null handling and synchronization order are unchanged."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_texture_tables.c",
+      "sha256": "001eb95c4cf6a4292a94c4be282d9f59fe9a13ade3eaf73eca45f2c87cf8b5f8"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_texture_tables.h",
+      "sha256": "602a46973fdac595af9cfd57625a032095697aee66a132a2136483439e397372"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_image_copy.h",
+      "sha256": "4e77210d10add13832627700b9f9044c04255049b0cf2ba3725a2d0db6c26166"
+    }
+  ]
+}

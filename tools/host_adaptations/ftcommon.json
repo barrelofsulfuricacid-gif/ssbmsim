@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/ftcommon.c",
+  "source_sha256": "43dff29e65d9c38c0b480d59510258d3a3b6f4aebf0b67d3b385e40ef560114d",
+  "adapted_sha256": "9a5a95002b17c3068f4e77d163002e376b7d8cd848299c1beb28fba02466762c",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"ftcommon.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftcommon.h\"",
+      "count": 1,
+      "reason": "Declare audited native arithmetic boundaries."
+    },
+    {
+      "old": "fp->x1A7C.x += sp10.x * fp->x1A6C;",
+      "new": "fp->x1A7C.x = PF_SlippiMulAddF32(sp10.x, fp->x1A6C, fp->x1A7C.x);",
+      "count": 1,
+      "reason": "Preserve throw-joint smoothing fmadds at 8007E4C8/8007E4DC/8007E4F0; preceding coordinate subtraction remains separately rounded."
+    },
+    {
+      "old": "fp->x1A7C.y += sp10.y * fp->x1A6C;",
+      "new": "fp->x1A7C.y = PF_SlippiMulAddF32(sp10.y, fp->x1A6C, fp->x1A7C.y);",
+      "count": 1,
+      "reason": "Preserve throw-joint smoothing fmadds at 8007E4C8/8007E4DC/8007E4F0; preceding coordinate subtraction remains separately rounded."
+    },
+    {
+      "old": "fp->x1A7C.z += sp10.z * fp->x1A6C;",
+      "new": "fp->x1A7C.z = PF_SlippiMulAddF32(sp10.z, fp->x1A6C, fp->x1A7C.z);",
+      "count": 1,
+      "reason": "Preserve throw-joint smoothing fmadds at 8007E4C8/8007E4DC/8007E4F0; preceding coordinate subtraction remains separately rounded."
+    },
+    {
+      "old": "dmg * p_ftCommonData->x198 + p_ftCommonData->x19C",
+      "new": "PF_SlippiMulAddF32((float)dmg, p_ftCommonData->x198, p_ftCommonData->x19C)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "temp_r31->x * arg_ft->facing_dir + v->x",
+      "new": "PF_SlippiMulAddF32(temp_r31->x, arg_ft->facing_dir, v->x)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "cur_ft->facing_dir * vtmp->x + sp24.x",
+      "new": "PF_SlippiMulAddF32(cur_ft->facing_dir, vtmp->x, sp24.x)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "temp_r31->x * fp->facing_dir + arg1->x",
+      "new": "PF_SlippiMulAddF32(temp_r31->x, fp->facing_dir, arg1->x)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "temp_r3->facing_dir * tmp->x + sp1C.x",
+      "new": "PF_SlippiMulAddF32(temp_r3->facing_dir, tmp->x, sp1C.x)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "arg1 * p_ftCommonData->x138 + p_ftCommonData->x13C",
+      "new": "PF_SlippiMulAddF32((float)arg1, p_ftCommonData->x138, p_ftCommonData->x13C)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "arg1 * p_ftCommonData->xEC + p_ftCommonData->xF0",
+      "new": "PF_SlippiMulAddF32((float)arg1, p_ftCommonData->xEC, p_ftCommonData->xF0)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "p_ftCommonData->x710 * fp->x2024 + p_ftCommonData->x708",
+      "new": "PF_SlippiMulAddF32(p_ftCommonData->x710, (float)fp->x2024, p_ftCommonData->x708)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    },
+    {
+      "old": "p_ftCommonData->x710 * fp->x2024 +\n                      p_ftCommonData->x708",
+      "new": "PF_SlippiMulAddF32(p_ftCommonData->x710, (float)fp->x2024, p_ftCommonData->x708)",
+      "count": 1,
+      "reason": "Preserve target fmadds in the complete ftcommon.c audit: hitlag, both nudge variants, both rumble durations and both item-scale variants. Preserve surrounding integer truncations and subtraction boundaries."
+    }
+  ]
+}

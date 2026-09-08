@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "source_path": "extern/dolphin/src/dolphin/mtx/vec.c",
+  "source_sha256": "6dd4bc76acd98fc8cc5ed000f0555928325ed86060b03ba2fdccff265d405e80",
+  "adapted_sha256": "657b4a284bdac68ef42b10210319c98fb11ae22c0d24ea826709286a4ab317c4",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_ps_math.h",
+      "sha256": "8292c0bc708e4fcf33625270298a46fd5448d4f32c17b251a23d9e5d05b1a02d"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include <dolphin.h>",
+      "new": "#include \"native_numeric.h\"\n#include <dolphin/os.h>\n#include \"native_ps_math.h\"",
+      "count": 1,
+      "reason": "Include only the native assertion contract plus the pure Gekko numeric compatibility helper instead of the unrelated target SDK umbrella."
+    },
+    {
+      "old": "void C_VECAdd(Vec* a, Vec* b, Vec* c)",
+      "new": "void C_VECAdd(const Vec* a, const Vec* b, Vec* c)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible read-only input declarations; ABI and arithmetic are unchanged."
+    },
+    {
+      "old": "asm void PSVECAdd(register Vec* a, register Vec* b, register Vec* c)",
+      "new": "#if 0\nasm void PSVECAdd(register Vec* a, register Vec* b, register Vec* c)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation; TARGET_PC consumers select the adjacent portable C body."
+    },
+    {
+      "old": "void C_VECSubtract(Vec* a, Vec* b, Vec* c)",
+      "new": "#endif\nvoid C_VECSubtract(const Vec* a, const Vec* b, Vec* c)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation and match its read-only input contracts."
+    },
+    {
+      "old": "asm void PSVECSubtract(register Vec* a, register Vec* b, register Vec* c)",
+      "new": "#if 0\nasm void PSVECSubtract(register Vec* a, register Vec* b, register Vec* c)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_VECScale(Vec* src, Vec* dst, f32 scale)",
+      "new": "#endif\nvoid C_VECScale(const Vec* src, Vec* dst, f32 scale)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation and match its read-only input contract."
+    },
+    {
+      "old": "asm void PSVECScale(register Vec* src, register Vec* dst, register f32 mult)",
+      "new": "#if 0\nasm void PSVECScale(register Vec* src, register Vec* dst, register f32 mult)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_VECNormalize(Vec* src, Vec* unit)",
+      "new": "#endif\nvoid C_VECNormalize(const Vec* src, Vec* unit)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation and match its read-only input contract."
+    },
+    {
+      "old": "void PSVECNormalize(register Vec* vec1, register Vec* dst)",
+      "new": "#if 0\nvoid PSVECNormalize(register Vec* vec1, register Vec* dst)",
+      "count": 1,
+      "reason": "Exclude the PowerPC reciprocal-square-root implementation from the native host translation unit."
+    },
+    {
+      "old": "f32 C_VECSquareMag(Vec* v)",
+      "new": "#endif\nvoid PSVECNormalize(const Vec* vec1, Vec* dst)\n{\n    const f32 xx = vec1->x * vec1->x;\n    const f32 yy = vec1->y * vec1->y;\n    const f32 xx_zz = PF_SlippiMulAddF32(vec1->z, vec1->z, xx);\n    const f32 sqsum = xx_zz + yy;\n    const double estimate = PF_GekkoFrsqrte((double) sqsum);\n    f32 nwork0 = PF_SlippiMulF32FromF64(estimate, estimate);\n    const f32 nwork1 = PF_SlippiMulF32FromF64(estimate, 0.5);\n    f32 rsqrt;\n    nwork0 = PF_SlippiMulAddF32(-nwork0, sqsum, 3.0F);\n    rsqrt = nwork0 * nwork1;\n    dst->x = vec1->x * rsqrt;\n    dst->y = vec1->y * rsqrt;\n    dst->z = vec1->z * rsqrt;\n}\n\nf32 C_VECSquareMag(const Vec* v)",
+      "count": 1,
+      "reason": "Restore PSVECNormalize with the full frsqrte estimate retained through the two scalar fmuls inputs, followed by the original binary32 Newton step and paired stores. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries. Preserve scalar single-multiply right-operand rounding for full-precision frsqrte estimates, matching pinned Slippi Force25Bit/fp_tri_op(roundRHS); otherwise shared wall normals and magnitudes differ before collision."
+    },
+    {
+      "old": "asm f32 PSVECSquareMag(register Vec* vec1){",
+      "new": "#if 0\nasm f32 PSVECSquareMag(register Vec* vec1){",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single magnitude implementations from the native host translation unit."
+    },
+    {
+      "old": "f32 C_VECMag(Vec* v)",
+      "new": "#endif\nf32 PSVECMag(const Vec* v)\n{\n    const f32 xx = v->x * v->x;\n    const f32 yy = v->y * v->y;\n    const f32 xx_zz = PF_SlippiMulAddF32(v->z, v->z, xx);\n    const f32 sqsum = xx_zz + yy;\n    const double estimate = PF_GekkoFrsqrte((double) sqsum);\n    f32 nwork0 = PF_SlippiMulF32FromF64(estimate, estimate);\n    const f32 nwork1 = PF_SlippiMulF32FromF64(estimate, 0.5);\n    f32 rsqrt;\n    f32 scale;\n    nwork0 = PF_SlippiMulAddF32(-nwork0, sqsum, 3.0F);\n    rsqrt = nwork0 * nwork1;\n    scale = rsqrt >= -0.0F ? rsqrt : sqsum;\n    return sqsum * scale;\n}\n\nf32 C_VECMag(const Vec* v)",
+      "count": 1,
+      "reason": "Restore PSVECMag with the full frsqrte estimate retained through the two scalar fmuls inputs, then preserve the original binary32 Newton step and fsel behavior. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries. Preserve scalar single-multiply right-operand rounding for full-precision frsqrte estimates, matching pinned Slippi Force25Bit/fp_tri_op(roundRHS); otherwise shared wall normals and magnitudes differ before collision."
+    },
+    {
+      "old": "f32 C_VECDotProduct(Vec* a, Vec* b)",
+      "new": "f32 C_VECDotProduct(const Vec* a, const Vec* b)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible read-only input declarations; arithmetic order is unchanged."
+    },
+    {
+      "old": "asm f32 PSVECDotProduct(register Vec* vec1, register Vec* vec2)",
+      "new": "#if 0\nasm f32 PSVECDotProduct(register Vec* vec1, register Vec* vec2)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single dot-product implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_VECCrossProduct(Vec* a, Vec* b, Vec* axb)",
+      "new": "#endif\nvoid C_VECCrossProduct(const Vec* a, const Vec* b, Vec* axb)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation and match its read-only input contracts."
+    },
+    {
+      "old": "asm void PSVECCrossProduct(register Vec* vec1, register Vec* vec2,",
+      "new": "#if 0\nasm void PSVECCrossProduct(register Vec* vec1, register Vec* vec2,",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single cross-product implementation from the native host translation unit."
+    },
+    {
+      "old": "void VECHalfAngle(Vec* a, Vec* b, Vec* half)",
+      "new": "#endif\nvoid VECHalfAngle(const Vec* a, const Vec* b, Vec* half)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation and match Aurora's source-compatible read-only inputs."
+    },
+    {
+      "old": "void VECReflect(Vec* src, Vec* normal, Vec* dst)",
+      "new": "void VECReflect(const Vec* src, const Vec* normal, Vec* dst)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible read-only inputs; normalization and reflection arithmetic remain unchanged."
+    },
+    {
+      "old": "f32 C_VECSquareDistance(Vec* a, Vec* b)",
+      "new": "f32 C_VECSquareDistance(const Vec* a, const Vec* b)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible read-only inputs; subtraction and accumulation order remain unchanged."
+    },
+    {
+      "old": "asm f32 PSVECSquareDistance(register Vec* vec1, register Vec* vec2){",
+      "new": "#if 0\nasm f32 PSVECSquareDistance(register Vec* vec1, register Vec* vec2){",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single square-distance implementation from the native host translation unit."
+    },
+    {
+      "old": "f32 VECDistance(Vec* a, Vec* b)",
+      "new": "#endif\nf32 VECDistance(const Vec* a, const Vec* b)",
+      "count": 1,
+      "reason": "Resume at the portable C implementation and match Aurora's source-compatible read-only inputs."
+    },
+    {
+      "old": "    vTmp.x = (a->y * b->z) - (a->z * b->y);\n    vTmp.y = (a->z * b->x) - (a->x * b->z);\n    vTmp.z = (a->x * b->y) - (a->y * b->x);",
+      "new": "    vTmp.x = PF_SlippiMulAddF32(a->y, b->z, -(a->z * b->y));\n    vTmp.y = -PF_SlippiMulAddF32(a->x, b->z, -(a->z * b->x));\n    vTmp.z = -PF_SlippiMulAddF32(a->y, b->x, -(a->x * b->y));",
+      "count": 1,
+      "reason": "The native C provider owns retail PSVECCrossProduct at 80342E58. Preserve its paired-single multiply/subtract ordering: x = ay*bz - rounded(az*by), y = -(ax*bz - rounded(az*bx)), z = -(ay*bx - rounded(ax*by)), with one fused operation per component and explicit final y/z negation. This preserves cancellation and signed-zero behavior, not merely the algebraic cross product. Keep all temporary components before stores for alias safety."
+    },
+    {
+      "old": "f32 C_VECMag(const Vec* v)\n{\n    return sqrtf(VECSquareMag(v));\n}",
+      "new": "f32 C_VECMag(const Vec* v)\n{\n    return PSVECMag(v);\n}",
+      "count": 1,
+      "reason": "The active Aurora host header maps VECMag to C_VECMag. The retail release call sites use PSVECMag, including all three reference-object orientation loops. Route the native compatibility provider through the existing target-faithful magnitude implementation; do not substitute the SDK C square-root variant."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_DamageFall.c",
+  "source_sha256": "00efdb4187aa0dd6f65cde4dddbf08c2601d17cfe305d43b53cca92f7758e34a",
+  "adapted_sha256": "fe1f98655d5146507968716109dcdd2397d9fadad0214dc22844cc6509c16c0c",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"ftCo_DamageFall.h\"",
+      "new": "#include \"ftCo_DamageFall.h\"\n#include \"native_pad_input.h\"",
+      "count": 1,
+      "reason": "Expose the native raw main-stick history consumed by the pinned UCF 0.84 tumble hook."
+    },
+    {
+      "old": "void ftCo_DamageFall_IASA(HSD_GObj* gobj)\n",
+      "new": "static bool ucf084_tumble_input_is_fresh(Fighter* fp)\n{\n    if (fp->x670_timer_lstick_tilt_x != 1) {\n        return false;\n    }\n    if (!(ABS(fp->input.lstick[1].x) < p_ftCommonData->x210)) {\n        return false;\n    }\n    return pf_ssbm_native_ucf084_raw_main_x_delta_squared_two_frames(\n               fp->x618_player_id) >\n           75 * 75;\n}\n\nvoid ftCo_DamageFall_IASA(HSD_GObj* gobj)\n",
+      "count": 1,
+      "reason": "Translate project-slippi/slippi-ssbm-asm revision fcf47f10dc244152c2ebaa3a9dec142ea42243b7 External/UCF 0.84/UCF/UCF Tumble.asm at GALE01 0x800908F4: on the first ordinary out-of-window X-tilt frame, accept only a preceding processed stick inside the tumble threshold and a strict raw two-frame X delta greater than 75."
+    },
+    {
+      "old": "        if (ABS(fp->input.lstick[0].x) >= p_ftCommonData->x210 &&\n            fp->x670_timer_lstick_tilt_x < p_ftCommonData->x214)\n",
+      "new": "        if (ABS(fp->input.lstick[0].x) >= p_ftCommonData->x210 &&\n            (fp->x670_timer_lstick_tilt_x < p_ftCommonData->x214 ||\n             ucf084_tumble_input_is_fresh(fp)))\n",
+      "count": 1,
+      "reason": "Preserve the vanilla strict timer window and reproduce UCF 0.84's condition-register override only when its raw-history tumble test succeeds."
+    }
+  ]
+}

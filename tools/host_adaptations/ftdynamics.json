@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ftdynamics.c",
+  "source_sha256": "d28af94e112b1db1d265cb0a8e101436d80a69e86eea4fdc02930a9693536d37",
+  "adapted_sha256": "5bc898f7320237b1ee0ec4553a67e9d20c4794ec0624992265f5b30f1f29a391",
+  "replacements": [
+    {
+      "old": "void ftCo_8009DD94(Fighter_GObj* gobj, bool arg1)\n{\n",
+      "new": "static void ftCo_SlippiSetupMatrixSubAll(HSD_JObj* jobj)\n{\n    if (HSD_JObjMtxIsDirty(jobj)) {\n        HSD_JObjSetupMatrixSub(jobj);\n    }\n    if (jobj->child != NULL) {\n        ftCo_SlippiSetupMatrixSubAll(jobj->child);\n    }\n    if (jobj->next != NULL) {\n        ftCo_SlippiSetupMatrixSubAll(jobj->next);\n    }\n}\n\nvoid ftCo_8009DD94(Fighter_GObj* gobj, bool arg1)\n{\n",
+      "count": 1,
+      "reason": "Translate Slippi's pinned Common/FastForward/DynamicsFix recursive helper. The hook tests the same USER_DEF_MTX and MTX_DIRTY bits as HSD_JObjMtxIsDirty, calls the original HSD_JObjSetupMatrixSub provider, then visits child and sibling in the original PowerPC order."
+    },
+    {
+      "old": "        }\n    }\n}\n\nvoid ftCo_8009E0A8(Fighter_GObj* gobj)\n",
+      "new": "        }\n    }\n\n    ftCo_SlippiSetupMatrixSubAll(GET_JOBJ(gobj));\n}\n\nvoid ftCo_8009E0A8(Fighter_GObj* gobj)\n",
+      "count": 1,
+      "reason": "Translate the Slippi netplay hook at GALE01 address 0x8009E090, replacing the original ftCo_8009DD94 epilogue. Headless Slippi refreshes dirty fighter bone matrices after dynamics because the skipped shadow render normally performs that gameplay-relevant cleanup."
+    }
+  ]
+}

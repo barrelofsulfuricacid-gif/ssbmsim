@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itlinkarrow.c",
+  "source_sha256": "abb27e2ef6fbb5fcc27ebcfafc292f2e138607923f1ff323c0c46fe4504379fb",
+  "adapted_sha256": "115d1634982db27a2bd6b27a269df25436dbdfc2f62295ebf958caed48312ef3",
+  "replacements": [
+    {
+      "old": "    HSD_JObjSetRotationZ(jobj, z);\n    ip->xDD4_itemVar.linkarrow.x9C -= 1;\n}\n\nvoid it_802A8330",
+      "new": "    HSD_JObjSetRotationZ(jobj, z);\n    ip->xDD4_itemVar.linkarrow.x9C -= 1;\n    return 0;\n}\n\nvoid it_802A8330",
+      "count": 1,
+      "reason": "Satisfy the decomp-owned s32 helper signature after preserving its rotation and counter updates; the pinned source has no consumer of this return."
+    },
+    {
+      "old": "        return it_8026EA20(gobj, &ip->xDD4_itemVar.linkarrow.x18, &ip->pos,\n                           &sp68, &ip->xDD4_itemVar.linkarrow.xE4, &flags);\n    }\n}\n\nvoid itLinkArrow_Logic98_Destroyed",
+      "new": "        return it_8026EA20(gobj, &ip->xDD4_itemVar.linkarrow.x18, &ip->pos,\n                           &sp68, &ip->xDD4_itemVar.linkarrow.xE4, &flags);\n    }\n    return false;\n}\n\nvoid itLinkArrow_Logic98_Destroyed",
+      "count": 1,
+      "reason": "Return false when the arrow has no valid owning fighter; both pinned fighter call sites discard the return and the valid-owner collision result remains unchanged."
+    },
+    {
+      "old": "#include \"itlinkarrow.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"itlinkarrow.h\"",
+      "count": 1,
+      "reason": "Preserve target fused arithmetic in arrow wobble, charge curves and attached motion."
+    },
+    {
+      "old": "temp_r3 = (f32*) &it_803F6A28 + ip->xDD4_itemVar.linkarrow.x9C;",
+      "new": "temp_r3 = &it_803F6A84[ip->xDD4_itemVar.linkarrow.x9C];",
+      "count": 2,
+      "reason": "Original address 0x803F6A28+0x5C is the independently declared wobble table 0x803F6A84. Native globals have no adjacency guarantee; never read beyond the state table."
+    },
+    {
+      "old": "(temp_r3[31] * rand) + temp_r3[23]",
+      "new": "PF_SlippiMulAddF32(temp_r3[8], rand, temp_r3[0])",
+      "count": 2,
+      "reason": "Use named wobble table indices and the target fmadds before degree conversion in both directions."
+    },
+    {
+      "old": "(lookup_table[8] * rand) + lookup_table[0]",
+      "new": "PF_SlippiMulAddF32(lookup_table[8], rand, lookup_table[0])",
+      "count": 2,
+      "reason": "Apply the same target arithmetic to the equivalent shared wobble helper and its compiler-inlined call sites."
+    },
+    {
+      "old": "(arg4 * ((attr->x8 - attr->x4) / arg5)) + attr->x4",
+      "new": "PF_SlippiMulAddF32(arg4, (attr->x8 - attr->x4) / arg5, attr->x4)",
+      "count": 1,
+      "reason": "Preserve final target fmadds in each charge curve."
+    },
+    {
+      "old": "(arg4 * ((attr->x10 - attr->xC) / arg5)) + attr->xC",
+      "new": "PF_SlippiMulAddF32(arg4, (attr->x10 - attr->xC) / arg5, attr->xC)",
+      "count": 1,
+      "reason": "Preserve final target fmadds in each charge curve."
+    },
+    {
+      "old": "item->pos.x = (item->xDD4_itemVar.linkarrow.xD4 *\n                   cosf(item->xDD4_itemVar.linkarrow.xD8)) +\n                  item->xDD4_itemVar.linkarrow.xC8;",
+      "new": "item->pos.x = PF_SlippiMulAddF32(\n        item->xDD4_itemVar.linkarrow.xD4,\n        cosf(item->xDD4_itemVar.linkarrow.xD8),\n        item->xDD4_itemVar.linkarrow.xC8);",
+      "count": 1,
+      "reason": "Preserve target fused attached-arrow coordinate calculation in both axes."
+    },
+    {
+      "old": "item->pos.y = (item->xDD4_itemVar.linkarrow.xD4 *\n                   sinf(item->xDD4_itemVar.linkarrow.xD8)) +\n                  item->xDD4_itemVar.linkarrow.xCC;",
+      "new": "item->pos.y = PF_SlippiMulAddF32(\n        item->xDD4_itemVar.linkarrow.xD4,\n        sinf(item->xDD4_itemVar.linkarrow.xD8),\n        item->xDD4_itemVar.linkarrow.xCC);",
+      "count": 1,
+      "reason": "Preserve target fused attached-arrow coordinate calculation in both axes."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "evidence": {
+    "class": "Cross-object address-relative table access and target fused arithmetic",
+    "table_base": "0x803F6A84",
+    "original_state_table_base": "0x803F6A28",
+    "base_byte_offset": 92,
+    "table_elements": 16,
+    "target_instructions": [
+      {
+        "address": "0x802a8234",
+        "op": "fmadds",
+        "function": "itLinkArrow_802A81C4"
+      },
+      {
+        "address": "0x802a8264",
+        "op": "fmadds",
+        "function": "itLinkArrow_802A81C4"
+      },
+      {
+        "address": "0x802a85dc",
+        "op": "fmadds",
+        "function": "itLinkArrow_802A850C"
+      },
+      {
+        "address": "0x802a85f4",
+        "op": "fmadds",
+        "function": "itLinkArrow_802A850C"
+      },
+      {
+        "address": "0x802a93fc",
+        "op": "fmadds",
+        "function": "itLinkarrow_UnkMotion2_Phys"
+      },
+      {
+        "address": "0x802a9414",
+        "op": "fmadds",
+        "function": "itLinkarrow_UnkMotion2_Phys"
+      },
+      {
+        "address": "0x802a975c",
+        "op": "fmadds",
+        "function": "itLinkarrow_UnkMotion4_Anim"
+      },
+      {
+        "address": "0x802a978c",
+        "op": "fmadds",
+        "function": "itLinkarrow_UnkMotion4_Anim"
+      },
+      {
+        "address": "0x802a9c88",
+        "op": "fmadds",
+        "function": "itLinkArrow_Logic98_HitShield"
+      },
+      {
+        "address": "0x802a9ca0",
+        "op": "fmadds",
+        "function": "itLinkArrow_Logic98_HitShield"
+      }
+    ]
+  }
+}

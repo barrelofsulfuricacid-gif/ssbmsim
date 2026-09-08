@@ -1,0 +1,89 @@
+{
+  "admission": {
+    "complete_match_only": true,
+    "dedupe_by": "sha256",
+    "items_must_be_off": true,
+    "note": "Fighting each required character at least once across the corpus is required; stage coverage target is all six legal stages. Random/stage-item matches are rejected, not counted.",
+    "pokemon_stadium_requires_frozen_flag": true,
+    "stage_ids": [
+      2,
+      3,
+      8,
+      28,
+      31,
+      32
+    ]
+  },
+  "description": "Public admission template. No replay corpus or qualification evidence is distributed.",
+  "entry_schema": {
+    "characters": "external character IDs parsed from settings",
+    "complete": "must be true (no truncation)",
+    "end_frame": "authoritative match end frame",
+    "frozen_pokemon_stadium": "required true when stage_id is 3",
+    "items_off": "must be true",
+    "players": "number of human players",
+    "ports": "controller ports used",
+    "result": "pass once zero-divergence qualified, else pending",
+    "sha256": "content hash of the .slp file (dedupe key)",
+    "slippi_version": "e.g. 3.x recording version",
+    "source": "dataset name + revision + license + redistribution status",
+    "stage_id": "Slippi stage ID",
+    "start_frame": "first replayed frame",
+    "ucf_evidence": "pinned UCF 0.84 revision + enabled ports/config"
+  },
+  "id": "ssbm-native-acceptance-corpus",
+  "note_on_ids": "Character IDs are Slippi EXTERNAL IDs parsed from settings.players[].characterId through the pinned parser table above. Never trust archive paths or bucket labels: some corpora label buckets with libmelee internal IDs, which collides Yoshi and Ice Climbers buckets. External 17 is Yoshi, external 14 is Ice Climbers.",
+  "parser": {
+    "audited_upstream_commit": "626f8fb0dfa08133f3244d58bebe7002bddd44bf",
+    "character_table": "tools/replay/node_modules/@slippi/slippi-js/dist/common/melee/characters.cjs",
+    "package": "@slippi/slippi-js",
+    "stage_table": "tools/replay/node_modules/@slippi/slippi-js/dist/common/melee/stages.cjs",
+    "version": "9.1.2"
+  },
+  "qualified": [],
+  "required_characters": {
+    "0": "Captain Falcon",
+    "1": "Donkey Kong",
+    "10": "Mewtwo",
+    "11": "Ness",
+    "12": "Peach",
+    "13": "Pikachu",
+    "14": "Ice Climbers",
+    "15": "Jigglypuff",
+    "16": "Samus",
+    "17": "Yoshi",
+    "18": "Zelda",
+    "19": "Sheik",
+    "2": "Fox",
+    "20": "Falco",
+    "21": "Young Link",
+    "22": "Dr. Mario",
+    "23": "Roy",
+    "24": "Pichu",
+    "25": "Ganondorf",
+    "3": "Mr. Game & Watch",
+    "4": "Kirby",
+    "5": "Bowser",
+    "6": "Link",
+    "7": "Luigi",
+    "8": "Mario",
+    "9": "Marth"
+  },
+  "required_match_count": 500,
+  "required_stages": {
+    "2": "Fountain of Dreams",
+    "28": "Dream Land N64",
+    "3": "Pokemon Stadium (frozen only)",
+    "31": "Battlefield",
+    "32": "Final Destination",
+    "8": "Yoshi's Story"
+  },
+  "schema": 1,
+  "selection": {
+    "frozen": false,
+    "membership_append_only": true,
+    "policy": "Record local corpus membership and provenance; no private recordings are bundled.",
+    "target_met": false
+  },
+  "target": "GALE01 NTSC 1.02 + UCF 0.84"
+}

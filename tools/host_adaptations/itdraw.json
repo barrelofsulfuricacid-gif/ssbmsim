@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/itdraw.c",
+  "source_sha256": "e16b75657de53b0506bbbdcf7d79fd1de46e567150fc6729b9652bb68800350b",
+  "adapted_sha256": "ccb08e5d72c43a6a5df5da8de7aef63d63cb3518e06dad8e39a56cb4e28a227a",
+  "replacements": [
+    {
+      "old": "u32 it_8026ECE0(Item_GObj* gobj, u32 arg1)\n{\n    Item* ip;\n    u32 ret;\n    u32 idx;\n\n    ret = 0;\n    ip = GET_ITEM(gobj);\n    if (ip->kind == It_Kind_Unk4) {\n        if (ip->xDAA_flag.b0 &&\n            (ip->xDD4_itemVar.it_266F.x18.b0 ||\n             ip->xDD4_itemVar.it_266F.x18.b1) &&\n            lbColl_8000A10C(&ip->xDD4_itemVar.it_266F.x1C, arg1, ip->scl))\n        {\n            ret = 1;\n        }\n    } else {\n        if (ip->xDAA_flag.b6) {\n            if (ip->xDAA_flag.b2) {\n                idx = 0U;\n                while (idx < 4U) {\n                    if (lbColl_80009F54(&ip->x5D4_hitboxes[idx].hit, arg1,\n                                        ip->scl) != false)\n                    {\n                        ret = 1;\n                    }\n                    idx++;\n                }\n            }\n            if (!ip->xDC8_word.flags.x13 && ip->xDAA_flag.b1) {\n                if (ip->xD0C == 0) {\n                    idx = 0U;\n                    while (idx < ip->xAC8_hurtboxNum) {\n                        if (lbColl_8000A244(&ip->xACC_itemHurtbox[idx], arg1,\n                                            NULL, 0.0f) != false)\n                        {\n                            ret = 1;\n                        }\n                        idx++;\n                    }\n                } else {\n                    idx = 0U;\n                    while (idx < ip->xAC8_hurtboxNum) {\n                        if (lbColl_8000A584(&ip->xACC_itemHurtbox[idx],\n                                            ip->xD0C, arg1, NULL,\n                                            0.0f) != false)\n                        {\n                            ret = 1;\n                        }\n                        idx++;\n                    }\n                }\n            }\n        }\n        if (ip->xDAA_flag.b4 && ip->xDC8_word.flags.x15 &&\n            (lbGx_8001E2F8((Vec4*) &ip->xBCC_unk, &ip->pos, &it_804D5168, arg1,\n                           ip->facing_dir) != false))\n        {\n            ret = 1;\n        }\n        if (ip->xDAA_flag.b3 && ip->xDD0_flag.b0 &&\n            (lb_800149E0((MtxPtr) &ip->xB54, arg1) != false))\n        {\n            ret = 1;\n        }\n    }\n    return ret;\n}",
+      "new": "u32 it_8026ECE0(Item_GObj* gobj, u32 arg1)\n{\n    (void) gobj;\n    (void) arg1;\n    return 0;\n}",
+      "count": 1,
+      "reason": "Bound the private item debug-geometry draw predicate. Repository-wide source search finds its sole caller inside the default GX-link callback below; it draws hitboxes, hurtboxes, effect geometry, and a debug matrix and returns whether GX state must be reset. Returning zero preserves the renderer-free contract and removes a CodeWarrior-only matrix-extent expression from the host provider."
+    }
+  ]
+}

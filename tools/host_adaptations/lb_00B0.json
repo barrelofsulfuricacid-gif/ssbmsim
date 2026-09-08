@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lb_00B0.c",
+  "source_sha256": "fab9f37e81137f20f45144330c6792522b53544444a93494b5a1b56af6298d0d",
+  "adapted_sha256": "6d3a36a632cc5b88a8085e1c427deddbe01a5ee4687f46e5088cebfd295185bd",
+  "replacements": [
+    {
+      "old": "    arg2->translate.x =\n        (jobj1->translate.x * arg8) + (jobj2->translate.x * arg9);\n    arg2->translate.y =\n        (jobj1->translate.y * arg8) + (jobj2->translate.y * arg9);\n    arg2->translate.z =\n        (jobj1->translate.z * arg8) + (jobj2->translate.z * arg9);\n    arg2->scale.x = (jobj1->scale.x * arg8) + (jobj2->scale.x * arg9);\n    arg2->scale.y = (jobj1->scale.y * arg8) + (jobj2->scale.y * arg9);\n    arg2->scale.z = (jobj1->scale.z * arg8) + (jobj2->scale.z * arg9);",
+      "new": "    arg2->translate.x =\n        PF_SlippiMulAddF32(jobj1->translate.x, arg8, jobj2->translate.x * arg9);\n    arg2->translate.y =\n        PF_SlippiMulAddF32(jobj1->translate.y, arg8, jobj2->translate.y * arg9);\n    arg2->translate.z =\n        PF_SlippiMulAddF32(jobj1->translate.z, arg8, jobj2->translate.z * arg9);\n    arg2->scale.x = PF_SlippiMulAddF32(jobj1->scale.x, arg8, jobj2->scale.x * arg9);\n    arg2->scale.y = PF_SlippiMulAddF32(jobj1->scale.y, arg8, jobj2->scale.y * arg9);\n    arg2->scale.z = PF_SlippiMulAddF32(jobj1->scale.z, arg8, jobj2->scale.z * arg9);",
+      "count": 1,
+      "reason": "Match lb_8000C490 at GALE01 0x8000C4B4 through 0x8000C524: each blend component rounds the second weighted term, then accumulates the first term with one PowerPC fmadds. This pose blend feeds gameplay ECB joints. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        cur = lobj_next(cur);\n    }\n}\n\nvoid lb_8000CE30",
+      "new": "        cur = lobj_next(cur);\n    }\n    return NULL;\n}\n\nvoid lb_8000CE30",
+      "count": 1,
+      "reason": "Return the null search sentinel when lb_8000CDC0 exhausts the light-object list; its caller observes this result and the existing loop already establishes cur == NULL."
+    },
+    {
+      "old": "#include \"lb_00B0.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"lb_00B0.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    },
+    {
+      "old": "(arg0->position.x * arg8) + (arg1->translate.x * arg9)",
+      "new": "PF_SlippiMulAddF32(arg0->position.x, arg8, arg1->translate.x * arg9)",
+      "count": 1,
+      "reason": "Preserve descriptor-to-runtime pose blend fmadds at GALE01 8000C8A8 through 8000C90C; the second weighted term is separately rounded. Completes both blend variants in the source unit."
+    },
+    {
+      "old": "(arg0->position.y * arg8) + (arg1->translate.y * arg9)",
+      "new": "PF_SlippiMulAddF32(arg0->position.y, arg8, arg1->translate.y * arg9)",
+      "count": 1,
+      "reason": "Preserve descriptor-to-runtime pose blend fmadds at GALE01 8000C8A8 through 8000C90C; the second weighted term is separately rounded. Completes both blend variants in the source unit."
+    },
+    {
+      "old": "(arg0->position.z * arg8) + (arg1->translate.z * arg9)",
+      "new": "PF_SlippiMulAddF32(arg0->position.z, arg8, arg1->translate.z * arg9)",
+      "count": 1,
+      "reason": "Preserve descriptor-to-runtime pose blend fmadds at GALE01 8000C8A8 through 8000C90C; the second weighted term is separately rounded. Completes both blend variants in the source unit."
+    },
+    {
+      "old": "(arg0->scale.x * arg8) + (arg1->scale.x * arg9)",
+      "new": "PF_SlippiMulAddF32(arg0->scale.x, arg8, arg1->scale.x * arg9)",
+      "count": 1,
+      "reason": "Preserve descriptor-to-runtime pose blend fmadds at GALE01 8000C8A8 through 8000C90C; the second weighted term is separately rounded. Completes both blend variants in the source unit."
+    },
+    {
+      "old": "(arg0->scale.y * arg8) + (arg1->scale.y * arg9)",
+      "new": "PF_SlippiMulAddF32(arg0->scale.y, arg8, arg1->scale.y * arg9)",
+      "count": 1,
+      "reason": "Preserve descriptor-to-runtime pose blend fmadds at GALE01 8000C8A8 through 8000C90C; the second weighted term is separately rounded. Completes both blend variants in the source unit."
+    },
+    {
+      "old": "(arg0->scale.z * arg8) + (arg1->scale.z * arg9)",
+      "new": "PF_SlippiMulAddF32(arg0->scale.z, arg8, arg1->scale.z * arg9)",
+      "count": 1,
+      "reason": "Preserve descriptor-to-runtime pose blend fmadds at GALE01 8000C8A8 through 8000C90C; the second weighted term is separately rounded. Completes both blend variants in the source unit."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

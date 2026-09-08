@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itcoin.c",
+  "source_sha256": "e03044b9fb422defe140eadc3b633cc6ef4f47ac8701a5d15251e0c7ea70de81",
+  "adapted_sha256": "b1b0e505c1ba9d9b7aaedcc03ed0f892c7df8a9e95adfd6c2f752118ac39b3e5",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "void inline itCoin_ResetRotation(Item_GObj* gobj)",
+      "new": "static inline void itCoin_ResetRotation(Item_GObj* gobj)",
+      "count": 1,
+      "reason": "The reset helper is defined and called only inside itcoin.c, has no external symbol in the GALE01 DOL, and exact assembly shows its three ordered zero-rotation writes inlined into both callers. Giving it internal inline linkage expresses that source ownership under host C semantics and prevents GCC from requiring externally visible definitions of the static JObj inline setters."
+    }
+  ]
+}

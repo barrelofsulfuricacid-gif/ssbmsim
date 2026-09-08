@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/quatlib.c",
+  "source_sha256": "4646bd1134c634c768d26f1096ab960fbbbdb213a9b9db5cc0682e3d48eda7ad",
+  "adapted_sha256": "950d15ad78fd4d94c07c34780a0acff8539f55d8d474c46b5c915ee9abede691",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    ss = sy * sz;\n    cc = cy * cz;\n    q->w = cx * cc + sx * ss;\n    q->x = sx * cc - cx * ss;\n    q->y = cz * (cx * sy) + sz * (sx * cy);\n    q->z = sz * (cx * cy) - cz * (sx * sy);",
+      "new": "    ss = sy * sz;\n    cc = cy * cz;\n    q->w = PF_SlippiMulAddF32(cx, cc, sx * ss);\n    q->x = PF_SlippiMulAddF32(sx, cc, -(cx * ss));\n    q->y = PF_SlippiMulAddF32(cz, cx * sy, sz * (sx * cy));\n    q->z = PF_SlippiMulAddF32(sz, cx * cy, -(cz * (sx * sy)));",
+      "count": 1,
+      "reason": "Match EulerToQuat at GALE01 0x8037EED0 through 0x8037EEF0: preserve the individually rounded subordinate products and the final PowerPC fmadds or fmsubs for each quaternion component. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "    cosom = p->x * q->x + p->y * q->y + p->z * q->z + p->w * q->w;",
+      "new": "    cosom = PF_SlippiMulAddF32(p->x, q->x, p->y * q->y);\n    cosom = PF_SlippiMulAddF32(p->z, q->z, cosom);\n    cosom = PF_SlippiMulAddF32(p->w, q->w, cosom);",
+      "count": 1,
+      "reason": "Match HSD_QuatLib_8037EF28 at GALE01 0x8037EF60 through 0x8037EF94: the DOL rounds the y product first, then accumulates x, z, and w with three ordered PowerPC fmadds operations. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        out->x = sp * p->x + sq * q->x;\n        out->y = sp * p->y + sq * q->y;\n        out->z = sp * p->z + sq * q->z;\n        out->w = sp * p->w + sq * q->w;",
+      "new": "        out->x = PF_SlippiMulAddF32(sp, p->x, sq * q->x);\n        out->y = PF_SlippiMulAddF32(sp, p->y, sq * q->y);\n        out->z = PF_SlippiMulAddF32(sp, p->z, sq * q->z);\n        out->w = PF_SlippiMulAddF32(sp, p->w, sq * q->w);",
+      "count": 1,
+      "reason": "Match the ordinary HSD_QuatLib_8037EF28 output branch at GALE01 0x8037EFF4 through 0x8037F040: each q-weighted term rounds independently and one ordered PowerPC fmadds accumulates the p-weighted term. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            out->x = sp * p->x + sq * q->x;\n            out->y = sp * p->y + sq * q->y;\n            out->z = sp * p->z + sq * q->z;\n            out->w = sp * p->w + sq * q->w;",
+      "new": "            out->x = PF_SlippiMulAddF32(sp, p->x, sq * q->x);\n            out->y = PF_SlippiMulAddF32(sp, p->y, sq * q->y);\n            out->z = PF_SlippiMulAddF32(sp, p->z, sq * q->z);\n            out->w = PF_SlippiMulAddF32(sp, p->w, sq * q->w);",
+      "count": 2,
+      "reason": "Match both orthogonal HSD_QuatLib_8037EF28 output branches at GALE01 0x8037F0A8 through 0x8037F17C: each q-weighted term rounds independently and one ordered PowerPC fmadds accumulates the p-weighted term. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"quatlib.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"quatlib.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    },
+    {
+      "old": "    x = q->w * p->x + p->w * q->x + (p->y * q->z - q->y * p->z);\n    y = q->w * p->y + p->w * q->y + (q->x * p->z - p->x * q->z);\n    z = q->w * p->z + p->w * q->z + (p->x * q->y - q->x * p->y);\n    w = p->w * q->w - (p->z * q->z + (p->x * q->x + p->y * q->y));",
+      "new": "    x = PF_SlippiMulAddF32(q->w, p->x, p->w * q->x) +\n        PF_SlippiMulAddF32(p->y, q->z, -(q->y * p->z));\n    y = PF_SlippiMulAddF32(q->w, p->y, p->w * q->y) +\n        PF_SlippiMulAddF32(q->x, p->z, -(p->x * q->z));\n    z = PF_SlippiMulAddF32(q->w, p->z, p->w * q->z) +\n        PF_SlippiMulAddF32(p->x, q->y, -(q->x * p->y));\n    w = PF_SlippiMulAddF32(p->w, q->w,\n        -PF_SlippiMulAddF32(p->z, q->z,\n            PF_SlippiMulAddF32(p->x, q->x, p->y * q->y)));",
+      "count": 1,
+      "reason": "Preserve all nine fused binary32 operations in shared quaternion multiplication, GALE01 8037EC94-8037ECC0. The x/y/z vector sums remain separately rounded, and all four results are computed before stores to preserve input/output aliasing. MatToQuat, matrix-to-Euler and axis-to-quaternion squared-length products remain unfused as shown by the retail code; previously adapted EulerToQuat and interpolation retain their audited operation order."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

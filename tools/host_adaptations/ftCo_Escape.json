@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Escape.c",
+  "source_sha256": "664f3a057fe21f775a382ba1afff6671185bde2e30418b66084499e1514c1c99",
+  "adapted_sha256": "eda2a97fed0640765de6d777c5903dbce86e445301de49de3a68cd1dedeb075f",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"ftCo_Escape.h\"",
+      "new": "#include \"ftCo_Escape.h\"\n#include <melee/mp/forward.h>\n#include \"native_pad_input.h\"",
+      "count": 1,
+      "reason": "Name the source collision platform flag and declare the exact native UCF 0.84 radial helper used by the pinned Shield Drop hook."
+    },
+    {
+      "old": "bool ftCo_80099794(Fighter_GObj* gobj)\n{\n    Fighter* fp = gobj->user_data;\n    if (fp->input.held_buttons[0] & HSD_PAD_LR && inlineB0(fp)) {\n        ftCo_80099894(gobj);\n        return true;\n    }\n    return false;\n}\n\nbool ftCo_8009980C(Fighter_GObj* gobj)\n{\n    Fighter* fp = gobj->user_data;\n    if (inlineB0(fp) || ftCo_800DF8E8(fp)) {\n        ftCo_80099894(gobj);\n        return true;\n    }\n    return false;\n}\n",
+      "new": "static bool ucf084_shield_drop_suppresses_escape_n(Fighter* fp)\n{\n    if (fp->input.cstick[0].y <= p_ftCommonData->x314 ||\n        fp->x670_timer_lstick_tilt_x < p_ftCommonData->x320 ||\n        fp->input.lstick[0].y <= -0.8F || fp->coll_data.floor.index == -1 ||\n        !(fp->coll_data.floor.flags & LINE_FLAG_PLATFORM))\n    {\n        return false;\n    }\n\n    return pf_ssbm_native_ucf084_shield_drop_radial_qualifies(\n        fp->input.lstick[0].x, fp->input.lstick[0].y);\n}\n\nbool ftCo_80099794(Fighter_GObj* gobj)\n{\n    Fighter* fp = gobj->user_data;\n    if (fp->input.held_buttons[0] & HSD_PAD_LR && inlineB0(fp) &&\n        !ucf084_shield_drop_suppresses_escape_n(fp))\n    {\n        ftCo_80099894(gobj);\n        return true;\n    }\n    return false;\n}\n\nbool ftCo_8009980C(Fighter_GObj* gobj)\n{\n    Fighter* fp = gobj->user_data;\n    bool lstick_escape = inlineB0(fp);\n\n    if (lstick_escape && ucf084_shield_drop_suppresses_escape_n(fp)) {\n        lstick_escape = false;\n    }\n    if (lstick_escape || ftCo_800DF8E8(fp)) {\n        ftCo_80099894(gobj);\n        return true;\n    }\n    return false;\n}\n",
+      "count": 1,
+      "reason": "Translate the pinned UCF 0.84 Shield Drop hook at GALE01 address 0x800998A4 across both source callers of its shared ftCo_80099894 injection site. This preserves c-stick spot dodge and ordinary roll priority, suppresses both L/R-held and ordinary fresh main-stick spot dodges on a pass-through floor in UCF's diagonal band, and delegates the patch's fused adjusted-radius calculation to its exact native helper."
+    }
+  ]
+}

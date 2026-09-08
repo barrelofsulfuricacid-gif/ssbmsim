@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gr/grdatfiles.c",
+  "source_sha256": "de8313b90dc8b1c014db535606c504b235e43344a5590959a036b889a5667fc7",
+  "adapted_sha256": "32a05482b29d2da3477ac88cea0a85ffdc4aa3f1a480f04d0ba4698a432ee5f0",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_stage_assets_api.h",
+      "sha256": "add2499a7538c562e349bffb36a9ef343cf0aab0b5057a1e0231294478d3cb5d"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"grdatfiles.h\"\n",
+      "new": "#include \"grdatfiles.h\"\n#include \"native_stage_assets_api.h\"\n",
+      "count": 1,
+      "reason": "Declare the native legal-stage asset binding that replaces runtime disc access and DAT relocation."
+    },
+    {
+      "old": "void grDatFiles_801C6038(void* arg0, s32 arg1, s32 arg2)\n{\n    UnkArchiveStruct* temp_r3 = grDatFiles_801C62B4();\n    if (arg0 != NULL) {\n        HSD_Archive* sp14;\n        s32 phi_r28;\n        void* r4 = arg0;\n        if (arg2 != 0) {\n            phi_r28 =\n                lbArchive_800171CC(&sp14, r4, &temp_r3->unk4, \"map_head\", 0);\n        } else {\n            sp14 =\n                lbArchive_80016DBC(r4, (void**) &temp_r3->unk4, \"map_head\", 0);\n            phi_r28 = 0;\n        }\n        temp_r3->unk8 = 0;\n        if (arg1 == 0) {\n            stage_info.coll_data =\n                HSD_ArchiveGetPublicAddress(sp14, \"coll_data\");\n            stage_info.param =\n                HSD_ArchiveGetPublicAddress(sp14, \"grGroundParam\");\n            stage_info.itemdata =\n                HSD_ArchiveGetPublicAddress(sp14, \"itemdata\");\n            stage_info.ald_yaku_all =\n                HSD_ArchiveGetPublicAddress(sp14, \"ALDYakuAll\");\n            stage_info.map_ptcl =\n                HSD_ArchiveGetPublicAddress(sp14, \"map_ptcl\");\n            stage_info.map_texg =\n                HSD_ArchiveGetPublicAddress(sp14, \"map_texg\");\n            stage_info.yakumono_param =\n                HSD_ArchiveGetPublicAddress(sp14, \"yakumono_param\");\n            stage_info.map_plit =\n                HSD_ArchiveGetPublicAddress(sp14, \"map_plit\");\n            stage_info.quake_model_set =\n                HSD_ArchiveGetPublicAddress(sp14, \"quake_model_set\");\n        }\n        temp_r3->unk0 = sp14;\n        if (stage_info.map_ptcl != NULL && stage_info.map_texg != NULL) {\n            if (phi_r28 != 0) {\n                psInitDataBankLoad(0x40, stage_info.map_ptcl,\n                                   stage_info.map_texg, 0, 0);\n            } else {\n                psInitDataBank(0x40, stage_info.map_ptcl, stage_info.map_texg,\n                               0, 0);\n            }\n        }\n        grDatFiles_801C6228(temp_r3->unk4);\n    } else {\n        temp_r3->unk4 = &grDatFiles_803E0924;\n        if (arg1 == 0) {\n            stage_info.coll_data = NULL;\n            stage_info.param = &grDatFiles_803E0848;\n            stage_info.itemdata = NULL;\n            stage_info.ald_yaku_all = NULL;\n            stage_info.map_ptcl = NULL;\n            stage_info.map_texg = NULL;\n            stage_info.yakumono_param = NULL;\n            stage_info.map_plit = NULL;\n            stage_info.x6C8 = NULL;\n        }\n        temp_r3->unk0 = (void*) -1;\n    }\n}\n\n",
+      "new": "void grDatFiles_801C6038(void* arg0, s32 arg1, s32 arg2)\n{\n    UnkArchiveStruct* temp_r3 = grDatFiles_801C62B4();\n    if (arg0 != NULL) {\n        PfSsbmNativeStageAssets assets;\n        (void) arg2;\n        HSD_ASSERT(44, pf_ssbm_native_stage_require(arg0, &assets));\n        temp_r3->unk0 = assets.archive_token;\n        temp_r3->unk4 = assets.map_head;\n        temp_r3->unk8 = 0;\n        if (arg1 == 0) {\n            stage_info.coll_data = assets.collision;\n            stage_info.param = assets.ground_param;\n            stage_info.itemdata = assets.item_data;\n            stage_info.ald_yaku_all = NULL;\n            stage_info.map_ptcl = assets.map_particles;\n            stage_info.map_texg = assets.map_textures;\n            stage_info.yakumono_param = assets.yakumono_param;\n            stage_info.map_plit = NULL;\n            stage_info.quake_model_set = assets.quake_model_set;\n        }\n        if (stage_info.map_ptcl != NULL && stage_info.map_texg != NULL) {\n            psInitDataBank(0x40, stage_info.map_ptcl, stage_info.map_texg, 0,\n                           0);\n        }\n        grDatFiles_801C6228(temp_r3->unk4);\n    } else {\n        temp_r3->unk4 = &grDatFiles_803E0924;\n        if (arg1 == 0) {\n            stage_info.coll_data = NULL;\n            stage_info.param = &grDatFiles_803E0848;\n            stage_info.itemdata = NULL;\n            stage_info.ald_yaku_all = NULL;\n            stage_info.map_ptcl = NULL;\n            stage_info.map_texg = NULL;\n            stage_info.yakumono_param = NULL;\n            stage_info.map_plit = NULL;\n            stage_info.x6C8 = NULL;\n        }\n        temp_r3->unk0 = (void*) -1;\n    }\n}\n",
+      "count": 1,
+      "reason": "Bind the original stage globals to startup-materialized pointer-free pack assets, retain gameplay stage articles such as Yoshi's Story Shy Guys, disable random-item script roots for item-off competitive matches, and preserve the original post-load particle and map-head initialization order."
+    }
+  ]
+}

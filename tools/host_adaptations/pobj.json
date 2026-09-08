@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/pobj.c",
+  "source_sha256": "cb5e3d1e38492e285798415e8a3368f62abd8486aad6011e73dab5f5b07d1a1c",
+  "adapted_sha256": "9ee49865e47f00f2ba58c6be17c8bfc8844579428634301ca8280fa7b3fe6276",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "                GXSetArray(desc->attr, desc->vertex, desc->stride);",
+      "new": "                GXSETARRAY(desc->attr, desc->vertex, 0U, desc->stride, false);",
+      "count": 2,
+      "reason": "The original GALE01 GXSetArray contract and HSD_VtxDescList contain only attribute, data pointer, and stride; no buffer extent exists at either setupArrayDesc call site. Aurora's native renderer adds extent and endian metadata through GXSETARRAY. The simulator is headless and never consumes these presentation registrations, so zero explicitly marks the unavailable renderer extent while preserving the original pointer, stride, call order, and big-endian source-data designation. This is not rendering support."
+    },
+    {
+      "old": "        HSD_JObjSetupMatrix(pobj->u.jobj);\n        PSMTXConcat(vmtx, pobj->u.jobj->mtx, m);",
+      "new": "        PSMTXConcat(vmtx, HSD_JObjGetMtxPtr(pobj->u.jobj), m);",
+      "count": 1,
+      "reason": "HSD_JObjGetMtxPtr performs the same HSD_JObjSetupMatrix call and returns the same inline matrix address used by the original two statements. Routing the access through doldecomp's source-owned inline accessor preserves setup and concatenation order while preventing GCC 11 from applying an incorrect union-member object-size bound to the matrix."
+    }
+  ]
+}

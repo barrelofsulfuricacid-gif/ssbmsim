@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/Runtime/__mem.c",
+  "source_sha256": "3b570989e0bc470f136072bbc953505f727abf006b5bb8ac49a0c1dcb03f46b3",
+  "adapted_sha256": "be066b5fb4fb57d32a126e04ec718e0563d7e0aba0188345a3f1cceb2144bc38",
+  "replacements": [
+    {
+      "old": "#include \"platform.h\"",
+      "new": "/* The native build force-includes its exact-width platform boundary. */",
+      "count": 1,
+      "reason": "Avoid redefining the native platform compatibility macros under -Werror. The forced native header supplies the same bool, size_t, SECTION_INIT, and fixed-width types used by this source; no implementation statement changes."
+    },
+    {
+      "old": "SECTION_INIT static void __fill_mem(void* dst, int val, unsigned long n);",
+      "new": "SECTION_INIT static void __fill_mem(void* dst, int val, size_t n);",
+      "count": 1,
+      "reason": "Use the native i686 spelling for the same unsigned 32-bit count ABI declared by the host string header; the implementation and call boundary are unchanged."
+    },
+    {
+      "old": "SECTION_INIT void* memset(void* dst, int val, unsigned long /*size_t*/ n)",
+      "new": "SECTION_INIT void* memset(void* dst, int val, size_t n)",
+      "count": 1,
+      "reason": "Match the native string.h declaration while preserving the original 32-bit count width and complete source-owned fill algorithm."
+    },
+    {
+      "old": "SECTION_INIT static void __fill_mem(void* dst, int val, unsigned long n)",
+      "new": "SECTION_INIT static void __fill_mem(void* dst, int val, size_t n)",
+      "count": 1,
+      "reason": "Keep the private helper declaration and definition consistent with the native i686 size_t spelling without changing its 32-bit arithmetic."
+    },
+    {
+      "old": "SECTION_INIT void* memcpy(void* dst, const void* src,\n                          unsigned long /* size_t */ n)",
+      "new": "SECTION_INIT void* memcpy(void* dst, const void* src, size_t n)",
+      "count": 1,
+      "reason": "Match the native string.h declaration while retaining Melee's complete direction-selecting copy loop, including its overlap-safe backward-copy behavior when source precedes destination."
+    }
+  ]
+}

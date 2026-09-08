@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/lb/lbspdisplay.c",
+  "source_sha256": "a1a8e824daafe719c5f782a4bd680cd0677533ebc04f15edb19ea0f03260d31d",
+  "adapted_sha256": "1cfe0fc309d3666fe1784163e5ef8037384ae4494bdb06c0a30dd6cdd118c575",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    } else {\n        GObj_SetupGXLinkMax(gobj, render_func, prio);\n    }\n}\n\nHSD_CObj* lb_80013B14",
+      "new": "    } else {\n        GObj_SetupGXLinkMax(gobj, render_func, prio);\n    }\n    return gobj;\n}\n\nHSD_CObj* lb_80013B14",
+      "count": 1,
+      "reason": "Return the HSD_GObj constructed and fully initialized by lb_800138EC. Its sole pinned source caller invokes it as a statement and discards the result; the repair defines the declared native pointer result without changing object creation, camera setup, allocation, user-data ownership, or render-link order."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "source_path": "src/MSL/trigf.c",
+  "source_sha256": "0385b3fb1236b559692b492a9ba76d0ef20197e929d0277c323fb683b66808b9",
+  "adapted_sha256": "2085276e9d0a64ca8f2972c2cf0e9a47f4f5399c3a8c14cd5b194d1c7ee4ec78",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"math.h\"\n",
+      "new": "#include \"native_numeric.h\"\n#include \"math.h\"\n\nextern float fabsf__Ff(float);\n",
+      "count": 1,
+      "reason": "The target MSL include layout declares fabsf__Ff in its math header, while the native host resolves the system math header first. Reintroducing the exact source-owned helper declaration changes no code or call ABI and leaves the Melee polynomial implementation intact."
+    },
+    {
+      "old": "f32 __four_over_pi_m1[] = { 0.0f, 0.0f, 0.0f, 0.0f };",
+      "new": "f32 __four_over_pi_m1[] = { 0.25f, 0.0232393741608f, 1.70555722434e-7f,\n                                1.86736494323e-11f };",
+      "count": 1,
+      "reason": "Materialize the exact post-__sinit_trigf_c coefficient state because the native headless startup does not execute the PowerPC SECTION_CTORS mechanism. The original initializer copies these same four constants from tmp_float before gameplay, so this removes only the target-runtime constructor dependency."
+    },
+    {
+      "old": "    y = x - n * 2 + __four_over_pi_m1[0] * x + __four_over_pi_m1[1] * x +\n        __four_over_pi_m1[2] * x + __four_over_pi_m1[3] * x;",
+      "new": "    y = x - n * 2;\n    y = PF_SlippiMulAddF32(__four_over_pi_m1[0], x, y);\n    y = PF_SlippiMulAddF32(__four_over_pi_m1[1], x, y);\n    y = PF_SlippiMulAddF32(__four_over_pi_m1[2], x, y);\n    y = PF_SlippiMulAddF32(__four_over_pi_m1[3], x, y);",
+      "count": 2,
+      "reason": "The GALE01 trigf range reduction is four ordered PowerPC fmadds instructions. Express each one as binary32 fmaf so the native host preserves the target's single-rounding sequence. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        return __sincos_on_quadrant[n] +\n               (__sincos_on_quadrant[n + 1] * y * __sincos_poly[9]);",
+      "new": "        f32 product = __sincos_on_quadrant[n + 1] * y;\n        return PF_SlippiMulAddF32(__sincos_poly[9], product,\n                    __sincos_on_quadrant[n]);",
+      "count": 1,
+      "reason": "Match the GALE01 small-angle sinf path's rounded multiply followed by one PowerPC fmadds. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        z = (((__sincos_poly[0] * ysq + __sincos_poly[2]) * ysq +\n              __sincos_poly[4]) *\n                 ysq +\n             __sincos_poly[6]) *\n                ysq +\n            __sincos_poly[8];",
+      "new": "        z = PF_SlippiMulAddF32(__sincos_poly[0], ysq, __sincos_poly[2]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[4]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[6]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[8]);",
+      "count": 2,
+      "reason": "Match both GALE01 even trig-polynomial paths' ordered binary32 PowerPC fmadds operations. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        z = ((((__sincos_poly[1] * ysq + __sincos_poly[3]) * ysq +\n               __sincos_poly[5]) *\n                  ysq +\n              __sincos_poly[7]) *\n                 ysq +\n             __sincos_poly[9]) *\n            y;",
+      "new": "        z = PF_SlippiMulAddF32(__sincos_poly[1], ysq, __sincos_poly[3]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[5]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[7]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[9]);\n        z *= y;",
+      "count": 1,
+      "reason": "Match the GALE01 sinf odd-polynomial path's ordered binary32 PowerPC fmadds operations before its separate final multiply. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        return __sincos_on_quadrant[n + 1] - y * __sincos_on_quadrant[n];",
+      "new": "        return PF_SlippiMulAddF32(-y, __sincos_on_quadrant[n],\n                    __sincos_on_quadrant[n + 1]);",
+      "count": 1,
+      "reason": "Match the GALE01 small-angle cosf path's PowerPC fnmsubs single-rounding result. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "        z = -((((__sincos_poly[1] * ysq + __sincos_poly[3]) * ysq +\n                __sincos_poly[5]) *\n                   ysq +\n               __sincos_poly[7]) *\n                  ysq +\n              __sincos_poly[9]) *\n            y;",
+      "new": "        z = PF_SlippiMulAddF32(__sincos_poly[1], ysq, __sincos_poly[3]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[5]);\n        z = PF_SlippiMulAddF32(ysq, z, __sincos_poly[7]);\n        z = -PF_SlippiMulAddF32(ysq, z, __sincos_poly[9]);\n        z *= y;",
+      "count": 1,
+      "reason": "Match the GALE01 cosf odd-polynomial path's ordered fmadds and final fnmadds before its separate multiply. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

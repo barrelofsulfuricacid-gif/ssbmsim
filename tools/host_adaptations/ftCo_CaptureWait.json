@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_CaptureWait.c",
+  "source_sha256": "b1197a55d57dc5cfc9a8eb33435c28ff22246994b140987c92dd82deeb63c326",
+  "adapted_sha256": "9d16d91817c328c1d1ea60dbd00ef8aafa53a6e3c2992db568d9afbe8d0802c7",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_slippi_wobble.h",
+      "sha256": "8b2b8a213f2cab3e8b795a95f1095e74534d0c1d5c425abbabbd4463f77c0a1e"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"ftCo_Attack100.h\"",
+      "new": "#include \"ftCo_Attack100.h\"\n#include \"native_slippi_wobble.h\"",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 PreventWobbling count initialization at 0x800DB880 and 0x800DBBD4, after the original capture-wait setup and before return."
+    },
+    {
+      "old": "    ftCommon_8007E2F4(fp, 0x1FF);\n}\n\nvoid fn_800DB8A4",
+      "new": "    ftCommon_8007E2F4(fp, 0x1FF);\n    pf_slippi_wobble_reset(fp);\n}\n\nvoid fn_800DB8A4",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 PreventWobbling count initialization at 0x800DB880 and 0x800DBBD4, after the original capture-wait setup and before return."
+    },
+    {
+      "old": "    ftCommon_8007E2F4(fp, 0x1FF);\n}\n\nstatic inline void fn_800DBBF8_noinline",
+      "new": "    ftCommon_8007E2F4(fp, 0x1FF);\n    pf_slippi_wobble_reset(fp);\n}\n\nstatic inline void fn_800DBBF8_noinline",
+      "count": 1,
+      "reason": "Port Slippi fcf47f10dc244152c2ebaa3a9dec142ea42243b7 PreventWobbling count initialization at 0x800DB880 and 0x800DBBD4, after the original capture-wait setup and before return."
+    }
+  ]
+}

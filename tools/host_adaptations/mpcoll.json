@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/mp/mpcoll.c",
+  "source_sha256": "4aa7941b46195ac4f39f447f000ad4a8361705d23f8c593945f8a21f57dced7a",
+  "adapted_sha256": "fa8496bc17b53cfaf5cf99395ea063f5c59d1323681a820b543e5d5fd53b90a4",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"mpcoll.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"mpcoll.h\"",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(orig_right_x * cos) - (midpoint_x * sin)",
+      "new": "PF_SlippiMulAddF32(orig_right_x, cos, -(midpoint_x * sin))",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(orig_right_x * sin) + (midpoint_x * cos)",
+      "new": "PF_SlippiMulAddF32(orig_right_x, sin, midpoint_x * cos)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(orig_left_x * cos) - (midpoint_x * sin)",
+      "new": "PF_SlippiMulAddF32(orig_left_x, cos, -(midpoint_x * sin))",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(orig_left_x * sin) + (midpoint_x * cos)",
+      "new": "PF_SlippiMulAddF32(orig_left_x, sin, midpoint_x * cos)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "dest->x += time * (src->x - dest->x);",
+      "new": "dest->x = PF_SlippiMulAddF32(time, src->x - dest->x, dest->x);",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "dest->y += time * (src->y - dest->y);",
+      "new": "dest->y = PF_SlippiMulAddF32(time, src->y - dest->y, dest->y);",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(coll->ceiling.normal.y * right_dx) + right_x",
+      "new": "PF_SlippiMulAddF32(coll->ceiling.normal.y, right_dx, right_x)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "-(coll->ceiling.normal.x * right_dx) + right_y",
+      "new": "-PF_SlippiMulAddF32(coll->ceiling.normal.x, right_dx, -right_y)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "-(coll->ceiling.normal.y * left_dx) + left_x",
+      "new": "-PF_SlippiMulAddF32(coll->ceiling.normal.y, left_dx, -left_x)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(coll->ceiling.normal.x * left_dx) + left_y",
+      "new": "PF_SlippiMulAddF32(coll->ceiling.normal.x, left_dx, left_y)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "-(coll->floor.normal.y * right_dx) + pos.x",
+      "new": "-PF_SlippiMulAddF32(coll->floor.normal.y, right_dx, -pos.x)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(coll->floor.normal.x * right_dx) + pos.y",
+      "new": "PF_SlippiMulAddF32(coll->floor.normal.x, right_dx, pos.y)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(coll->floor.normal.y * left_dx) + pos.x",
+      "new": "PF_SlippiMulAddF32(coll->floor.normal.y, left_dx, pos.x)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "-(coll->floor.normal.x * left_dx) + pos.y",
+      "new": "-PF_SlippiMulAddF32(coll->floor.normal.x, left_dx, -pos.y)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "-((2.0F * right_dx) - f1)",
+      "new": "-PF_SlippiMulAddF32(2.0F, right_dx, -f1)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "-((2.0F * (coll->ecb.right.y - coll->ecb.bottom.y)) - f2)",
+      "new": "-PF_SlippiMulAddF32(2.0F, coll->ecb.right.y - coll->ecb.bottom.y, -f2)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "2.0F * left_dx + f1",
+      "new": "PF_SlippiMulAddF32(2.0F, left_dx, f1)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "-(2.0F * (coll->ecb.left.y - coll->ecb.bottom.y)) + f2",
+      "new": "-PF_SlippiMulAddF32(2.0F, coll->ecb.left.y - coll->ecb.bottom.y, -f2)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "f27 * (pos.y - bot) + coll->ecb.bottom.x",
+      "new": "PF_SlippiMulAddF32(f27, pos.y - bot, coll->ecb.bottom.x)",
+      "count": 2,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "f26 * (pos.y - top) + coll->ecb.top.x",
+      "new": "PF_SlippiMulAddF32(f26, pos.y - top, coll->ecb.top.x)",
+      "count": 2,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "f27 * (pos.y - f28) + coll->ecb.bottom.x",
+      "new": "PF_SlippiMulAddF32(f27, pos.y - f28, coll->ecb.bottom.x)",
+      "count": 2,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "f26 * (pos.y - f30) + coll->ecb.top.x",
+      "new": "PF_SlippiMulAddF32(f26, pos.y - f30, coll->ecb.top.x)",
+      "count": 2,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "bot_y_to_x * (pos.y - bot) + coll->ecb.bottom.x",
+      "new": "PF_SlippiMulAddF32(bot_y_to_x, pos.y - bot, coll->ecb.bottom.x)",
+      "count": 4,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "top_y_to_x * (pos.y - top) + coll->ecb.top.x",
+      "new": "PF_SlippiMulAddF32(top_y_to_x, pos.y - top, coll->ecb.top.x)",
+      "count": 4,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(pos.y - top.y) / nrm.x * -nrm.y + top.x",
+      "new": "PF_SlippiMulAddF32((pos.y - top.y) / nrm.x, -nrm.y, top.x)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "(pos.y - vec.y) / -nrm.x * nrm.y + vec.x",
+      "new": "PF_SlippiMulAddF32((pos.y - vec.y) / -nrm.x, nrm.y, vec.x)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    },
+    {
+      "old": "0.5F * (coll->prev_ecb.top.y + coll->prev_ecb.bottom.y) +\n                    coll->prev_pos.y",
+      "new": "PF_SlippiMulAddF32(0.5F, coll->prev_ecb.top.y + coll->prev_ecb.bottom.y,\n                    coll->prev_pos.y)",
+      "count": 1,
+      "reason": "Preserve original fused collision arithmetic"
+    }
+  ]
+}

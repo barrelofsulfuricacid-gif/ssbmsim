@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftYoshi/ftyoshispecials.c",
+  "source_sha256": "437036abba301b624fac1afbe3c3ed1481ea7339598ffa95ef6e904b6b56a220",
+  "adapted_sha256": "b0b00473b7d41f9723b6f52d5bc348397eba57b6f0ff34884afcfb98cbe6bd74",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "instructions": "GALE01 fmadds immediately before gr_vel stores: 0x80131258, 0x8013131c",
+    "class": "multiplied ground-velocity accumulation; opcode evidence retained in ground-momentum-audit.json"
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftyoshispecials.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftyoshispecials.h\"",
+      "count": 1,
+      "reason": "Declare shared Slippi single-precision accumulation helper."
+    },
+    {
+      "old": "    fp->gr_vel += delta * mpLib_800569EC(fp->coll_data.floor.flags);",
+      "new": "    fp->gr_vel = PF_SlippiMulAddF32(\n        delta, mpLib_800569EC(fp->coll_data.floor.flags), fp->gr_vel);",
+      "count": 1,
+      "reason": "Preserve the separately rounded acceleration input and the original fused ground-velocity accumulation; retain source branches, clamps, callbacks and surface lookup order."
+    },
+    {
+      "old": "    fp->gr_vel +=\n        fp->mv.ys.specials.x20 * mpLib_800569EC(fp->coll_data.floor.flags);",
+      "new": "    const float friction = mpLib_800569EC(fp->coll_data.floor.flags);\n    fp->gr_vel = PF_SlippiMulAddF32(\n        fp->mv.ys.specials.x20, friction, fp->gr_vel);",
+      "count": 1,
+      "reason": "Preserve the separately rounded acceleration input and the original fused ground-velocity accumulation; retain source branches, clamps, callbacks and surface lookup order."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

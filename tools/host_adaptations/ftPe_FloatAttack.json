@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftPeach/ftpeachfloatattack.c",
+  "source_sha256": "390b43da7da62943d18d24a4cb9a4db0f6375178e700542d906a459ca0140f2c",
+  "adapted_sha256": "ed9f8d4e0b683f2e382fb84e6b0b558c6abf27ac4e644b1257a12071d1d0e058",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "ftCo_80095328(gobj, false)",
+      "new": "ftCo_80095328(gobj, NULL)",
+      "count": 1,
+      "reason": "ftCo_80095328 accepts an optional bool output pointer. Exact GALE01 assembly loads r4 with zero at this Peach float-aerial interrupt call, so NULL is the defined host-C expression of the same null pointer; false is a scalar bool and is not pointer-compatible in C."
+    }
+  ]
+}

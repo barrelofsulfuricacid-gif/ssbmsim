@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/if/ifnametag.c",
+  "source_sha256": "5b1975b769609ed6bf43cd324056faaf84cd25a0bd7c41d8936974e6e383a225",
+  "adapted_sha256": "be375a9cf9778e7819766e88f381e3d9860f5bfcfc94195e5f1fa2000bd4c88b",
+  "replacements": [
+    {
+      "old": "/* 4D6D7C */ static int un_804D6D7C;\n",
+      "new": "/* 4D6D7C */ static int un_804D6D7C;\n\nstatic HSD_Text native_headless_nametag_text;\nstatic u8 native_headless_nametag_slots[Gm_Player_NumMax];\n",
+      "count": 1,
+      "reason": "Provide fixed presentation state and one stable user-data byte per player. The headless nametag GObjs need neither text nor per-match heap allocation."
+    },
+    {
+      "old": "void fn_802FCAC4(HSD_GObj* gobj, int pass)\n{\n",
+      "new": "void fn_802FCAC4(HSD_GObj* gobj, int pass)\n{\n    (void) gobj;\n    (void) pass;\n    return;\n",
+      "count": 1,
+      "reason": "Bound the nametag camera/GX pass. It only moves hidden text offscreen or renders presentation objects."
+    },
+    {
+      "old": "void un_802FCBA0(void)\n{\n",
+      "new": "void un_802FCBA0(void)\n{\n    return;\n",
+      "count": 1,
+      "reason": "Do not load the nametag model section from the interface archive; its joints and animations feed only the bounded UI renderer."
+    },
+    {
+      "old": "void fn_802FCC44(HSD_GObj* gobj)\n{\n",
+      "new": "void fn_802FCC44(HSD_GObj* gobj)\n{\n    (void) gobj;\n    return;\n",
+      "count": 1,
+      "reason": "Retain one process at the original priority for every nametag GObj, but omit player-to-screen projection and JObj/text mutation whose results have no gameplay consumer."
+    },
+    {
+      "old": "void NameTag_Create(int slot)\n{\n",
+      "new": "void NameTag_Create(int slot)\n{\n    HSD_GObj* native_gobj = GObj_Create(HSD_GOBJ_CLASS_UI, 15, 0);\n\n    un_804A1EE0[slot] = native_gobj;\n    native_headless_nametag_slots[slot] = (u8) slot;\n    GObj_InitUserData(native_gobj, 0, NULL,\n                      &native_headless_nametag_slots[slot]);\n    HSD_GObj_SetupProc(native_gobj, fn_802FCC44, 17);\n    return;\n",
+      "count": 1,
+      "reason": "Preserve all six nametag GObjs, their creation order, class, PLink, process priority, and stable slot user data while omitting model, animation, GX, and text construction."
+    },
+    {
+      "old": "void un_802FD28C(int slot)\n{\n",
+      "new": "void un_802FD28C(int slot)\n{\n    (void) slot;\n    return;\n",
+      "count": 1,
+      "reason": "This externally callable refresh only changes nametag model animation and text after team/name changes; both outputs are bounded presentation."
+    },
+    {
+      "old": "void un_802FD4C8(void)\n{\n",
+      "new": "void un_802FD4C8(void)\n{\n    HSD_GObj* native_camera_gobj;\n    int native_i;\n\n    for (native_i = 0; native_i < Gm_Player_NumMax; native_i++) {\n        un_804A1EE0[native_i] = NULL;\n    }\n    un_804D6D68 = NULL;\n    un_804D6D6C = 0;\n    memzero(un_804D6D70, sizeof(un_804D6D70));\n    memzero(&native_headless_nametag_text,\n            sizeof(native_headless_nametag_text));\n    un_804D6D68 = native_camera_gobj = un_802FD4C8_inline(15);\n    (void) native_camera_gobj;\n    un_804D6D7C = 0;\n    un_804D6D78 = &native_headless_nametag_text;\n    for (native_i = 0; native_i < Gm_Player_NumMax; native_i++) {\n        NameTag_Create(native_i);\n    }\n    return;\n",
+      "count": 1,
+      "reason": "Preserve the master GObj followed by six per-player GObjs and processes, but omit camera, GX, interface-model archive, SisLib font archive, and dynamic text setup."
+    }
+  ]
+}

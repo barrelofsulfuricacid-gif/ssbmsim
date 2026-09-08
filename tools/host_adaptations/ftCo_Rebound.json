@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Rebound.c",
+  "source_sha256": "040104daf2aa67ff7bb8a8207df217cc2e91eeafe97223aef5a9d9adb013003c",
+  "adapted_sha256": "d8520c935788ed3d6b50d0ab3ecf7f8b776f6eee8bcde9892af7425a3fc69b8e",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"ftCo_Rebound.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftCo_Rebound.h\"\n#include <math.h>",
+      "count": 1,
+      "reason": "Declare the host fma operation used to preserve GALE01 fused multiply-add rebound slide codegen."
+    },
+    {
+      "old": "        fp->mv.co.rebound.x0 =\n            -fp->dmg.facing_dir *\n            (fp_x191C * p_ftCommonData->x3D8 + p_ftCommonData->x3DC);",
+      "new": "        fp->mv.co.rebound.x0 =\n            -fp->dmg.facing_dir *\n            PF_SlippiMulAddF32(fp_x191C, p_ftCommonData->x3D8, p_ftCommonData->x3DC);",
+      "count": 1,
+      "reason": "Match the PowerPC single-precision fused multiply-add codegen for the clang rebound slide velocity in ftCo_80099D9C: fp_x191C*x3D8+x3DC is one ordered a*b+c expression, which the target contracts to a single fmadds while the native import globally disables contraction. Same fmadds class as the fobj linear-channel, spline, mplib vertex-write, fighter shield-damage, ftcoll clang-magnitude, and itanimlist adaptations; applied together with the fused clang rebound magnitude that the frame-745 oracle proof requires. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

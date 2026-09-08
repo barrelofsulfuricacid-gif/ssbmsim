@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/iteffect.c",
+  "source_sha256": "baee7e29543e8c582fcacbfdf4c2d954341945ea5f283bc1eb28192532fcc615",
+  "adapted_sha256": "26d981216aa7738b880f5c5e10acf7e46e1222545efbaf402e4fb47e46439539",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_item_common_api.h",
+      "sha256": "0c89c8fff64263e30872aa2f30e980b472bfeb7410d36a84312376bf981e8059"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"it_3F14.h\"\n",
+      "new": "#include \"it_3F14.h\"\n#include \"native_item_common_api.h\"\n",
+      "count": 1,
+      "reason": "Declare the startup-only native ItCo graph binding used in place of runtime DAT parsing."
+    },
+    {
+      "old": "    if (lbLang_IsSettingUS()) {\n        lbArchive_80017040(NULL, it_803F1EE4, &it_804D6D20, it_803F1EF0, 0);\n    } else {\n        lbArchive_80017040(NULL, it_803F1ED8, &it_804D6D20, it_803F1EF0, 0);\n    }",
+      "new": "    it_804D6D20 = pf_ssbm_native_item_common_require();",
+      "count": 1,
+      "reason": "Bind the complete endian-normalized pointer-free ItCo.dat relocation graph once at startup while preserving the original assignments of all six gameplay globals."
+    }
+  ]
+}

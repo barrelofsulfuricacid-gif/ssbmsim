@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/grstory.c",
+  "source_sha256": "822ab2a35f9110d351690c12976eda4ebef4647e3a4e6f310e2f8850cb3249d6",
+  "adapted_sha256": "901134c544d062a84f77d309b21d7a9ab381cdd780c6c50300ac72a2adc7bb10",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "/* 1E302C */ static void grStory_801E302C(bool);",
+      "new": "/* 1E302C */ static void grStory_801E302C(int);",
+      "count": 1,
+      "reason": "Match the translation-unit-local function declaration to StageData.on_demo_init's int callback contract. The callback ignores its argument and has no direct callers, so this removes native function-pointer incompatibility without changing source behavior or call order."
+    },
+    {
+      "old": "static void grStory_801E302C(bool _) {}",
+      "new": "static void grStory_801E302C(int _) {}",
+      "count": 1,
+      "reason": "Define the Yoshi's Story demo callback with the same int parameter contract used by its sole StageData table slot; the empty body remains unchanged."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gm/gm_1A45.c",
+  "source_sha256": "84d35a434a6eb111acc67ad2b6e5ab819dae634667489e92a43a4b84dc22c0ea",
+  "adapted_sha256": "17d293d1b8d2fd2448e76bd458c25772556faa7bef149ca6fdf2cafde251876a",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [],
+  "replacements": [
+    {
+      "old": "u32 gm_801A4BB8(void)\n{\n    return gm_80479D58.unk_8;\n}",
+      "new": "u32 gm_801A4BB8(void)\n{\n    return gm_80479D58.unk_8;\n}\n\nvoid pf_gm_active_outer_loop_post_frame(void)\n{\n    if (gm_80479D58.unk_0 != (u32) -2) {\n        gm_80479D58.unk_0++;\n    }\n    if (gm_80479D58.unk_8 != (u32) -2) {\n        gm_80479D58.unk_8++;\n    }\n}",
+      "count": 1,
+      "reason": "Runtime::step owns the headless one-sample active-match outer loop. The original gm_801A4D34 increments unk_0 after HSD_GObj_80390CFC and increments unk_8 on the same active, unpaused path. Exporting those exact source-owned writes preserves frame-keyed match caches and active-frame timing without importing the OS input queue, renderer, audio, or device loop."
+    }
+  ]
+}

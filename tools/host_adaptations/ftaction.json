@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/ftaction.c",
+  "source_sha256": "f866206af4b9b1cd956e3206c5c95f0a5780947a4cfc71ed15ceef3ef98e79ba",
+  "adapted_sha256": "b8d44609ddd5451c54ea4cdd4bb0473418d44d436213daa003ed03df023ecf83",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    ftAction_80072E24, ftAction_80072FE0, ftAction_8007309C, ftAction_80073108,\n    ftAction_8007320C,\n};\n\nstatic u8 ftAction_803C0870",
+      "new": "    ftAction_80072E24, ftAction_80072FE0, ftAction_8007309C, ftAction_80073108,\n    ftAction_8007320C,\n};\n\nstatic FtCmd ftAction_GetNormalCommand(u32 event_index)\n{\n    switch (event_index) {\n    case 49:\n        return ftAction_800711DC;\n    case 50:\n        return ftAction_800715EC;\n    case 51:\n        return ftAction_8007168C;\n    case 52:\n        return ftAction_800716F8;\n    case 53:\n        return ftAction_80071774;\n    default:\n        return ftAction_803C06E8[event_index];\n    }\n}\n\nstatic u8 ftAction_803C0870",
+      "count": 1,
+      "reason": "Make GALE01's intentional command-table adjacency explicit: indexes 49 through 53 at 0x803C07AC through 0x803C07BC are the first five entries of the immediately adjacent skip-handler table. Native section slicing cannot rely on that DOL linker layout."
+    },
+    {
+      "old": "                ftAction_803C06E8[eventCode](fighter_gobj, ftCommand);",
+      "new": "                ftAction_GetNormalCommand(eventCode)(fighter_gobj, ftCommand);",
+      "count": 1,
+      "reason": "Route normal fighter script opcodes through the explicit GALE01 adjacency mapping instead of reading beyond a host C array."
+    },
+    {
+      "old": "        gfx_id = ((u16*) cmd->u)[1];",
+      "new": "        gfx_id = ((u16) cmd->u->unk_fx_0.x2_b0_7 << 8) |\n                 cmd->u->unk_fx_0.x3_b0_7;",
+      "count": 1,
+      "reason": "Recover the PowerPC big-endian halfword value from the command's two named bytes. A native little-endian u16 pointer cast reverses GFX 0x0407 into 0x0704 even though the immutable command bytes retain source order."
+    },
+    {
+      "old": "        cmd_words[1] = sp64;",
+      "new": "        _cmd.u[1].sound_effect_1.sfx_id = (u32) sp64;",
+      "count": 2,
+      "reason": "Both runtime-created footstep sound commands are consumed through the big-endian CmdUnion layout. Preserve byte copies of the first and last words, but encode the computed numeric operand through its typed field. A host u32 store reverses IDs such as 359 and skips the original pitch-randomization RNG draw, affecting later stage and fighter state."
+    }
+  ]
+}

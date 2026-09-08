@@ -1,0 +1,165 @@
+diff --git a/Source/Core/Core/HW/EXI_DeviceSlippi.cpp b/Source/Core/Core/HW/EXI_DeviceSlippi.cpp
+index 71eb6cfe4..b95f03334 100644
+--- a/Source/Core/Core/HW/EXI_DeviceSlippi.cpp
++++ b/Source/Core/Core/HW/EXI_DeviceSlippi.cpp
+@@ -10,7 +10,11 @@
+ #include <SlippiLib/SlippiGame.h>
+ 
+ #include <semver/include/semver200.h>
++#include <array>
++#include <cstdio>
++#include <memory>
+ #include <utility> // std::move
++#include <unistd.h>
+ 
+ #include "Common/CommonPaths.h"
+ #include "Common/CommonTypes.h"
+@@ -55,6 +59,61 @@
+ static std::unordered_map<u8, std::string> slippi_names;
+ static std::unordered_map<u8, std::string> slippi_connect_codes;
+ 
++static std::array<std::unique_ptr<SlippiSavestate>, 16>
++    s_oracle_checkpoints;
++static unsigned int s_oracle_checkpoint_generation = 0;
++
++static void WriteOracleCheckpointStatus(
++    const char* action, unsigned int slot = 0)
++{
++	const std::string path =
++	    "/tmp/pf-exiai-checkpoint-" + std::to_string(getpid()) + ".status";
++	const std::string temporary_path = path + ".tmp";
++	if (FILE* status = fopen(temporary_path.c_str(), "w"))
++	{
++		fprintf(status, "%s %u %u\n", action, slot,
++		        ++s_oracle_checkpoint_generation);
++		fclose(status);
++		rename(temporary_path.c_str(), path.c_str());
++	}
++}
++
++static void DispatchOracleCheckpointRequest()
++{
++	const std::string path =
++	    "/tmp/pf-exiai-checkpoint-" + std::to_string(getpid()) + ".request";
++	char action[16] = {};
++	unsigned int slot = 0;
++	FILE* request = fopen(path.c_str(), "r");
++	if (request == nullptr)
++		return;
++	const int fields = fscanf(request, "%15s %u", action, &slot);
++	fclose(request);
++	unlink(path.c_str());
++	if (fields < 1 || slot >= s_oracle_checkpoints.size())
++		return;
++	if (strcmp(action, "save") == 0)
++	{
++		s_oracle_checkpoints[slot] = std::make_unique<SlippiSavestate>();
++		s_oracle_checkpoints[slot]->Capture();
++		WriteOracleCheckpointStatus("saved", slot);
++	}
++	else if (strcmp(action, "load") == 0 && s_oracle_checkpoints[slot])
++	{
++		s_oracle_checkpoints[slot]->Load({
++		    {0x804BF9D2, 4},
++		    {0x804C3DE4, 20},
++		    {0x804C4560, 44},
++		    {0x804D7760, 36},
++		});
++		WriteOracleCheckpointStatus("loaded", slot);
++	}
++	else if (strcmp(action, "load") == 0)
++	{
++		WriteOracleCheckpointStatus("empty", slot);
++	}
++}
++
+ extern std::unique_ptr<SlippiPlaybackStatus> g_playbackStatus;
+ extern std::unique_ptr<SlippiReplayComm> g_replayComm;
+ 
+@@ -149,6 +208,7 @@ void OSDMessageHandler(const char *message, u32 color, u32 duration_ms)
+ CEXISlippi::CEXISlippi()
+ {
+ 	INFO_LOG(SLIPPI, "EXI SLIPPI Constructor called.");
++	WriteOracleCheckpointStatus("ready");
+ 
+ 	// @TODO: For mainline port, ISO file path can't be fetched this way. Look at the following:
+ 	// https://github.com/dolphin-emu/dolphin/blob/7f450f1d7e7d37bd2300f3a2134cb443d07251f9/Source/Core/Core/Movie.cpp#L246-L249
+@@ -3252,6 +3312,7 @@ void CEXISlippi::prepareOverwriteInputs()
+ 	m_read_queue.clear();
+ 	// If blocking pipe input is configured, this will block until pipe input is sent for this frame
+ 	g_controller_interface.UpdateInput();
++	DispatchOracleCheckpointRequest();
+ 	std::map<int, SlippiPad> pads =	g_controller_interface.GetSlippiPads();
+ 
+ 	// Insert the pads
+diff --git a/Source/Core/DolphinNoGUI/MainNoGUI.cpp b/Source/Core/DolphinNoGUI/MainNoGUI.cpp
+index b8a68d2e3..cb35ca13e 100644
+--- a/Source/Core/DolphinNoGUI/MainNoGUI.cpp
++++ b/Source/Core/DolphinNoGUI/MainNoGUI.cpp
+@@ -75,7 +75,7 @@ public:
+ 				s_running.Clear();
+ 			}
+ 			Core::HostDispatchJobs();
+-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
++			std::this_thread::sleep_for(std::chrono::milliseconds(5));
+ 		}
+ 	}
+ 	virtual void Shutdown() {}
+diff --git a/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.cpp b/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.cpp
+index 61d143227..ac6c81ad5 100644
+--- a/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.cpp
++++ b/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.cpp
+@@ -165,8 +165,11 @@ void PipeDevice::UpdateInput()
+ {
+   bool finished = false;
+   bool wait_for_inputs = SConfig::GetInstance().m_blockingPipes && g_needInputForFrame;
++  if (m_batch_input_queue && !wait_for_inputs)
++    return;
+   #ifndef _WIN32
+-  if(wait_for_inputs)
++  if(wait_for_inputs &&
++     (!m_batch_input_queue || m_buf.find("FLUSH\n") == std::string::npos))
+   {
+     fd_set set;
+     FD_ZERO (&set);
+@@ -198,6 +201,8 @@ void PipeDevice::UpdateInput()
+       finished = ParseCommand(command);
+ 
+       m_buf.erase(0, newline + 1);
++      if (finished && m_batch_input_queue)
++        return;
+       newline = m_buf.find("\n");
+     }
+   } while(!finished && wait_for_inputs);
+@@ -263,6 +268,11 @@ void PipeDevice::SetAxis(const std::string& entry, double value)
+ 
+ bool PipeDevice::ParseCommand(const std::string& command)
+ {
++  if(command == "BATCH ON")
++  {
++    m_batch_input_queue = true;
++    return false;
++  }
+   if(command == "FLUSH")
+   {
+     // Let ControllerInterface.cpp clear the flag after all PipeDevices
+diff --git a/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.h b/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.h
+index 8e1d46608..7c54dd39f 100644
+--- a/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.h
++++ b/Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.h
+@@ -38,6 +38,7 @@ namespace Pipes
+ // SET {MAIN, C} [0, 1] [0, 1]
+ // FLUSH -> In blocking input mode, this tells dolphin to progress to the next frame
+ //    (does nothing in non-blocking mode)
++// BATCH ON -> Preserve one queued FLUSH-delimited sample per emulated frame.
+ void PopulateDevices();
+ 
+ class PipeDevice : public Core::Device
+@@ -72,6 +73,7 @@ private:
+   const PIPE_FD m_fd;
+   const std::string m_name;
+   std::string m_buf;
++  bool m_batch_input_queue = false;
+   std::map<std::string, PipeInput*> m_buttons;
+   std::map<std::string, PipeInput*> m_axes;
+   SlippiPad m_current_pad;

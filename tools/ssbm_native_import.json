@@ -1,0 +1,1842 @@
+{
+  "schema": 1,
+  "target": "GALE01 NTSC 1.02 + UCF 0.84",
+  "decomp_revision": "ae5898ee0dfda41b34fdf846f7d680a33e14779d",
+  "dependencies": {
+    "aurora": {
+      "repository": "https://github.com/encounter/aurora.git",
+      "branch": "main",
+      "revision": "f8573d34e632aea81039526a728b34f373d247ef",
+      "gx_compat_header_sha256": "6c5e46144b855c3d24500c781f9869d78f813a116837a6f1d0351568abfaf5c8",
+      "gx_enum_header_sha256": "3d8486fdba538f82682339555452f4312da6cc7b657f49c4764f31a6b0ebb9c5",
+      "gx_pixel_header_sha256": "1198e53c01bfc6ca264e3ae1b12e3a3f39532d496258d51dcf44d8f1ad462f4c",
+      "gx_tev_header_sha256": "c33b412cb174075c6e44299a04046aaeb9eb3cf8f8e1871d02e5a7942a84a794",
+      "pad_header_sha256": "8f8c350aa8a55b59fa4d6d03abbf14c8132538dae4c71db74f03590b89a5b6d6",
+      "types_header_sha256": "4b0cc6090b15ba1ae0cce77d9fd0e5d749435d4bd86f5d5b2cb7dd732c672ded",
+      "patch": "dependencies/aurora-strict-c.patch",
+      "patch_sha256": "0188e02c850e48aee383845ce4f3a863db296d62693409f2082f9b7c7cd72594"
+    }
+  },
+  "source_compile_options": [
+    {
+      "path": "src/melee/it/it_26B1.c",
+      "source_sha256": "2ce51e2d8d40c31213605fe2735395632ceff5680a382de3c1abad8a171c62a3",
+      "options": [
+        "-Wno-undef"
+      ],
+      "evidence": {
+        "kind": "nonmatching-preprocessor-contract",
+        "reason": "This is doldecomp's sole ordinary #if MUST_MATCH site. The nonmatching build intentionally leaves MUST_MATCH undefined so this expression becomes zero while 727 #ifdef MUST_MATCH sites remain disabled."
+      },
+      "claim_boundary": "source-scoped-host-diagnostic-not-behavioral-coverage"
+    },
+    {
+      "path": "src/melee/gm/gmmain_lib.c",
+      "source_sha256": "9295eef6fb0383d27cf60edf56d562144025a6a35419ccc85f7c00577769ab40",
+      "options": [
+        "-Wno-stringop-overflow"
+      ],
+      "evidence": {
+        "kind": "gcc-11-object-size-diagnostic",
+        "reason": "GCC 11 diagnoses an object-size overflow in unselected inventory code; closure selection and exact section auditing remain fail-closed."
+      },
+      "claim_boundary": "source-scoped-host-diagnostic-not-behavioral-coverage"
+    },
+    {
+      "path": "src/melee/mp/mpcoll.c",
+      "source_sha256": "4aa7941b46195ac4f39f447f000ad4a8361705d23f8c593945f8a21f57dced7a",
+      "options": [
+        "-Wno-uninitialized"
+      ],
+      "evidence": {
+        "kind": "gcc-11-dataflow-diagnostic",
+        "reason": "GCC 11 loses the x130 Locked-bit invariant across ECB loader calls and does not recognize the external CollDataInit zero-initialization contract."
+      },
+      "claim_boundary": "source-scoped-host-diagnostic-not-behavioral-coverage"
+    },
+    {
+      "path": "src/melee/ft/ftdata.c",
+      "source_sha256": "aa55d8157453d4cd26d503780e2edf0f0bcb2b81badcdac77391dc5e24721579",
+      "options": [
+        "-Wno-type-limits"
+      ],
+      "evidence": {
+        "kind": "gale01-dol-disassembly",
+        "dol_sha1": "08e0bf20134dfcb260699671004527b2d6bb1a45",
+        "function": "ftData_800855C8",
+        "instructions": [
+          {
+            "address": "0x800856D0",
+            "bytes": "8863183C",
+            "operation": "lbz r3, 0x183c(r3)"
+          },
+          {
+            "address": "0x800856D4",
+            "bytes": "2C03FFFF",
+            "operation": "cmpwi r3, -1"
+          },
+          {
+            "address": "0x800856D8",
+            "bytes": "41820008",
+            "operation": "beq 0x800856E0"
+          }
+        ],
+        "reason": "The original DOL zero-extends the table byte, compares the resulting 0..255 word with -1, and retains the source branch. The equality is unreachable, so GCC's type-limits warning describes original behavior rather than a host semantic mismatch."
+      },
+      "claim_boundary": "source-scoped-host-diagnostic-not-behavioral-coverage"
+    },
+    {
+      "path": "src/melee/ft/kinds/ftKirby/ftkirby.c",
+      "source_sha256": "a9b5929d123e0e9575b2d581cc4d0e6b77e7aa42a48edd002572055bc8c47f45",
+      "options": [
+        "-Wno-type-limits"
+      ],
+      "evidence": {
+        "kind": "gale01-dol-disassembly",
+        "dol_sha1": "08e0bf20134dfcb260699671004527b2d6bb1a45",
+        "function": "ftKb_SpecialN_800EEC34",
+        "instructions": [
+          {
+            "address": "0x800EED2C",
+            "bytes": "88630000",
+            "operation": "lbz r3, 0(r3)"
+          },
+          {
+            "address": "0x800EED30",
+            "bytes": "2C03FFFF",
+            "operation": "cmpwi r3, -1"
+          },
+          {
+            "address": "0x800EED34",
+            "bytes": "41820008",
+            "operation": "beq 0x800EED3C"
+          }
+        ],
+        "reason": "The original DOL zero-extends the Kirby effect-table byte and compares the resulting 0..255 word with -1 before the effect load. The equality is unreachable, so GCC's type-limits warning describes original behavior rather than a host semantic mismatch."
+      },
+      "claim_boundary": "source-scoped-host-diagnostic-not-behavioral-coverage"
+    },
+    {
+      "path": "src/melee/ft/kinds/ftPopo/ftpopospecials.c",
+      "source_sha256": "cd69834c541d38f393ef63725815436576704cf911c501eb3a8379ab2d067fc1",
+      "options": [
+        "-Wno-tautological-compare"
+      ],
+      "evidence": {
+        "kind": "gale01-dol-disassembly",
+        "dol_sha1": "08e0bf20134dfcb260699671004527b2d6bb1a45",
+        "functions": [
+          {
+            "name": "ftPp_SpecialAirS1_Coll",
+            "instructions": [
+              {
+                "address": "0x80120A80",
+                "bytes": "801F0824",
+                "operation": "lwz r0, 0x824(r31)"
+              },
+              {
+                "address": "0x80120A84",
+                "bytes": "54000464",
+                "operation": "rlwinm r0, r0, 0, 17, 18"
+              },
+              {
+                "address": "0x80120A88",
+                "bytes": "2C000001",
+                "operation": "cmpwi r0, 1"
+              }
+            ]
+          },
+          {
+            "name": "ftPp_SpecialAirS2_Coll",
+            "instructions": [
+              {
+                "address": "0x80120C90",
+                "bytes": "801F0824",
+                "operation": "lwz r0, 0x824(r31)"
+              },
+              {
+                "address": "0x80120C94",
+                "bytes": "54000464",
+                "operation": "rlwinm r0, r0, 0, 17, 18"
+              },
+              {
+                "address": "0x80120C98",
+                "bytes": "2C000001",
+                "operation": "cmpwi r0, 1"
+              }
+            ]
+          }
+        ],
+        "reason": "Both original DOL functions mask the collision word to the 0x6000 ceiling bits and compare that result with 1, so the vertical-velocity reset branch is unreachable. GCC's tautological-comparison warning describes the shipped behavior and is isolated to this source."
+      },
+      "claim_boundary": "source-scoped-host-diagnostic-not-behavioral-coverage"
+    }
+  ],
+  "header_adaptations": [
+    {
+      "path": "src/placeholder.h",
+      "host_adaptation": {
+        "path": "host_adaptations/placeholder.json",
+        "sha256": "df6dcedd8a7fddf217cd64e3ab9c72821284f2e78ad0fd712f59d77890e7848f"
+      }
+    },
+    {
+      "path": "src/melee/cm/types.h",
+      "host_adaptation": {
+        "path": "host_adaptations/cm_types.json",
+        "sha256": "68e77c744a982ebc4b6f2cf7c9eb0e1c39629804241d4e0f906103f3a06d57c4"
+      }
+    },
+    {
+      "path": "src/melee/lb/types.h",
+      "host_adaptation": {
+        "path": "host_adaptations/lb_types.json",
+        "sha256": "e9ec5f4dbfc5dcfd19b8634b03fbd57aab8d286bc19dc1edf74380473eaa12d1"
+      }
+    },
+    {
+      "path": "src/melee/gr/types.h",
+      "host_adaptation": {
+        "path": "host_adaptations/gr_types.json",
+        "sha256": "b91133ba2e1a4b538a61b77eb36fdebbb57eadb376a058aeafd526afb4e5fae0"
+      }
+    },
+    {
+      "path": "src/melee/gm/types.h",
+      "host_adaptation": {
+        "path": "host_adaptations/gm_types.json",
+        "sha256": "495ce75ae5021f1ce68b8cf5c5a218c70bd64f2f37948465a56af97f5d0b7e72"
+      }
+    },
+    {
+      "path": "src/melee/gr/grlib.h",
+      "force_include_sources": [
+        "src/melee/gr/grlib.c",
+        "src/melee/gr/grinishie1.c",
+        "src/melee/gr/gryorster.c"
+      ],
+      "host_adaptation": {
+        "path": "host_adaptations/grlib_h.json",
+        "sha256": "784db4ba30fd03569a2fcb1f819fbd54e2cf0935dad94322f81aa4dd8037b8bd"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/types.h",
+      "host_adaptation": {
+        "path": "host_adaptations/ftcommon_types.json",
+        "sha256": "85adb03c954c864f854da67114093a1326612538764b95d37b170ad02b82f362"
+      }
+    },
+    {
+      "path": "src/melee/ft/types.h",
+      "host_adaptation": {
+        "path": "host_adaptations/ft_types.json",
+        "sha256": "87e8a029c75ab46a74f0b765a6e6df70a1435c9da847cad4a2456717d9be17be"
+      }
+    },
+    {
+      "path": "src/melee/it/types.h",
+      "host_adaptation": {
+        "path": "host_adaptations/it_types.json",
+        "sha256": "505d795b24a9888212341ea15b4476be04eda1fc834e0f66c434f8de5301f011"
+      }
+    }
+  ],
+  "provider_roots": [
+    {
+      "path": "src/melee/gr/stage.c",
+      "symbols": [
+        "Stage_802252E4"
+      ]
+    },
+    {
+      "path": "src/melee/if/ifmagnify.c",
+      "symbols": [
+        "ifMagnify_802FC870",
+        "pf_ifMagnify_headless_post_frame"
+      ]
+    },
+    {
+      "path": "src/melee/gm/gm_1601.c",
+      "symbols": [
+        "gm_SetupAllPlayerDefaults",
+        "gm_SetupRulesDefaults"
+      ]
+    },
+    {
+      "path": "src/melee/gm/gm_1A45.c",
+      "symbols": [
+        "pf_gm_active_outer_loop_post_frame"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/particle.c",
+      "symbols": [
+        "pf_ps_install_native_bank"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobj.c",
+      "symbols": [
+        "HSD_GObj_80390C5C",
+        "HSD_GObj_80390CFC",
+        "HSD_GObj_80390FC0",
+        "HSD_GObj_80391260"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/id.c",
+      "symbols": [
+        "HSD_IDInitAllocData",
+        "HSD_IDSetup"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/list.c",
+      "symbols": [
+        "HSD_ListInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/aobj.c",
+      "symbols": [
+        "HSD_AObjInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/fobj.c",
+      "symbols": [
+        "HSD_FObjInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/mtx.c",
+      "symbols": [
+        "HSD_MtxInitAllocData",
+        "HSD_VecInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/robj.c",
+      "symbols": [
+        "HSD_RObjInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/tev.c",
+      "symbols": [
+        "HSD_RenderInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/shadow.c",
+      "symbols": [
+        "HSD_ShadowInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/displayfunc.c",
+      "symbols": [
+        "HSD_ZListInitAllocData"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/sislib.c",
+      "symbols": [
+        "HSD_SisLib_803A6048"
+      ]
+    },
+    {
+      "path": "src/sysdolphin/baselib/spline.c",
+      "symbols": [
+        "splGetSplinePoint"
+      ]
+    }
+  ],
+  "provider_exclusions": [
+    {
+      "path": "src/melee/lb/lb_01F8.c",
+      "sha256": "0f73743236662c868c725dab91aea679728128e2d188bc1fc0ecfe7ffc14fba6",
+      "scope": "noncompetitive-presentation",
+      "reason": "THP movie texture allocation and GX upload are outside the headless competitive simulator; excluding this unit also prevents its host-only GXTexObj layout from weakening gameplay ABI assertions."
+    }
+  ],
+  "translation_units": [
+    {
+      "path": "src/MSL/float.c",
+      "sha256": "7acfb851a023896add9d1a575574df6437a2a8a18606579d727bab3a282a9ca7",
+      "role": "source-owned floating-point sentinel constants used by gameplay trigonometry"
+    },
+    {
+      "path": "src/MSL/trigf.c",
+      "sha256": "0385b3fb1236b559692b492a9ba76d0ef20197e929d0277c323fb683b66808b9",
+      "role": "source-owned single-precision sine, cosine, and tangent behavior used by gameplay and stage physics",
+      "provider_only": true,
+      "original_include_dir": false,
+      "host_adaptation": {
+        "path": "host_adaptations/trigf.json",
+        "sha256": "fa8d77c197a5f8bb85133ac8df4b3659650c7d8da385aed977badcbacb98e068"
+      }
+    },
+    {
+      "path": "src/MSL/math_1.c",
+      "sha256": "da9b2c87473277678bb92db55e7925af419e945542b4ac73c84fda1a57552564",
+      "role": "source-owned single-precision absolute-value helper and double decomposition behavior",
+      "provider_only": true,
+      "original_include_dir": false,
+      "host_adaptation": {
+        "path": "host_adaptations/math_1.json",
+        "sha256": "00328fff6a6ecd3f8eb9877994271de458a7552b1be1ad1c91948ac11fd5d366"
+      }
+    },
+    {
+      "path": "src/MSL/mem.c",
+      "sha256": "d9162b591b0af3283e9901ded5d4ba9739184ebd8238d644005bc949c172aca2",
+      "role": "source-owned overlap-safe memory movement used by compiler-emitted gameplay copies",
+      "provider_only": true,
+      "original_include_dir": false,
+      "host_adaptation": {
+        "path": "host_adaptations/mem.json",
+        "sha256": "660268b7d800873ed71a714fe90e058754821f4e6e67e3025a07c34132fe07d6"
+      },
+      "replaces_ready_provider": true
+    },
+    {
+      "path": "src/MSL/string.c",
+      "sha256": "223820def1e079f37d3dd03c91f3223e2b0dca42024e4c4a40f44966e6ec10ef",
+      "role": "source-owned byte-exact string copy and comparison behavior used by archive lookup and gameplay audio tables",
+      "provider_only": true,
+      "original_include_dir": false,
+      "host_adaptation": {
+        "path": "host_adaptations/msl_string.json",
+        "sha256": "a5f8c69b202b9aad51718bef145cb75f516e3dd53e0d8ccf46aa5d1e16401ba7"
+      }
+    },
+    {
+      "path": "src/Runtime/__mem.c",
+      "sha256": "3b570989e0bc470f136072bbc953505f727abf006b5bb8ac49a0c1dcb03f46b3",
+      "role": "source-owned overlap-safe memory copy and optimized memory fill used by gameplay and HSD state",
+      "provider_only": true,
+      "original_include_dir": false,
+      "host_adaptation": {
+        "path": "host_adaptations/runtime_mem.json",
+        "sha256": "40fd8f7a5fdae9e8c4405497a86cf1a63e9207fdf03bc5c13d76ea82636269bc"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/id.c",
+      "sha256": "4a97a6c75c848ca98f01298aa9a8c15715dfba597ef0c644c2779310a3a2e3bc",
+      "role": "source-owned HSD relocation-ID table and allocator bootstrap required by native JObj construction"
+    },
+    {
+      "path": "src/sysdolphin/baselib/list.c",
+      "sha256": "254624d5a0725954bdd67babfb78b7a9422dd14e42e034028e512557da2b8daf",
+      "role": "source-owned HSD list allocators required by native object construction"
+    },
+    {
+      "path": "src/sysdolphin/baselib/fobj.c",
+      "sha256": "fa24a983f583ce31e0f8c809fe9084d4df7c5c4eb57be2d8a044537f790f32e9",
+      "role": "source-owned animation-track allocator and keyframe evaluator with exact GALE01 fused linear-channel interpolation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/fobj.json",
+        "sha256": "430050088018c25928954f49481009a533bbd46924fc1342c38955ce2274f628"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/mtx.c",
+      "sha256": "f310c0e473efa52037f5ddaaaa415f1b705915c853b3a071241ede2a548941ac",
+      "role": "source-owned temporary vector and matrix allocator bootstrap and exact fused SRT transforms required by gameplay joints",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/hsd_mtx.json",
+        "sha256": "8a8eeabb1148c8b6c0d59f364bc187d5e773651bcd5d3edfccec48f200f4884d"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/robj.c",
+      "sha256": "ba5a6c39f94473fc6525c7dcc71ba3fe9e1f5d74bb6896c35847cf76f91a7697",
+      "role": "source-owned HSD reference-object allocator bootstrap required by joint construction"
+    },
+    {
+      "path": "src/sysdolphin/baselib/tev.c",
+      "sha256": "45b020ccce8ce5a094c27b9827242e8a0778cf23bf92cfb87340dfbca78c22e3",
+      "role": "source-owned HSD render-object allocator bootstrap retained for source object lifecycle compatibility"
+    },
+    {
+      "path": "src/sysdolphin/baselib/shadow.c",
+      "sha256": "07c16c48bd1a987ae91385c0f0c81037a1c7d07de56ed72bd87269ede03e939c",
+      "role": "source-owned HSD shadow-object allocator bootstrap retained for source object lifecycle compatibility",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/shadow.json",
+        "sha256": "dac6e1a33565c22b11b565aaaea919911edb75d7a40fe93b9393da3d1c2bca56"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/displayfunc.c",
+      "sha256": "2522b6aaaf0ff9cdc14c2da6bb688d9133c79722e67b1497f54a2a0600262fd0",
+      "role": "source-owned HSD z-list allocator bootstrap retained for source object lifecycle compatibility"
+    },
+    {
+      "path": "src/sysdolphin/baselib/aobj.c",
+      "sha256": "3a99a90a0bf63b4c11f3b08ffa1bb087a3667db20499fa93a7e470d6bcb4a3d4",
+      "role": "source-owned animation interpreter with exact GALE01 MSL remainder semantics",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/aobj.json",
+        "sha256": "2b8c2bc031323aa88fd75ed58f9df78a00a5cead0fefc67cb3a9dd7f90ccb8e3"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/bytecode.c",
+      "sha256": "18c1c7e6c0258f5cbf7ea2e23433ea3f93c67baaf41bd37d3f06b9a0e9ebdd11",
+      "role": "source-owned animation bytecode evaluator with exact GALE01 MSL remainder semantics",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/bytecode.json",
+        "sha256": "be32233e01726c5aca5f4b73cf44247e8ca83e8f0da9ddd33368f01a6408446f"
+      }
+    },
+    {
+      "path": "src/melee/lb/lb_013B.c",
+      "sha256": "2120012ec2deb50f78b47a774c6b51a54c1a277771ca488729cbb14ee3990d2c",
+      "role": "source-owned color-animation command interpreter with exact PowerPC command bitfields and native runtime pointers",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lb_013B.json",
+        "sha256": "65f6df7e0b1e7c8ddfff1eb94fa5734724686c173e8c4222888e7323848af3c1"
+      }
+    },
+    {
+      "path": "src/melee/lb/lbtrigf.c",
+      "sha256": "1701b0d56ecaeb4e4b1bed7b4727a5b655112d7cc71fa5861de00c5b685bc57d",
+      "role": "source-owned inverse trigonometry used by collision normals, fighter knockback, recovery, articles, camera, and stage behavior",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lbtrigf.json",
+        "sha256": "d13fe26c3076d6dcad9e2d098218c88f77d8c4da700ee0c5aaca91e7ad9937a6"
+      }
+    },
+    {
+      "path": "src/melee/lb/lbanim.c",
+      "sha256": "4303746ac4697c1726ee8321f0fd503a86f9789c6742b315ff7ed3f075f21f7b",
+      "role": "source-owned fighter animation binding with the original PowerPC register-residue behavior made explicit for the all-filtered-track case",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lbanim.json",
+        "sha256": "a9b874715f33ebd421a41a7c449d179a01ac7d3831dcc4a536690f8804b5a869"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Thrown.c",
+      "sha256": "0e590733c1c281c91560fdf47c23ea94a20ce14b09500d175b7a93c15b129b5a",
+      "role": "source-owned thrown-fighter state and exact fused victim attachment positioning",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Thrown.json",
+        "sha256": "30ed0f6f51f4581d9ca642825e44ffd18b697517c0c3fb5d41fee043165c7df1"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftaction.c",
+      "sha256": "f866206af4b9b1cd956e3206c5c95f0a5780947a4cfc71ed15ceef3ef98e79ba",
+      "role": "source-owned fighter command interpreter with original DOL command-table adjacency made explicit",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftaction.json",
+        "sha256": "8331817b4af0550f9dc565f1d3b11c92738e9f7fe5f8ff4fcc3d6a8125f23dd6"
+      }
+    },
+    {
+      "path": "extern/dolphin/src/dolphin/gx/GXTransform.c",
+      "sha256": "673dfe03ee3b328dde598a926babf692e886215ab3495533053920613089a9a4",
+      "role": "source-owned pure world-to-screen projection used by gameplay camera culling, with GX register writes and paired-single device upload routines excluded",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gxtransform.json",
+        "sha256": "6f5b3377300d74e0011be39af2a946521719e22f8f59928c273318befa2cf581"
+      }
+    },
+    {
+      "path": "extern/dolphin/src/dolphin/mtx/mtx.c",
+      "sha256": "594e946b2686708a44f50683acb142c7f7e138eac520905e11f089e333414caa",
+      "role": "source-owned native C matrix transforms used throughout fighter, collision, camera, fog, and legal-stage behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/dolphin_mtx.json",
+        "sha256": "2d97ae9604142812d716e404ca54da6104cece38bdf6f56a5bbd5c7bd08f1ae4"
+      }
+    },
+    {
+      "path": "extern/dolphin/src/dolphin/mtx/mtx44.c",
+      "sha256": "016c4c7ef3926d769a9eedf9cb56fc6d2f61545621df9b25fec7353cd4f1859b",
+      "role": "source-owned native C frustum, perspective, and orthographic projection matrices used by gameplay camera and coordinate transforms",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/dolphin_mtx44.json",
+        "sha256": "eac1b0c38a5a344272a1b31894714d681a6cddcf02aa226d9e859603866ae510"
+      }
+    },
+    {
+      "path": "extern/dolphin/src/dolphin/mtx/mtxvec.c",
+      "sha256": "41335e9824650e3ac56f620774028bba01d539ed8384b2c89d9e5bb3ed597184",
+      "role": "source-owned native C matrix-vector transforms used by fighter, article, collision, stage, camera, and animation behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/dolphin_mtxvec.json",
+        "sha256": "4a732c4148f6d216a330bf6cda1ab01a83702afb382ae6f1020e671cfc867056"
+      }
+    },
+    {
+      "path": "extern/dolphin/src/dolphin/mtx/vec.c",
+      "sha256": "6dd4bc76acd98fc8cc5ed000f0555928325ed86060b03ba2fdccff265d405e80",
+      "role": "source-owned native C vector arithmetic, normalization, magnitude, dot, cross, reflection, and distance behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/dolphin_vec.json",
+        "sha256": "dfb3cae59e4d94e23cae841ab4a92baa657577e5f56c33416e0514d3bf2bfa6d"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/random.c",
+      "sha256": "c1ee9c4317a48b59021c23b901e97fe7ad794f148d6ab98783ecfcadcdd566e6",
+      "role": "global gameplay RNG"
+    },
+    {
+      "path": "src/melee/sfx/crowdsfx.c",
+      "sha256": "b06e2e34802185f225ba5531774e3b94ef3b3b4d9d4a9c5c79fbc58862f5a108",
+      "role": "source-owned crowd state, thresholds, fighter event callbacks, and deterministic process updates; audio output remains a lower headless boundary",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/crowdsfx.json",
+        "sha256": "833a7e2a6ef4336e5259957376e7b4d6bd66dc3b055f7fabf4985c368a6cf83d"
+      }
+    },
+    {
+      "path": "src/melee/ef/efalt.c",
+      "sha256": "9941dbdc5c1922fd4bbd520a1fc1bdfeaaeac226b4f8294378a414cdb14f5f55",
+      "role": "source-owned alternate effect dispatcher preserving effect creation, animation callbacks, and shared RNG consumption under the native i686 varargs ABI",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/efalt.json",
+        "sha256": "5c7a4499a952d2591b47f98288626e6fbb084285c3eb05c10834149c6c3d7fcd"
+      }
+    },
+    {
+      "path": "src/melee/ef/efasync.c",
+      "sha256": "56eb819c15045f7d2f33d67cf030aa1b8ab20fc84d122e1568ac4b1a314fa3bd",
+      "role": "source-owned effect dispatch with synchronous DAT loading replaced by startup-only binding of typed native particle banks",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/efasync.json",
+        "sha256": "a5ca0179cb97190718fd7a1c4d5982394f31e179b500b105ccef849af78ccb3b"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/spline.c",
+      "sha256": "736ab29868437a263bcdbdaefdf973c75e9fa4ff3d86a3baf548f3396d415c50",
+      "role": "source-owned HSD animation spline interpolation with exact fused Hermite accumulation and fused linear point evaluation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/spline.json",
+        "sha256": "c72fa997dfd774c6ac5bd76a29877dcaece421b9ba1b8a30ad2a9099b4b284b7"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/quatlib.c",
+      "sha256": "4646bd1134c634c768d26f1096ab960fbbbdb213a9b9db5cc0682e3d48eda7ad",
+      "role": "HSD quaternion and Euler transforms with exact GALE01 fused quaternion conversion and interpolation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/quatlib.json",
+        "sha256": "5aed8d6c5d8a2ef2c736950e011be9954b9233986f5004ad55f784aa837af0be"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/particle.c",
+      "sha256": "12857a1954beef2167cbd4160ff5592487273462fecdae651df406d679a7af8f",
+      "role": "source-owned particle interpreter with a native startup hook for pointer-free effect banks and unchanged per-frame execution",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/particle.json",
+        "sha256": "f18ba9cd261c259e9799f20653295cafcbac38126db7e2d6647bbb7b9d244fa9"
+      }
+    },
+    {
+      "path": "src/melee/ty/tydisplay.c",
+      "sha256": "ebd8c5822caab114d24ed515993a8bf77003785fd64d2989eae801ad921f5051",
+      "role": "source-owned trophy display queries reached by ground and item lifecycle code",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/tydisplay.json",
+        "sha256": "4acd1f41e60772c47b5491fc3124997ded73e4e9a335c29bca3762ff8675e829"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobj.c",
+      "sha256": "a8eb5cd248fac8a0e0f3f8d0491c91efbf185329655e2042ba1250c7883de75c",
+      "role": "HSD process dispatcher and scheduler globals with the bootstrap-owned common counter declared external",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gobj.json",
+        "sha256": "7a0384951d17dc0d8b99d59f2bbfb59c542fb33f586f3212e4755f7b687a83ec"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobjinit.c",
+      "sha256": "85fbe72b42b32a92ff4a36c7f8ff2f5e4f5365e7cf9ce65499736cdbbe2d2eeb",
+      "role": "HSD GObj source-owned table and pool initialization"
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobjgxlink.c",
+      "sha256": "b6c199614c8e5bca821a0e448a28b541947d77ea2dcfc9a517a5810e20b55bfb",
+      "role": "HSD GObj render-link lifecycle used by object removal"
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobjobject.c",
+      "sha256": "fc5d3fb993e02fbd3c9710c7b338d3d76036fd98920bec230495a6b6e72836a3",
+      "role": "HSD GObj object ownership lifecycle"
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobjplink.c",
+      "sha256": "0dd495c0dc5ea268e2f9b4a0932c6b2179e25526dc81593367831f4e3c52089e",
+      "role": "HSD GObj process-link ordering and mutation"
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobjproc.c",
+      "sha256": "bae7c3d4199363799daf315f721f778f624fe16c362ea67207f44394bddcea02",
+      "role": "HSD GObj process insertion and removal"
+    },
+    {
+      "path": "src/sysdolphin/baselib/gobjuserdata.c",
+      "sha256": "b52cc79a6137adbc5de7e3f6a7bd2db9b46a7ca9180b3deb6acd55da39efcb4d",
+      "role": "HSD GObj user-data lifecycle"
+    },
+    {
+      "path": "src/sysdolphin/baselib/tobj.c",
+      "sha256": "16f2d1f2fe32f92f933fd05a2f68c883b4754134b9a0d06fe2c0931ddec9f195",
+      "role": "source-owned texture object animation, resource assignment, and lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/tobj.json",
+        "sha256": "04b01971aa2a80b5752d3579e4622411f4cbe7c00ddd4ce595bb4e5890c4ae59"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/pobj.c",
+      "sha256": "cb5e3d1e38492e285798415e8a3368f62abd8486aad6011e73dab5f5b07d1a1c",
+      "role": "source-owned polygon object lifecycle, shape animation, envelopes, and matrix setup behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/pobj.json",
+        "sha256": "d1eb86f8abb4d8e20f2fe1880bb71c1bd86fb4551526bb4500647f54c9ac468c"
+      }
+    },
+    {
+      "path": "src/melee/gm/gm_1601.c",
+      "sha256": "b88e0a0193665db2de9427b67db2f21b43cdad42a69825067c648f807787dd19",
+      "role": "source-owned persistent records, match-end standings, versus initialization, and route callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gm_1601.json",
+        "sha256": "73995ab17c4c0254216be5636561d6c0990119e64c7f9e4646792f535a8b2a6a"
+      }
+    },
+    {
+      "path": "src/melee/gm/gm_1A36.c",
+      "sha256": "3964234a0a3dc1dccb39824c6f78c88b9a59a301f8fec4078120efa4b7aa9d7d",
+      "role": "source-owned controller button aggregation, composite input flags, repeat timing, and game-mode input initialization",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gm_1A36.json",
+        "sha256": "72c706d42af7aee9b236677c01da3729b9d6f2810bf9bc427a6e93ff395fc61d"
+      }
+    },
+    {
+      "path": "src/melee/gm/gm_1832.c",
+      "sha256": "ec9590a275a417ca3b5a14ed58b25ea06e9e137b958af52f415678dc3cf00538",
+      "role": "source-owned game-mode and training-mode state queries reached by legal-stage and item lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gm_1832.json",
+        "sha256": "54ee94afa8f01e47fa43f71e1c65dfcdccb7e66c82e942e40f6390823d163871"
+      }
+    },
+    {
+      "path": "src/melee/gm/gm_1884.c",
+      "sha256": "0d035e94f4e6fd69716cf0f3692bcb3d0d300b598f6d74993391d965ed625cb3",
+      "role": "source-owned game-mode state demanded by the rooted match-state provider",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gm_1884.json",
+        "sha256": "7afc5772d666bc49867f5e514d6bddccda3fcd75b68a4ec7cfda25c420b9a6db"
+      }
+    },
+    {
+      "path": "src/melee/gm/gmregclear.c",
+      "sha256": "1323e3c908306fab97594b1605e046e81a088c6d46501894c50e1124cc06c42d",
+      "role": "source-owned match-mode state, single-player record access, item-mode queries, and multiman predicate",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gmregclear.json",
+        "sha256": "a0c9aa1fd7499fcf2a1413c1a10563b3d1e42e872050a8568c2edd64cc2daf1a"
+      }
+    },
+    {
+      "path": "src/melee/if/if_2FF2.c",
+      "sha256": "b27dde8c09671ecbae7f31a9251cb68ee7c2e2b3ad045c954158222a5d6179f8",
+      "role": "source-owned HUD scheduler topology and match score state with SisLib formatting and rendering bounded in headless mode",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/if_2FF2.json",
+        "sha256": "49640005ababe62e976134e9673ee25c3a219bc47a68b6b4665e828c444b9c9d"
+      }
+    },
+    {
+      "path": "src/melee/if/ifmagnify.c",
+      "sha256": "42c8a7477d15836e4771c4b77944b3e2b136b5203e01ecfa91dc314415d38a2b",
+      "role": "source-owned gameplay-visible magnifier offscreen and edge state with UI models, textures, and GX output bounded in headless mode",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ifmagnify.json",
+        "sha256": "6f25f8a36c70250dd5562480fff0323556f3bd91a68c692ff3c18a733af26ef8"
+      }
+    },
+    {
+      "path": "src/melee/if/ifnametag.c",
+      "sha256": "5b1975b769609ed6bf43cd324056faaf84cd25a0bd7c41d8936974e6e383a225",
+      "role": "source-owned nametag GObj and process topology with camera, model, text, and GX presentation bounded in headless mode",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ifnametag.json",
+        "sha256": "2a0b5c28e57cd525e49593c9dcf788de80b8ee6990a356118187ab8e708c5276"
+      }
+    },
+    {
+      "path": "src/melee/if/if_2F6E.c",
+      "sha256": "8392a774b07a5426da902ad1f8722d62f024c376f6452971337b2c2c08dd9643",
+      "role": "source-owned match-status banner dispatch with headless guard skipping JObj/GObj presentation reconstruction when IfAll.dat scene models are unavailable",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/if_2F6E.json",
+        "sha256": "809f08a60c83fe95fb4a0f196835eef2418dfee8964ad3d3fa04ea9bb9f5727f"
+      }
+    },
+    {
+      "path": "src/melee/cm/camera.c",
+      "sha256": "b149ae8c5f8c2e393bdfe2b6107311501fe5d23771ee9ec21a91d837d88fe8f3",
+      "role": "source-owned gameplay camera tracking, bounds, quake, and camera lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/camera.json",
+        "sha256": "0f1e6a5d9a3f246786a1e6cb6621aed67725be9d6971243d9dbafc2a74dcdbea"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/cobj.c",
+      "sha256": "b49cc2726fa8617c73c12090815611e7c554721f4f5d43bfca77df2cfa24cdce",
+      "role": "source-owned camera projection, viewport, and camera-object lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/cobj.json",
+        "sha256": "204518e12e8757ae6ce74df87d875ff6e9a7416e392763684e3a3c2dffff3c70"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftdynamics.c",
+      "sha256": "d28af94e112b1db1d265cb0a8e101436d80a69e86eea4fdc02930a9693536d37",
+      "role": "source-owned fighter dynamics with Slippi's pinned headless dirty-bone matrix refresh at the original 0x8009E090 epilogue hook",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftdynamics.json",
+        "sha256": "88bbf7c04ad8f429420dfe49f0663c228ca9c53feeaeddcaeae1b01a976a7e1e"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Escape.c",
+      "sha256": "664f3a057fe21f775a382ba1afff6671185bde2e30418b66084499e1514c1c99",
+      "role": "source-owned common dodge selection with the pinned UCF 0.84 shield-drop suppression hook translated at the original EscapeN decision",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Escape.json",
+        "sha256": "d20b102170ea87de0b5294781f993142b11ea17801b8653ffe9b0aa8d6582ba0"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Pass.c",
+      "sha256": "5a54a6cd1171bab28687ce55a96d0ed3a1eb36356b5c94a66b4af60ff6d1eaa1",
+      "role": "source-owned platform-drop selection with the pinned UCF 0.84 extended shield-drop buffer decision translated at the original comparison hook",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Pass.json",
+        "sha256": "7d4bd10efd0c13f0c105b09654b5bc4f7a8152602d0dd9c700e9bbf16ce4c4c0"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Turn.c",
+      "sha256": "2a0df3786c80330a54e6dea5830ba103ba44eb5ff26fb97d43cdb932a501cae3",
+      "role": "source-owned Turn callbacks with the pinned UCF 0.84 raw-history Dashback hook translated at the original facing update",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Turn.json",
+        "sha256": "724c1165876c907b0ee3122963fa51c8d205458fa4917f4d738a64e8be724ead"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_SquatRv.c",
+      "sha256": "7a31e8bda702f6448ebeda5613f71f75a220ae302f1f3713bab4db26e6f9d4b3",
+      "role": "source-owned common squat-reverse check with the pinned UCF 0.84 DBOOC SquatRv Fix translated at the original 0x800D65EC threshold load",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_SquatRv.json",
+        "sha256": "ca9a8ff0f35e4a3a55424e54c95180f857dc25d979e8b193aee3a0bc6d35b0f4"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Guard.c",
+      "sha256": "738114cca1146510f30bb6456151cf6f2a9479466bd45e6e5389ce07a7dbb4a3",
+      "role": "source-owned common shield state with exact PowerPC fused guard-duration, push-velocity, and guard SDI/ASDI arithmetic plus the pinned UCF 0.84 raw-history Shield SDI hook",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Guard.json",
+        "sha256": "441911d9e2e23c9fbad7172381c80097322b7a505605f24e0f9892b4684bb0bd"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Damage.c",
+      "sha256": "b51c1febe3b9df50e795c29083b4dff663780877d5edf2702e8a858dfb18c359",
+      "role": "source-owned common damage state with the exact pinned UCF 0.84 raw-input SDI hook",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Damage.json",
+        "sha256": "f1ad71db076a4e8235ad91ec34d795ff3b451054a85b9131517f3fa634f1098a"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_DamageFall.c",
+      "sha256": "00efdb4187aa0dd6f65cde4dddbf08c2601d17cfe305d43b53cca92f7758e34a",
+      "role": "source-owned common tumble recovery with the exact pinned UCF 0.84 raw-history Tumble hook",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_DamageFall.json",
+        "sha256": "677523a2c649c0e1bc67e2a0d83de75ac32a8fd28bd2b1e434ceb6280fa25dc1"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_AttackAir.c",
+      "sha256": "18eb8f663442558e375f07e2cdefe818b311473c93e023fc6d81f012d3ceeeac",
+      "role": "source-owned common aerial-attack selection, entry, animation, interrupt, physics, and landing behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_AttackAir.json",
+        "sha256": "74b8efd187e6ad1a2b7f2d8db18ce731e5f4caeb7da6b6530374092128db29ee"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Dash.c",
+      "sha256": "7251dcee053adcaf812b245c569574a112713758d8d24f2e5101d98dbe6fdd84",
+      "role": "source-owned dash state with exact GALE01 fused dash-exit ground-friction arithmetic",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Dash.json",
+        "sha256": "128477dd4ff9efa1d8ec9802e61d2241cde15efadf2263d6d9175d7264251d39"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_0A01.c",
+      "sha256": "72437c3b3c87d1dab0a8bfdcc879e8bc2715936f5f6fcfa4617d82b75c712ec8",
+      "role": "source-owned CPU behavior and command selection with GALE01 live call-site predicate semantics made explicit",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_0A01.json",
+        "sha256": "f885b06571e4e08544147adb144b06570c4f70eebf1caa466e42d576ff2096b9"
+      },
+      "replaces_ready_provider": true
+    },
+    {
+      "path": "src/melee/ft/kinds/ftFox/ftfoxspecialhi.c",
+      "sha256": "a641804b45d66c33f3a907bb6e49aac9bb217629204143e7fbd3c780f99b42c2",
+      "role": "source-owned Fox and Falco up-special states with exact PowerPC reverse-acceleration arithmetic",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftFx_SpecialHi.json",
+        "sha256": "75e896eb35ccb13faca5e6f13e388cef033a1c0dc94bcec6f92c08992c300c84"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftPeach/ftpeachfloatattack.c",
+      "sha256": "390b43da7da62943d18d24a4cb9a4db0f6375178e700542d906a459ca0140f2c",
+      "role": "source-owned Peach float-aerial attack selection, animation, interrupts, physics, and landing behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftPe_FloatAttack.json",
+        "sha256": "9c2122e3b2f9dcdcd418e258204c329c1355a1fd02625c3530e5c0e308121c09"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftPopo/ftpopospecialhi.c",
+      "sha256": "4299e232d147cc01ae3c98cc9fa6029eb2627358286be21c2eb1911965364a7b",
+      "role": "source-owned Ice Climbers up-special states and callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftPp_SpecialHi.json",
+        "sha256": "a115094c9baa2fdb8785aa6208d079929f1f3fdd1b2123690ec629642fba5f53"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftafterimage.c",
+      "sha256": "ba1bd20665a03c208b6955d518c208c194bf08b4b9658b06e56030c79d037f22",
+      "role": "source-owned fighter afterimage state sampler with only its GX draw callback bounded out of the renderer-free runtime",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftafterimage.json",
+        "sha256": "be20302a85bc75414b3ac911780a2fc3dd6dba4a82bd548aa9beca7a3ea93a7a"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftparts.c",
+      "sha256": "babbbb43e2dec59efb3406b40ba8c62c06163b5fa9daa7c70516f0e68778b5d2",
+      "role": "source-owned fighter model-part matrices, visibility, and joint setup behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftparts.json",
+        "sha256": "d0267584735286b2d171c7f19dd24b4c4cd83f8da3ecd2172e9f5cb8b558c6c4"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftanim.c",
+      "sha256": "b201785fc4489eb074398c8e9a65bf6820c985770e6cd79d6218284300bb2fac",
+      "role": "source-owned fighter animation progression and callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftanim.json",
+        "sha256": "bba2aede7534bfdad0b51e29fa7f3b7caa2db88524aa6872fd67924ac10b21e9"
+      }
+    },
+    {
+      "path": "src/melee/gr/ground.c",
+      "sha256": "302f2542da48d7aef4d4ee637b2f375e834feb82a36e2f08caae4e810ec4bdc2",
+      "role": "source-owned stage lifecycle and collision registry bounded to the six legal competitive stages",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ground.json",
+        "sha256": "bd86d5a4bcdc084eef3c80a43fbd4a6eb0e441c4a52d717f605ccfae0fc1a0da"
+      }
+    },
+    {
+      "path": "src/melee/gr/grdatfiles.c",
+      "sha256": "de8313b90dc8b1c014db535606c504b235e43344a5590959a036b889a5667fc7",
+      "role": "source-owned stage archive registry with runtime DAT loading replaced by typed native legal-stage pack bindings",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/grdatfiles.json",
+        "sha256": "15c57fe7a00d1f472bc1178063f69a94e65b43e83e16a9bcea3eba1819439e5a"
+      }
+    },
+    {
+      "path": "src/melee/gr/grpstadium.c",
+      "sha256": "3a69ef5e8bbaa7b5357cd56262cbf3b8d88b6ae432db0a41ce6de1ef0b548c24",
+      "role": "source-owned Pokemon Stadium gameplay, transformation, RNG, timers, and display-state process with only SIS/GX presentation output bounded",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/grpstadium.json",
+        "sha256": "546eba6fc5889a341d188c7b159d868f5bc04dbd1348698a96d3aed69f93417c"
+      }
+    },
+    {
+      "path": "src/melee/gr/granime.c",
+      "sha256": "9251633b946fd37158a7ff572e114c5dc41dd8b557e6d7265121c7f731acdc88",
+      "role": "source-owned stage animation loading, traversal, requests, updates, and lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/granime.json",
+        "sha256": "8e55c5d6bcd417c87867f78fd8ea32276aee414f9052f3b37323283bc23e27ab"
+      }
+    },
+    {
+      "path": "src/melee/gr/grcorneria.c",
+      "sha256": "204f8b97159a5bae0e0fcd06c0af837fec02af561b8fbda8abbc0e4163d1b006",
+      "role": "source-owned Corneria and Venom stage-kind predicates shared by Fox and Falco input handling; closure selection retains only predicates reached on legal stages",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/grcorneria.json",
+        "sha256": "c3d060e60f37e6f7561c2be9249fb5faf29a6154ec8ea5c8a337183e9b9c5852"
+      }
+    },
+    {
+      "path": "src/melee/gr/grstory.c",
+      "sha256": "822ab2a35f9110d351690c12976eda4ebef4647e3a4e6f310e2f8850cb3249d6",
+      "role": "source-owned Yoshi's Story stage table, Randall and Shy Guy callbacks, platform behavior, RNG, and lifecycle",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/grstory.json",
+        "sha256": "a0d173178154b50e8f99e0556f9138b6fa1a1490159536db886833b0e634b435"
+      }
+    },
+    {
+      "path": "src/melee/gr/grizumi.c",
+      "sha256": "5a313df3d1c585ca1f1704ed194efbb915bd8c505e0e66c04b1d85d7609437a1",
+      "role": "source-owned Fountain of Dreams stage table, moving-platform, reflection, collision, RNG, and lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/grizumi.json",
+        "sha256": "da0c8d2d5a4603475ed07885f75a09c1283b89177887b486baaa23f4bd4cd6a0"
+      }
+    },
+    {
+      "path": "src/melee/gr/grlast.c",
+      "sha256": "d55ce4dc770d023838915cff1225c676643863c1d6f4f4e98391078decdaa198",
+      "role": "source-owned Final Destination stage table, animation-state transitions, camera, RNG, and lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/grlast.json",
+        "sha256": "3702033c35e5d81cf88f43a75b7dadca0582e4d7b2ae1b0855a1d7b3393f2cb4"
+      }
+    },
+    {
+      "path": "src/melee/gr/groldpupupu.c",
+      "sha256": "804e81e684fbcbaf825f47df48f7bfd0d3b240f5eb926b32ec2d82556c88b89f",
+      "role": "source-owned Dream Land stage table, Whispy wind, background, collision, RNG, and lifecycle behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/groldpupupu.json",
+        "sha256": "3a5b43936b51d0991584395f5d76b5c2159392f1f9eb7b6d1fd224a704257a34"
+      }
+    },
+    {
+      "path": "src/melee/it/itdraw.c",
+      "sha256": "e16b75657de53b0506bbbdcf7d79fd1de46e567150fc6729b9652bb68800350b",
+      "role": "default item GX-link callback bounded out of the renderer-free runtime",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itdraw.json",
+        "sha256": "50fec60933dc055141bd0605dd912c5d6279245f1ca8f437dd914713737752b4"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itcoin.c",
+      "sha256": "e03044b9fb422defe140eadc3b633cc6ef4f47ac8701a5d15251e0c7ea70de81",
+      "role": "source-owned Coin item creation, rotation reset, state transitions, physics, and collision behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itcoin.json",
+        "sha256": "1a077ad66f68c61ee9ff0a9f23f24b88dfbfdb128e19b31a3fc8f8213d6894da"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itmewtwodisable.c",
+      "sha256": "4159f84f99a29589531df3ee66363b2c4563cb11595d086d36172758687fb6e3",
+      "role": "source-owned Mewtwo Disable article creation, lifetime, collision, interaction, and destruction behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itmewtwodisable.json",
+        "sha256": "c829ccf1fb858b746781461730568e6f84e58a4ea9d0a22521e8a1511af2429a"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itseakchain.c",
+      "sha256": "634d10bd8564782b00cd9de7730994bf24d5dfe4ab38179e99ec9eb17d34df0a",
+      "role": "source-owned Sheik chain article creation, link simulation, collision, retraction, hitbox updates, and lifecycle",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itseakchain.json",
+        "sha256": "236bdb8d305008c7dfbbb96823838ad54ced3bfb166c20b1cb7dd901eaf676f1"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itzeldadinfireexplode.c",
+      "sha256": "263b5f54a659e092ea68640e6c3ab1768b0c35fdbd8b8ef52c5a90c9e851fc73",
+      "role": "source-owned Zelda Din's Fire explosion creation, state, animation, physics, collision, interactions, and lifecycle reachable from Sheik transformation",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itzeldadinfireexplode.json",
+        "sha256": "2a84e26005c88237bf6736452c79736846912d503c7eaa02b80486e7248b131f"
+      }
+    },
+    {
+      "path": "src/melee/lb/lbcommand.c",
+      "sha256": "d0cd96443c3bb1f71fbcd1ae0094c0d323a249e04282db441485c260467529c8",
+      "role": "source-owned shared fighter, item, and animation command interpreter",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lbcommand.json",
+        "sha256": "de6ec8226999e16d3c128d51cb9a3685d90a6e6b0d983a2a489092a2f52587c6"
+      }
+    },
+    {
+      "path": "src/melee/lb/lb_0146.c",
+      "sha256": "e06c608ad3ee98efc20bf8535017e648e0516821e89a9a440726adb5bc645d7d",
+      "role": "source-owned fighter/item damage-volume overlap predicate with only its GX debug visualization bounded out of the renderer-free runtime",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lb_0146.json",
+        "sha256": "608badd50d582930990dfa7df058c07f1191ea7401efc071ea8bdea6f83edf42"
+      }
+    },
+    {
+      "path": "src/melee/lb/lb_00F9.c",
+      "sha256": "2db3aad0b4ecd2671974da5bac3d35891fdadf4066534bc57e748bb7e31a1155",
+      "role": "source-owned dynamic-bone allocation, initialization, update, copy, and debug-draw support",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lb_00F9.json",
+        "sha256": "031ecc1362e68ff90f2939edce059747baf8cbdc72c2a3f40ff2229b1522af18"
+      }
+    },
+    {
+      "path": "src/melee/lb/lbspdisplay.c",
+      "sha256": "a1a8e824daafe719c5f782a4bd680cd0677533ebc04f15edb19ea0f03260d31d",
+      "role": "source-owned light, joint-tree, image-descriptor, and camera construction reached by fighters, effects, frozen Stadium, and match HUD callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lbspdisplay.json",
+        "sha256": "f0cc90bb4a35b45e9424efe5c7f6f9ecfa79bc018de64bd81ef8b2c0841d7d90"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itarwinglaser.c",
+      "sha256": "92fade7ab855a0d80a76fd971aea5140c2d82db5994085a51a2abdb410061cd2",
+      "role": "source-owned Arwing laser item states and callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itarwinglaser.json",
+        "sha256": "abeba90fbe55735f2f38b9bac4dda58585dffa6d5a4aa13227a31dc4c8ee35c1"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itlinkarrow.c",
+      "sha256": "abb27e2ef6fbb5fcc27ebcfafc292f2e138607923f1ff323c0c46fe4504379fb",
+      "role": "source-owned Link arrow item states and callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itlinkarrow.json",
+        "sha256": "46985f4ad4757bb130e4641e85c49ea5e2082e5c594d05db7aec5758156e549c"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itlinkboomerang.c",
+      "sha256": "690699f46a894e45dd2542094430d9ef217fe631de4792114c8d51c9b8db72c7",
+      "role": "source-owned Link and Young Link boomerang state, trail, physics, collision, and reflection behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itlinkboomerang.json",
+        "sha256": "aa68d83ff9914e72bf505b3b43ab641a0712c48ad2d543d9dc77ccea4669cdad"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itkusudama.c",
+      "sha256": "53bdf41c0251c831d260e058aa232aabf0d622162f0ebddf11383b9709227063",
+      "role": "source-owned container item random-spawn behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itkusudama.json",
+        "sha256": "6e1b316214199219e23c7e100f752f54fa6190b6aeb390971855bef604771a2a"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itkyasarinegg.c",
+      "sha256": "339f571a37e7be9fd35a432ea352c6deb95199089d8289dddd0ab2efffb66283",
+      "role": "source-owned Catherine egg item states and callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itkyasarinegg.json",
+        "sha256": "9c6e32242fd11e41c1ff0407d96fbe5136da44c4b4fb92fb3332b1774701999e"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itsscope.c",
+      "sha256": "422637dde64b5b0b5523a1b76a05f9c1dac637a43503b6fb0233da7ea042dc93",
+      "role": "source-owned Super Scope ammunition, charge-level, item-state, physics, and collision behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itsscope.json",
+        "sha256": "8f405323ffd73698089faa81f8ed14d45b4de773a8b5e010701936a899b03686"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itmewtwoshadowball.c",
+      "sha256": "18a9d81b8ac208a0ed267b34ca42394a2ad109b1bef8244321218b554439d789",
+      "role": "source-owned Mewtwo shadow-ball state, physics, and collision callbacks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itmewtwoshadowball.json",
+        "sha256": "1305d52810912b3a22a9b18140e0390224591aa081e60108f1e27418830a97cb"
+      }
+    },
+    {
+      "path": "src/melee/it/itzako.c",
+      "sha256": "0c437060691a9b817ef2d737c9eeffbe608e8724c51338f2baef9762d3764fba",
+      "role": "source-owned helper behavior shared by stage enemies and creature items",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itzako.json",
+        "sha256": "b8ac073fdf261a157d7b40e3a4d14c75cfe1f318779922efdc44d3d975e6388d"
+      }
+    },
+    {
+      "path": "src/melee/lb/lb_00B0.c",
+      "sha256": "fab9f37e81137f20f45144330c6792522b53544444a93494b5a1b56af6298d0d",
+      "role": "source-owned joint, material, and light-object helpers",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lb_00B0.json",
+        "sha256": "392328bf0586bd35e9ea8a388fafca5f1768b568e9add19ff4e5a81b8e842e00"
+      }
+    },
+    {
+      "path": "src/melee/lb/lb_0195.c",
+      "sha256": "6e68d0ffdc61baa8bcc0aed049fd98fca5fdc25df2d85dc8634c17508813fdb3",
+      "role": "source-owned match frame-period state with the device-service loop bounded for headless replay",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lb_0195.json",
+        "sha256": "428938be50983838dd6e66cfdbea5d2c47f4ba69710eadf8c5bcc6f1277f5374"
+      }
+    },
+    {
+      "path": "src/melee/lb/lbrefract.c",
+      "sha256": "4f0960717691c20399fce7fa86171d7760b90801fd523c48404191f94e7945a1",
+      "role": "source-owned refraction user bookkeeping with presentation-only DAT and texture construction bounded for headless competitive replay",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lbrefract.json",
+        "sha256": "45f3833126a9c3540156585c65c30377eecd183a9f573bf4a5b564b84895bf8a"
+      }
+    },
+    {
+      "path": "src/melee/lb/lbvector.c",
+      "sha256": "86fb5f0d484345ad9264ab8b9cafcc753b972a40d5d22156b3792e9567485bd5",
+      "role": "source-owned vector math and world-to-screen projection behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lbvector.json",
+        "sha256": "fbb25f690df4f208dcf0ff036a6824947cc181fc13eeab257cddb8f11c07b8ac"
+      }
+    },
+    {
+      "path": "src/melee/lb/lbcollision.c",
+      "sha256": "59705ddc7a8a20fe40598b9e97251bb5cbd3f4ede890e3f6fa3ed5bc34dbd36b",
+      "role": "source-owned hitbox, hurtbox, shield, and collision geometry behavior",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/lbcollision.json",
+        "sha256": "e56909ab789a8ca9881b0c6441b389a522f366860487fdf484d3f5f4c2555197"
+      }
+    },
+    {
+      "path": "src/melee/it/iteffect.c",
+      "sha256": "baee7e29543e8c582fcacbfdf4c2d954341945ea5f283bc1eb28192532fcc615",
+      "role": "source-owned item effect behavior with startup-only native binding of the complete common item and character-article graph",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/iteffect.json",
+        "sha256": "c77f086cc6cf64516df4b28306a67c45e9501a23bad5ba3e577dfe65a992d46d"
+      }
+    },
+    {
+      "path": "src/melee/ft/ft_084E.c",
+      "sha256": "fd8a8a71f19e25673c9e7bdd06de8188a51e0caf8dbd2a0a70383b0841e3d4c2",
+      "role": "source-owned fighter movement physics with exact PowerPC fused velocity rotation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ft_084E.json",
+        "sha256": "76e6cdecc7e34aeede7648e5cbb1322137d6f58372fc75a2e64dee4a09a2fb93"
+      }
+    },
+    {
+      "path": "src/melee/ft/fighter.c",
+      "sha256": "41cdefd477ba20c6c4a7ab9643ed0916305be38dbc1c0d8af281c36732963b7f",
+      "role": "source-owned fighter allocation, common-data globals, initialization, and per-fighter lifecycle with startup-only native PlCo binding",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/fighter.json",
+        "sha256": "0d24fea5e1f0adeffd2041f979b7f1bb2d64004ec100a592feceb0ccb18c9501"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftcoll.c",
+      "sha256": "f376f14500c1e018fd022b45563ac8163d0aba043f1817f8e1b2eeba651f16e7",
+      "role": "source-owned fighter hit collision and exact PowerPC fused knockback arithmetic",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftcoll.json",
+        "sha256": "c972a90e1abfb3f78ae6c03cd64f455b428c3aed010d62c1861b31075c1f653f"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftdata.c",
+      "sha256": "aa55d8157453d4cd26d503780e2edf0f0bcb2b81badcdac77391dc5e24721579",
+      "role": "source-owned fighter data tables and lifecycle with startup-only native binding of exact character DAT roots",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftdata.json",
+        "sha256": "af31116c4c1799763b0823497621ea58226d38a038b6cd702b9a5cf45c8ee7c8"
+      }
+    },
+    {
+      "path": "src/melee/pl/player.c",
+      "sha256": "1d3bf43ad9071026f5c7bb056a8227cb2c29c9a33b922411142bd371abb623e4",
+      "role": "source-owned player slots, match initialization, and player state accessors",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/player.json",
+        "sha256": "c2cfae17ad7ac035ca2bf7e8ec2ec8a33157a4f5c468a994bfd4768119b8f172"
+      }
+    },
+    {
+      "path": "src/melee/pl/pltrick.c",
+      "sha256": "f53b742f7c7b3aa395432faf595f15d26af85ba570c74dbb3dc300b3ea50b35c",
+      "role": "source-owned single-player action history checks",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/pltrick.json",
+        "sha256": "7706d5e21639c4f466ea10a14b8f10cb4826f748046f4ecc15141cd8eedbca99"
+      }
+    },
+    {
+      "path": "src/melee/gm/gm_1A45.c",
+      "sha256": "84d35a434a6eb111acc67ad2b6e5ab819dae634667489e92a43a4b84dc22c0ea",
+      "role": "source-owned active-match outer-loop frame counters exported at the native headless loop boundary",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gm_1A45.json",
+        "sha256": "d2489c0002efae78639bc6d6922df5852a68eb67491c2b1e3b78cdae4c3feb22"
+      }
+    },
+    {
+      "path": "src/melee/gr/stage.c",
+      "sha256": "34f105ce93218149bb7213c60b7b05b15f926ce0a5b0afcb30b222ffd83df05c",
+      "role": "source-owned legal-stage on-start dispatch preconstructed before allocation freeze and activated at countdown completion"
+    },
+    {
+      "path": "src/melee/gm/gm_16AE.c",
+      "sha256": "140aac8d052e37e057f003ed89647e9e5333024532b7c6c0752244f7d9415196",
+      "role": "source match-state initialization and gameplay subsystem registration order",
+      "roots": [
+        "fn_8016B7F8",
+        "fn_8016E730",
+        "gm_Scene_Vs_OnFrame"
+      ],
+      "host_adaptation": {
+        "path": "host_adaptations/gm_16AE.json",
+        "sha256": "ae1a18428fa885364debda64fca786b27da15b1893af99cc206f5d5e1a720d09"
+      }
+    },
+    {
+      "path": "src/melee/it/itanimlist.c",
+      "sha256": "1fc228edf9ee0dd3cea3f331361723bd405374f10f51414444946946ef283713",
+      "role": "source-owned item command interpreter with big-endian command halfword reads made explicit for the host",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itanimlist.json",
+        "sha256": "d6186aa3c3e1bfb985c92541a71c29abf03ba75360a7b11e1d3ef0da1e94d71a"
+      }
+    },
+    {
+      "path": "src/melee/mp/mplib.c",
+      "sha256": "7984d542363a1ee87ec5c812fb087ae0bc780916ea047278f297efbdb369e7eb",
+      "role": "source-owned ground collision vertex writer with exact GALE01 fused uniform-scale vertex and bounding interpolation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/mplib.json",
+        "sha256": "2254ae7506732442e06e7d0197c32e11f232a37d029d0686c21ffbb18b69fa98"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_Rebound.c",
+      "sha256": "040104daf2aa67ff7bb8a8207df217cc2e91eeafe97223aef5a9d9adb013003c",
+      "role": "source-owned clang rebound state with exact GALE01 fused rebound slide velocity",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_Rebound.json",
+        "sha256": "25b26bae9fd26dd45b7fb734a9334c108844b8de0d55826947b51666ee224c37"
+      }
+    },
+    {
+      "path": "src/melee/ft/ft_0D31.c",
+      "sha256": "e0f78a933a22db3a6bfef104656a8f7a68dd856524ddba617b583b51bb8b4e4a",
+      "role": "source-owned screen-KO behavior with Slippi deterministic physics patch",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ft_0D31.json",
+        "sha256": "f4d7fd24ea45524dbcceb2996035b432d336ba96bb883a4278192b3d97ba10ee"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftdrawcommon.c",
+      "sha256": "49496d2fc19e4dfa2437d84bba34b3e029afe4c6b232dd77a01242872257b269",
+      "role": "source-owned screen-KO behavior with Slippi deterministic physics patch",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftdrawcommon.json",
+        "sha256": "ed1e669d6847db2c43f22927aa854c7dcc7b35e8837fb5470680e944043455be"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_CaptureWait.c",
+      "sha256": "b1197a55d57dc5cfc9a8eb33435c28ff22246994b140987c92dd82deeb63c326",
+      "role": "source-owned capture wait with Slippi anti-wobbling counter initialization",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_CaptureWait.json",
+        "sha256": "8cf2ca0d1f22703dad3a4730c35c00ee837e71480ca82628807bb71394a57c07"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_SpecialS.c",
+      "sha256": "f714f2e7dbc5a4e3b7d1aaffda7d45cbd433e95855e22ba9d082affa8f02ddd4",
+      "role": "source-owned shared side-special input and entry with exact fused momentum-friction accumulation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_SpecialS.json",
+        "sha256": "5319dc2cffb5e5c6251091b094336485c7678039bc2e00bd33efc80efec9822a"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftYoshi/ftyoshispecials.c",
+      "sha256": "437036abba301b624fac1afbe3c3ed1481ea7339598ffa95ef6e904b6b56a220",
+      "role": "source-owned special-move behavior with fused ground-momentum accumulation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftYs_SpecialS.json",
+        "sha256": "328ff465ada61d4bbd9468e0211be6488a8061d0d49e62157548fd405bc72eb5"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftPurin/ftpurinspecialn.c",
+      "sha256": "32260215ab926c09a9e912cb896cd53751587a77ad918a79811c0df1ae2f2b07",
+      "role": "source-owned special-move behavior with fused ground-momentum accumulation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftPr_SpecialN.json",
+        "sha256": "7b27bf6244f7a83a34bed774970cb7c97526f7d0e4b2c4e9255d18c135b6cb08"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftKirby/ftkirbyspecialpurin.c",
+      "sha256": "e22706b5803d99d45035d16255d4b20261e351bc8caba005693e81555f6fd9c0",
+      "role": "source-owned special-move behavior with fused ground-momentum accumulation",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftKb_SpecialPurin.json",
+        "sha256": "e0b7e5dcf08942e10d593484f2c058111b9dfd117791b0b0ad4bfae44b027de3"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftlib.c",
+      "sha256": "78bc9c9a87439b1db063bf033b8f18869d43105917308f6efcf08d83fc7b6693",
+      "role": "source-owned fighter queries with Slippi Whispy death-action vote exclusion",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftlib.json",
+        "sha256": "41d41d8571cf182ce68f57fc24bd12008a1e2dab5dde5b17c4170982ce2f83e6"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itnesspkfirepillar.c",
+      "sha256": "43bfe5000dfc17e112c82da7a6b33c6c9f6bbbee8b95304aa14509690d54558c",
+      "role": "Source-owned Ness and Kirby-copy projectile gameplay callbacks",
+      "provider_only": true,
+      "original_include_dir": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itnesspkfirepillar.json",
+        "sha256": "eccf5e87a586f0fa089c29e6374f04eacf1083448bd0d51b2b2be8361d0c569c"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itnesspkflashexplode.c",
+      "sha256": "a52de7b1c4cde04931cc0e6b4ddabb24ff6386e323b12c7eccf4bad3eb2dde50",
+      "role": "Source-owned Ness and Kirby-copy projectile gameplay callbacks",
+      "provider_only": true,
+      "original_include_dir": true,
+      "host_adaptation": {
+        "path": "host_adaptations/itnesspkflashexplode.json",
+        "sha256": "b5d1d3f4207c57700967bc946f4555cd4e3b8a5200d53798eed1d9f9ca0742bf"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/class.c",
+      "sha256": "9c9c6f8bf436a9bbdc3dea7797a601b4edaab6fa521faef0bb1f2c79cbcbcd24",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Source class lifecycle and counters with preallocated texture-object storage",
+      "host_adaptation": {
+        "path": "host_adaptations/class.json",
+        "sha256": "af57dbfce20a3be5642c37f41089b39b64745c22b45d99a1216a94e7689f856a"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftKirby/ftkirby.c",
+      "sha256": "a9b5929d123e0e9575b2d581cc4d0e6b77e7aa42a48edd002572055bc8c47f45",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Source Kirby copy-ability and hat lifecycle with resident asset binding",
+      "host_adaptation": {
+        "path": "host_adaptations/ftkirby.json",
+        "sha256": "e267d6e1bc3928cd2cacb5c12a51d58372ba3d66ccd2820b0871d014854f7385"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftcpuattack.c",
+      "sha256": "7a2cc2e0debca64103ead034a9ad5cf0129e2a7eea7e74caee5ea05f520bf4e7",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Source CPU attack calculations with valid volatile scratch storage",
+      "host_adaptation": {
+        "path": "host_adaptations/ftcpuattack.json",
+        "sha256": "95ce7abe3dfc523c2ee874f2873a4505eba19564296c2d5a110c13d13850eda0"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftNess/ftnessspecialhi.c",
+      "sha256": "fe2ac9965672992853e8c0af1a6073184d3a628b1198de628d29d892dbbaf39a",
+      "role": "Source-owned special-move arithmetic with target fused operation boundaries",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftnessspecialhi.json",
+        "sha256": "b74650c59f5c8069122972819e63835666cda711ef783234bafbe5e33bdc495e"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftPikachu/ftpikachuspecialhi.c",
+      "sha256": "450e6be863714a2f0d4b459ffebd41c66768aeeeb381b844ff0e0d8ac394866f",
+      "role": "Source-owned special-move arithmetic with target fused operation boundaries",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftpikachuspecialhi.json",
+        "sha256": "537ecaa50a9ba88c0d8534e8602bfd37b475124508a11ddbf5988f02301ebff1"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftSamus/ftsamusspeciallw0.c",
+      "sha256": "121c356a7277d843628b14daaaba45ca89eea5254ee9ba4518c145f840f25324",
+      "role": "Source-owned special-move arithmetic with target fused operation boundaries",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftsamusspeciallw0.json",
+        "sha256": "d3a1b90afecd91e5caa0667f8b56ace020ed119d47ec78c86cda5e4139f24328"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftZelda/ftzeldaspecialhi.c",
+      "sha256": "a4c6aa1b982979a0a91a6197b4ed2b6c32ab9cb4c9667c2c9d878b384743f5df",
+      "role": "Source-owned special-move arithmetic with target fused operation boundaries",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftzeldaspecialhi.json",
+        "sha256": "b7d996b080ede17bcccaed5f190045de11c4f1ed0c22f71f987b5f8f7dec76d7"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftLuigi/ftluigispecials.c",
+      "sha256": "056b9771ed13d9de2c46f0af0f6b22bf61839004e007ff05ef8898f7dec39298",
+      "role": "Source-owned special-move arithmetic with target fused operation boundaries",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftluigispecials.json",
+        "sha256": "a1d98a670870c3a459fcdbf95811903b8921a9b83fbf0abb5c4e9e4fe668e594"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itnesspkthunderball.c",
+      "sha256": "b858e1538b63a163ae08624519082a5aca0693c6b1f8e374db816fff57b04e37",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Source-owned PK Thunder steering with fused degree conversion and angular accumulation",
+      "host_adaptation": {
+        "path": "host_adaptations/itnesspkthunderball.json",
+        "sha256": "6c6387b1a63079202ac396400f1b93d8020b7c637fbc20cf511156646ec82f1c"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itlinkhookshot.c",
+      "sha256": "1369c5f3fcb8fee983e64446d0e4a66a9b5b48c3f4ca3923592cf01f965136f0",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Source-owned Link and Young Link hookshot chain dynamics with target contraction boundaries",
+      "host_adaptation": {
+        "path": "host_adaptations/itlinkhookshot.json",
+        "sha256": "69c54cbd6ccf7ac5d9f5369ecb1b11d7adcc75cb56e9a1f46017d1427c796d68"
+      }
+    },
+    {
+      "path": "src/melee/it/kinds/itsamusgrapple.c",
+      "sha256": "3432a6b9c69255a9f5f40a184fdb94cfeee55c6a0ad2285c1b36f572f10e9df6",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Source-owned Samus grapple chain dynamics with target contraction boundaries",
+      "host_adaptation": {
+        "path": "host_adaptations/itsamusgrapple.json",
+        "sha256": "e65cdb99a81e57cdd91d665dab0e9a0fd6a29568cda7509589939917600e1491"
+      }
+    },
+    {
+      "path": "src/melee/mp/mpcoll.c",
+      "sha256": "4aa7941b46195ac4f39f447f000ad4a8361705d23f8c593945f8a21f57dced7a",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Source-owned map collision with original contraction boundaries",
+      "host_adaptation": {
+        "path": "host_adaptations/mpcoll.json",
+        "sha256": "c8247f140482b489d133dcc6be57fe66da8d320a8b5314ab73522d83e541dcf9"
+      }
+    },
+    {
+      "path": "src/melee/ft/kinds/ftCommon/ftCo_JumpAerial.c",
+      "sha256": "32da7dd4e7f68c4f3152e0eac9aac4f8c806e1238701c2adbe383af42047cf3b",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Original aerial-turn and Ness jump arithmetic",
+      "host_adaptation": {
+        "path": "host_adaptations/ftCo_JumpAerial.json",
+        "sha256": "e52aaf72f95310b444b5170be86d421e9a82bfae8b1dd851baef7cb574008596"
+      }
+    },
+    {
+      "path": "src/melee/ft/ft_0C31.c",
+      "sha256": "2ed9c5a6987e4712b81741153718aff4cd0dc6df887f59e03a6a28722fefc5b4",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Original common entry scale and accessory-position arithmetic",
+      "host_adaptation": {
+        "path": "host_adaptations/ft_0C31.json",
+        "sha256": "f01128d7a88ee11837fa2504303ba92d0584f0ea94e85727405892bcaa230081"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftcommon.c",
+      "sha256": "43dff29e65d9c38c0b480d59510258d3a3b6f4aebf0b67d3b385e40ef560114d",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "role": "Original shared fighter arithmetic including throw-joint smoothing",
+      "host_adaptation": {
+        "path": "host_adaptations/ftcommon.json",
+        "sha256": "896b27373286dfe97322969690d5a3207af9289cb0592282b33958f197614b95"
+      }
+    },
+    {
+      "path": "extern/dolphin/src/dolphin/gx/GXLight.c",
+      "sha256": "6221578a73fef45fd4e5aa46a906397a0adacb4aec6c3cd8419bc938bbf937e2",
+      "role": "Source-owned CPU light-object constructors and getters; device upload excluded; numeric qualification pending",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gxlight.json",
+        "sha256": "59bf681d48fdf986107e83fa01c0712b8826713af25c97eaecb49b4cd8d4803d"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/psdisp.c",
+      "sha256": "f5aeb59cb2510213053d03819354424166677d75b44e5ab671165a75832b51af",
+      "role": "Source-owned particle sorting, display-phase counters and application-transform cache updates; full numeric qualification pending",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/psdisp.json",
+        "sha256": "1a8c918444fe202111c3661c21d2e23e2839fd69f6dfba456b293a540e12e947"
+      }
+    },
+    {
+      "path": "extern/dolphin/src/dolphin/gx/GXTexture.c",
+      "sha256": "2b46cc08ba249e5397ab553aef9e0c8be0d22baa3f7dbceb38572995c0e3861f",
+      "role": "Original CPU texture metadata constructors/getters with native pointer storage; exact object qualification pending",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/gxtexture.json",
+        "sha256": "7db586288490806647429d28af1321f00d3ee952946461502f24be38f29d8493"
+      }
+    },
+    {
+      "path": "src/melee/ft/ftmaterial.c",
+      "sha256": "8d21483af078701296c0c80498f8fa2cd2fef0b63ccd26bf8cbb5a11ffe19d67",
+      "role": "source-owned fighter material callbacks with native-safe template ownership",
+      "provider_only": true,
+      "replaces_ready_provider": true,
+      "host_adaptation": {
+        "path": "host_adaptations/ftmaterial.json",
+        "sha256": "9c9a9694c4960ee0a8e87d4da7eac9bf93efff1133e40be65eb61c31842575cb"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/hsd_3A64.c",
+      "sha256": "f5f5a2641bf5cc2a0f4ee2013f42ef8bfbd44cfcd38ce5997370c6a69e2b5865",
+      "host_adaptation": {
+        "path": "host_adaptations/hsd_3A64.json",
+        "sha256": "01ad8a350491a0fde6325f87e8f2df1368a2c1cc55df9023148438fcfb5b7585"
+      },
+      "role": "source-owned SIS text creation and mutation with checked native stack bounds",
+      "provider_only": true
+    },
+    {
+      "path": "src/sysdolphin/baselib/hsd_3A76.c",
+      "sha256": "f23ce602945fe0c39fd2ff75d8c153199bd9f1e11d629a0033bff0802cb9af34",
+      "role": "source-owned SIS glyph tables and text interpreter with full projection storage",
+      "provider_only": true,
+      "host_adaptation": {
+        "path": "host_adaptations/hsd_3A76.json",
+        "sha256": "f59e377d7b292a5b2927be7b3afe0f4ada2dc0fc14be5539ddfeaba388ec1b5e"
+      }
+    },
+    {
+      "path": "src/sysdolphin/baselib/sislib.c",
+      "sha256": "a8c76233259f225c957e14d71fe97b568317ae915a14b5384a3e4c6990786c6c",
+      "role": "source-owned SIS arena bootstrap and text object lifetime"
+    }
+  ]
+}

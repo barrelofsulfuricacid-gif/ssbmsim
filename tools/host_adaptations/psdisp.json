@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/psdisp.c",
+  "source_sha256": "f5aeb59cb2510213053d03819354424166677d75b44e5ab671165a75832b51af",
+  "adapted_sha256": "2afe7e79d59c622572fb10048d0411c8dfd21d9b5e064937ef38b26a2e742bfe",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "GXSetArray(GX_VA_TEX0, HSD_PSDisp_8040C340, 2U);",
+      "new": "GXSETARRAY(GX_VA_TEX0, HSD_PSDisp_8040C340, sizeof(HSD_PSDisp_8040C340), 2U, false);",
+      "count": 1,
+      "reason": "Supply the static byte-array extent to the established host renderer-registration contract; preserve original pointer and stride. No renderer is implemented."
+    },
+    {
+      "old": "                GXTexFmt fmt;",
+      "new": "                u32 fmt;",
+      "count": 1,
+      "reason": "The local format spans ordinary and indexed texture formats. Use their shared numeric representation so all comparisons and switch cases preserve values across split host enums."
+    },
+    {
+      "old": "GXWGFifo.u8 = tex_base;",
+      "new": "(void) (u8) (tex_base);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.u8 = ((pp->kind >> 16) & 0xC) + 1;",
+      "new": "(void) (u8) (((pp->kind >> 16) & 0xC) + 1);",
+      "count": 3,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.u8 = ((pp->kind >> 16) & 0xC) + 2;",
+      "new": "(void) (u8) (((pp->kind >> 16) & 0xC) + 2);",
+      "count": 3,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.u8 = ((pp->kind >> 16) & 0xC) + 3;",
+      "new": "(void) (u8) (((pp->kind >> 16) & 0xC) + 3);",
+      "count": 3,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = up.x * tx + (right.x * sx + x);",
+      "new": "(void) (f32) (up.x * tx + (right.x * sx + x));",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = up.y * tx + (right.y * sx + y);",
+      "new": "(void) (f32) (up.y * tx + (right.y * sx + y));",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = up_z * tx + (right_z * sx + z);",
+      "new": "(void) (f32) (up_z * tx + (right_z * sx + z));",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = s;",
+      "new": "(void) (f32) (s);",
+      "count": 4,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = t;",
+      "new": "(void) (f32) (t);",
+      "count": 4,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.u8 = (pp->kind >> 16) & 0xC;",
+      "new": "(void) (u8) ((pp->kind >> 16) & 0xC);",
+      "count": 2,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = -ax + cur_x;",
+      "new": "(void) (f32) (-ax + cur_x);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = -ay + cur_y;",
+      "new": "(void) (f32) (-ay + cur_y);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = cur_z;",
+      "new": "(void) (f32) (cur_z);",
+      "count": 4,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = -bx + cur_x;",
+      "new": "(void) (f32) (-bx + cur_x);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = -by + cur_y;",
+      "new": "(void) (f32) (-by + cur_y);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = ax + cur_x;",
+      "new": "(void) (f32) (ax + cur_x);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = ay + cur_y;",
+      "new": "(void) (f32) (ay + cur_y);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = bx + cur_x;",
+      "new": "(void) (f32) (bx + cur_x);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    },
+    {
+      "old": "GXWGFifo.f32 = by + cur_y;",
+      "new": "(void) (f32) (by + cur_y);",
+      "count": 1,
+      "reason": "Bound direct particle device output while retaining source expression evaluation and value conversion. No FIFO storage, MMIO mapping, or instruction processing."
+    }
+  ]
+}

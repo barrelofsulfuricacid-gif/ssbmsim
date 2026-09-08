@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/fighter.c",
+  "source_sha256": "41cdefd477ba20c6c4a7ab9643ed0916305be38dbc1c0d8af281c36732963b7f",
+  "adapted_sha256": "0e01c41210e1e74dcff7e3836ab5ec2bd2efd8b8fe519d33a06f38010e1e3f55",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_fighter_common_api.h",
+      "sha256": "4cfba65090b12bfa7e9472f0c61a295488fe3c50b61d8211c626609db126c582"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_post_frame_api.h",
+      "sha256": "5c8d39cb264d5696ad4a879d5990202818672da400ade67570cef3989b91b0e2"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi.h",
+      "sha256": "4da9634e81bae2a376673a32ac597879b88d366f3cda720b50498111604f910c"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi_spawn.h",
+      "sha256": "9f08dc267394232fe40192cc5346a8b6b9a2b0c462ccb6b2ac22abfc2a7eff87"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"fighter.h\"\n",
+      "new": "#include \"native_numeric.h\"\n#include \"fighter.h\"\n#include \"native_fighter_common_api.h\"\n#include \"native_pad_input.h\"\n#include \"native_post_frame_api.h\"\n#include \"native_slippi.h\"\n#include \"native_slippi_spawn.h\"\n",
+      "count": 1,
+      "reason": "Declare the startup-only native PlCo graph binding used in place of runtime DAT parsing."
+    },
+    {
+      "old": "    lbArchive_LoadSymbols(\"PlCo.dat\", (void**) &pData, \"ftLoadCommonData\", 0);",
+      "new": "    pData = pf_ssbm_native_fighter_common_require();",
+      "count": 1,
+      "reason": "Bind the complete endian-normalized pointer-free PlCo.dat common fighter graph once at startup while preserving all 23 original gameplay-global assignments."
+    },
+    {
+      "old": "                        p_kb_vel->x -=\n                            p_ftCommonData->x204_knockbackFrameDecay *\n                            cosf(kb_angle);\n                        p_kb_vel->y -=\n                            p_ftCommonData->x204_knockbackFrameDecay *\n                            sinf(kb_angle);",
+      "new": "                        p_kb_vel->x = PF_SlippiMulAddF32(\n                            -p_ftCommonData->x204_knockbackFrameDecay,\n                            cosf(kb_angle), p_kb_vel->x);\n                        p_kb_vel->y = PF_SlippiMulAddF32(\n                            -p_ftCommonData->x204_knockbackFrameDecay,\n                            sinf(kb_angle), p_kb_vel->y);",
+      "count": 1,
+      "reason": "Match Fighter_procUpdate at GALE01 0x8006B9C8 and 0x8006B9E4: each fnmsubs rounds the finite binary32 operands directly to a binary32 result before the following stfs, so native fmaf preserves the single fused operation without an extra Gekko store conversion. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "                    pAtkShieldKB->x -=\n                        p_ftCommonData->x3E8_shieldKnockbackFrameDecay *\n                        cosf(atkShieldKBAngle);\n                    pAtkShieldKB->y -=\n                        p_ftCommonData->x3E8_shieldKnockbackFrameDecay *\n                        sinf(atkShieldKBAngle);",
+      "new": "                    pAtkShieldKB->x = PF_SlippiMulAddF32(\n                        -p_ftCommonData->x3E8_shieldKnockbackFrameDecay,\n                        cosf(atkShieldKBAngle), pAtkShieldKB->x);\n                    pAtkShieldKB->y = PF_SlippiMulAddF32(\n                        -p_ftCommonData->x3E8_shieldKnockbackFrameDecay,\n                        sinf(atkShieldKBAngle), pAtkShieldKB->y);",
+      "count": 1,
+      "reason": "Match Fighter_procUpdate at GALE01 0x8006BB34 and 0x8006BB50: each attacker-shield decay uses one binary32 fnmsubs followed by an exact stfs of that already-rounded result. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            float eval =\n                (fp->dmg.x1928 * p_ftCommonData->x3E0) + p_ftCommonData->x3E4;",
+      "new": "            float eval =\n                PF_SlippiMulAddF32(fp->dmg.x1928, p_ftCommonData->x3E0,\n                     p_ftCommonData->x3E4);",
+      "count": 1,
+      "reason": "Match Fighter_ProcessHit_8006D1EC at GALE01 0x8006D8D8: attacker shield pushback is formed by one binary32 fmadds before its sign selection and store. The complete-match witness 15 * 0.07 + 0.02 rounds to 0x3f88f5c3 fused rather than the host's unfused 0x3f88f5c2. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "if (lb_8000D148(fp->input.lstick[1].x, fp->input.lstick[1].y,\n                            fp->input.lstick[0].x, fp->input.lstick[0].y, 0.0f,\n                            0.0f,\n                            p_ftCommonData->horizontal_stick_smash_deadzone))\n            {\n                fp->x67A_y = 0;\n                fp->x679_x = 0;\n            }\n\n            // Fighter_ClampSpecificValue",
+      "new": "            if (lb_8000D148(fp->input.lstick[1].x, fp->input.lstick[1].y,\n                            fp->input.lstick[0].x, fp->input.lstick[0].y, 0.0f, 0.0f,\n                            p_ftCommonData->horizontal_stick_smash_deadzone))\n            {\n                fp->x67A_y = 0;\n                fp->x679_x = 0;\n            }\n\n            if (!ftCo_800A2040(fp)) {\n                pf_ssbm_native_ucf084_apply_input_hook(fp);\n            }\n\n            // Fighter_ClampSpecificValue\n",
+      "count": 1,
+      "reason": "Apply UCF 0.84's raw-pad history, extended shield-drop buffer, and 1.0-cardinal hook at its original 0x8006B460 phase, after Melee's stick-edge timers and before the remaining input timers and action callbacks consume the snapped gameplay axes. Preserve the hook's ftCo_800A2040 hardware-input exclusion."
+    },
+    {
+      "old": "ifMagnify_802FC998(fp->player_id)",
+      "new": "pf_ssbm_native_slippi_brawl_offscreen_damage(fp, ifMagnify_802FC998)",
+      "count": 1,
+      "reason": "Apply project-slippi/slippi-ssbm-asm revision fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Online/Core/BrawlOffscreenDamage.asm at its original 0x8006A880 injection boundary. The native provider preserves vanilla magnifier behavior outside Slippi online matches and uses the exact stage-camera-bounds predicate during admitted online replays."
+    },
+    {
+      "old": "        if (fp->cam_cb) {\n            fp->cam_cb(gobj);\n        }\n    }\n}\n\nvoid Fighter_8006DA4C",
+      "new": "        if (fp->cam_cb) {\n            fp->cam_cb(gobj);\n        }\n    }\n    pf_ssbm_native_post_frame_capture(fp);\n}\n\nvoid Fighter_8006DA4C",
+      "count": 1,
+      "reason": "Capture native fighter state at Slippi's exact 0x8006DA34 post-frame injection boundary instead of after later scheduler callbacks have mutated the live fighter."
+    },
+    {
+      "old": "            fp->shield_health -=\n                (p_ftCommonData->x284 *\n                 ((fp->x19A0_shieldDamageTaken) *\n                  (1.0f - ((fp->lightshield_amount *\n                            (p_ftCommonData->x2E0 - p_ftCommonData->x2DC)) +\n                           p_ftCommonData->x2DC)))) +\n                p_ftCommonData->x288;",
+      "new": "            fp->shield_health -=\n                PF_SlippiMulAddF32(p_ftCommonData->x284,\n                     (fp->x19A0_shieldDamageTaken) *\n                     (1.0f - PF_SlippiMulAddF32(fp->lightshield_amount,\n                                 p_ftCommonData->x2E0 - p_ftCommonData->x2DC,\n                                 p_ftCommonData->x2DC)),\n                     p_ftCommonData->x288);",
+      "count": 1,
+      "reason": "Match the PowerPC single-precision fused multiply-add codegen for the shield-damage reduction in Fighter_ProcessHit_8006D1EC: the light-shield interpolation light*(x2E0-x2DC)+x2DC and the outer x284*(damage*(1-interp))+x288 are each one ordered a*b+c expression, which the target contracts to a single fmadds while the native import globally disables contraction. Same fmadds class as the fobj linear-channel, spline, mplib vertex-write, and itanimlist adaptations; verified end to end by the d43010c7 frame-4079 oracle proof (native shield health converges to the oracle value when both sites are fused). Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            Fighter_Spaghetti_8006AD10_Inner1(fp);",
+      "new": "            pf_ssbm_native_slippi_spawn_correct(gobj);\n            Fighter_Spaghetti_8006AD10_Inner1(fp);",
+      "count": 1,
+      "reason": "Port the first-frame, non-resync Slippi playback spawn correction at 0x8006B0DC before input-edge computation; preserve source collision, entry, player and camera updates and follower exclusion."
+    }
+  ]
+}

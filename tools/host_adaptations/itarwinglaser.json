@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itarwinglaser.c",
+  "source_sha256": "92fade7ab855a0d80a76fd971aea5140c2d82db5994085a51a2abdb410061cd2",
+  "adapted_sha256": "cbeb4fd32ac68089901edef17564b2b4568d15ce76460b61fd30d262e545bb98",
+  "replacements": [
+    {
+      "old": "        ip->xDCC_flag.b3 = 0;\n    }\n    // NOTE: no return\n}\n\nvoid it_802E79C8",
+      "new": "        ip->xDCC_flag.b3 = 0;\n    }\n    return new_gobj;\n}\n\nvoid it_802E79C8",
+      "count": 1,
+      "reason": "Return the Item_GObj produced by Item_80268B18, including NULL on spawn failure; every pinned stage caller currently discards the result."
+    }
+  ]
+}

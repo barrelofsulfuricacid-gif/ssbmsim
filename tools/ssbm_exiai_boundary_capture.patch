@@ -1,0 +1,374 @@
+diff --git a/SSBM_ORACLE.md b/SSBM_ORACLE.md
+new file mode 100644
+index 000000000..642b59b73
+--- /dev/null
++++ b/SSBM_ORACLE.md
+@@ -0,0 +1,21 @@
++# Headless SSBM validation oracle
++
++This fork adds bounded read-only frame/RNG captures and an explicit arithmetic
++profile to the upstream exi-ai-rebase headless runner. It does not replace game
++logic. Original source license terms remain in force.
++
++Set `SSBM_ORACLE_ARITHMETIC=deterministic` before launching
++`dolphin-emu-nogui` to disable host FMA generation before JIT initialization.
++This selects the separately rounded multiply/add path used by the interpreter.
++The default is `host-default`, preserving upstream host-dependent behavior.
++Every launch logs the requested mode and effective host FMA flag. Unknown
++profile values are rejected with exit code 2 before booting a game.
++
++The explicit setting avoids using movie/netplay determinism flags, whose other
++state requirements are inappropriate for standalone Slippi playback.
++
++Validation: the same replay, ISO, binary and inputs give Nana's frame-20 Y as
++29.769750595092773 in deterministic mode, matching its recorded Slippi state
++and CPUCore=0 interpreter. Host-default yields 29.769752502441406 on the tested
++FMA-capable host. This is bounded regression evidence, not full-match parity.
++No replay data or disc assets are distributed with this fork.
+diff --git a/Source/Core/Core/HLE/HLE.cpp b/Source/Core/Core/HLE/HLE.cpp
+index e089fbb96..7bbb5ceb1 100644
+--- a/Source/Core/Core/HLE/HLE.cpp
++++ b/Source/Core/Core/HLE/HLE.cpp
+@@ -3,6 +3,10 @@
+ // Refer to the license.txt file included.
+ 
+ #include "Common/CommonTypes.h"
++#include <cstdio>
++#include <cstdlib>
++#include <cerrno>
++#include <limits>
+ 
+ #include "Core/ConfigManager.h"
+ #include "Core/Core.h"
+@@ -21,6 +25,76 @@ namespace HLE
+ 
+ using namespace PowerPC;
+ 
++
++// Opt-in read-only RNG diagnostics. HLE_HOOK_START retains the original
++// function body. These hooks belong only to the external Dolphin oracle.
++static s32 rng_frame = 0;
++static bool rng_frame_active = false;
++
++void SetRngDiagnosticFrame(s32 frame)
++{
++    const char* path = std::getenv("SSBM_RNG_TRACE");
++    if (!path || !*path)
++        return;
++    auto limit = [](const char* key) -> s32 {
++        const char* value = std::getenv(key);
++        char* end = nullptr;
++        errno = 0;
++        long n = value ? std::strtol(value, &end, 10) : 0;
++        if (!value || !*value || !end || *end || errno ||
++            n < std::numeric_limits<s32>::min() ||
++            n > std::numeric_limits<s32>::max())
++            std::exit(EXIT_FAILURE);
++        return static_cast<s32>(n);
++    };
++    const s32 first = limit("SSBM_RNG_FIRST");
++    const s32 last = limit("SSBM_RNG_LAST");
++    if (first > last)
++        std::exit(EXIT_FAILURE);
++    rng_frame = frame;
++    rng_frame_active = frame >= first && frame <= last;
++}
++
++static void TraceMeleeRng(u32 address)
++{
++    if (!rng_frame_active)
++        return;
++    static FILE* output = nullptr;
++    if (!output)
++    {
++        output = std::fopen(std::getenv("SSBM_RNG_TRACE"), "wb");
++        if (!output)
++            std::exit(EXIT_FAILURE);
++    }
++    const u32 seed_address = Memory::Read_U32(0x804D5F94);
++    if (seed_address < 0x80000000 || seed_address > 0x817FFFFC)
++        std::exit(EXIT_FAILURE);
++    std::fprintf(output,
++        "{\"frame\":%d,\"function\":%u,\"caller\":%u,\"arg3\":%u,"
++        "\"seed_before\":%u,\"stack_callers\":[",
++        rng_frame, address, LR, GPR(3), Memory::Read_U32(seed_address));
++    u32 stack = GPR(1);
++    for (int depth = 0; depth < 5; ++depth)
++    {
++        if (stack < 0x80000000 || stack > 0x817FFFF8 || (stack & 3))
++            break;
++        if (depth)
++            std::fputc(44, output);
++        std::fprintf(output, "%u", Memory::Read_U32(stack + 4));
++        const u32 next = Memory::Read_U32(stack);
++        if (next <= stack)
++            break;
++        stack = next;
++    }
++    std::fprintf(output, "]}\n");
++    if (std::fflush(output) != 0 || std::ferror(output))
++        std::exit(EXIT_FAILURE);
++}
++static void TraceRand() { TraceMeleeRng(0x803804F8); }
++static void TraceRandf() { TraceMeleeRng(0x80380528); }
++static void TraceRandi() { TraceMeleeRng(0x80380580); }
++
++
+ typedef void(*TPatchFunction)();
+ 
+ static std::map<u32, u32> s_original_instructions;
+@@ -42,6 +116,9 @@ struct SPatch
+ static const SPatch OSPatches[] =
+ {
+ 	{ "FAKE_TO_SKIP_0",       HLE_Misc::UnimplementedFunction, HLE_HOOK_REPLACE, HLE_TYPE_GENERIC },
++	{ "MeleeTraceRand", TraceRand, HLE_HOOK_START, HLE_TYPE_GENERIC },
++	{ "MeleeTraceRandf", TraceRandf, HLE_HOOK_START, HLE_TYPE_GENERIC },
++	{ "MeleeTraceRandi", TraceRandi, HLE_HOOK_START, HLE_TYPE_GENERIC },
+ 
+ 	{ "PanicAlert",           HLE_Misc::HLEPanicAlert,         HLE_HOOK_REPLACE, HLE_TYPE_DEBUG },
+ 
+@@ -129,6 +206,17 @@ void Execute(u32 _CurrentPC, u32 _Instruction)
+ 
+ u32 GetFunctionIndex(u32 addr)
+ {
++    static const bool trace_rng = [] {
++        const char* value = std::getenv("SSBM_RNG_TRACE");
++        return value && *value;
++    }();
++    if (trace_rng)
++    {
++        if (addr == 0x803804F8) return 1;
++        if (addr == 0x80380528) return 2;
++        if (addr == 0x80380580) return 3;
++    }
++
+ 	auto iter = s_original_instructions.find(addr);
+ 	return (iter != s_original_instructions.end()) ? iter->second : 0;
+ }
+diff --git a/Source/Core/Core/HLE/HLE.h b/Source/Core/Core/HLE/HLE.h
+index 56ecbf707..d7bf106d2 100644
+--- a/Source/Core/Core/HLE/HLE.h
++++ b/Source/Core/Core/HLE/HLE.h
+@@ -23,6 +23,7 @@ enum
+ 	HLE_TYPE_DEBUG = 1,    // Debug output function
+ };
+ 
++void SetRngDiagnosticFrame(s32 frame);
+ void PatchFunctions();
+ 
+ void Patch(u32 pc, const char *func_name);
+diff --git a/Source/Core/Core/HW/EXI_DeviceSlippi.cpp b/Source/Core/Core/HW/EXI_DeviceSlippi.cpp
+index 71eb6cfe4..f47565df0 100644
+--- a/Source/Core/Core/HW/EXI_DeviceSlippi.cpp
++++ b/Source/Core/Core/HW/EXI_DeviceSlippi.cpp
+@@ -1,3 +1,4 @@
++#include "Core/HLE/HLE.h"
+ // Copyright 2017 Dolphin Emulator Project
+ // Licensed under GPLv2+
+ // Refer to the license.txt file included.
+@@ -11,6 +12,10 @@
+ 
+ #include <semver/include/semver200.h>
+ #include <utility> // std::move
++#include <cerrno>
++#include <cstdio>
++#include <cstdlib>
++#include <limits>
+ 
+ #include "Common/CommonPaths.h"
+ #include "Common/CommonTypes.h"
+@@ -1034,6 +1039,77 @@ bool CEXISlippi::checkFrameFullyFetched(s32 frameIndex)
+ 	return frame->inputsFullyFetched && frameIsFinalized;
+ }
+ 
++
++// Opt-in diagnostic snapshots at synchronous EXI callbacks. No guest writes.
++// The driver must qualify phase alignment, not assume that a request frame
++// labels finalized state. These raw snapshots are not canonical qualification.
++static void CaptureMeleeBoundary(const char* phase, s32 frame)
++{
++    const char* prefix = std::getenv("SSBM_BOUNDARY_PREFIX");
++    if (!prefix || !*prefix)
++        return;
++    auto readLimit = [](const char* name) -> s32 {
++        const char* value = std::getenv(name);
++        char* end = nullptr;
++        errno = 0;
++        const long parsed = value ? std::strtol(value, &end, 10) : 0;
++        if (!value || !*value || !end || *end || errno ||
++            parsed < std::numeric_limits<s32>::min() ||
++            parsed > std::numeric_limits<s32>::max())
++        {
++            std::fprintf(stderr, "Invalid boundary capture limit: %s\n", name);
++            std::exit(EXIT_FAILURE);
++        }
++        return static_cast<s32>(parsed);
++    };
++    const s32 first = readLimit("SSBM_BOUNDARY_FIRST");
++    const s32 last = readLimit("SSBM_BOUNDARY_LAST");
++    if (first > last)
++    {
++        std::fprintf(stderr, "Boundary capture first exceeds last\n");
++        std::exit(EXIT_FAILURE);
++    }
++    if (frame < first || frame > last)
++        return;
++    static u64 sequence = 0;
++    const u64 ordinal = sequence++;
++    const std::string stem = std::string(prefix) + "." + phase + "." +
++        std::to_string(frame) + "." + std::to_string(ordinal);
++    const std::string memory_path = stem + ".mem1";
++    FILE* output = std::fopen(memory_path.c_str(), "wb");
++    if (!output)
++    {
++        std::perror(memory_path.c_str());
++        std::exit(EXIT_FAILURE);
++    }
++    const size_t size = Memory::REALRAM_SIZE;
++    const size_t written = std::fwrite(Memory::GetPointer(0x80000000), 1, size, output);
++    const int close_result = std::fclose(output);
++    if (written != size || close_result != 0)
++    {
++        std::fprintf(stderr, "Incomplete boundary snapshot: %s\n", memory_path.c_str());
++        std::exit(EXIT_FAILURE);
++    }
++    const std::string metadata_path = stem + ".json";
++    output = std::fopen(metadata_path.c_str(), "wb");
++    if (!output)
++    {
++        std::perror(metadata_path.c_str());
++        std::exit(EXIT_FAILURE);
++    }
++    const int result = std::fprintf(output,
++        "{\"schema\":1,\"phase\":\"%s\",\"requested_frame\":%d,"
++        "\"sequence\":%llu,\"memory_base\":2147483648,\"memory_bytes\":%zu,"
++        "\"claim_boundary\":\"synchronized-exi-diagnostic-not-canonical-qualification\"}\n",
++        phase, frame, static_cast<unsigned long long>(ordinal), size);
++    const int metadata_close = std::fclose(output);
++    if (result < 0 || metadata_close != 0)
++    {
++        std::fprintf(stderr, "Incomplete boundary metadata: %s\n", metadata_path.c_str());
++        std::exit(EXIT_FAILURE);
++    }
++}
++
+ void CEXISlippi::prepareFrameData(u8 *payload)
+ {
+ 	// Since we are prepping new data, clear any existing data
+@@ -1047,6 +1123,8 @@ void CEXISlippi::prepareFrameData(u8 *payload)
+ 
+ 	// Parse input
+ 	s32 frameIndex = payload[0] << 24 | payload[1] << 16 | payload[2] << 8 | payload[3];
++	HLE::SetRngDiagnosticFrame(frameIndex);
++	CaptureMeleeBoundary("read_frame", frameIndex);
+ 
+ 	// If loading from queue, move on to the next replay if we have past endFrame
+ 	auto watchSettings = g_replayComm->current;
+@@ -3348,6 +3426,11 @@ void CEXISlippi::DMAWrite(u32 _uAddr, u32 _uSize)
+ 			prepareFrameData(&memPtr[bufLoc + 1]);
+ 			break;
+ 		case CMD_FRAME_BOOKEND:
++			if (payloadLen >= 4)
++				CaptureMeleeBoundary("bookend", static_cast<s32>(
++					(static_cast<u32>(memPtr[bufLoc + 1]) << 24) |
++					(static_cast<u32>(memPtr[bufLoc + 2]) << 16) |
++					(static_cast<u32>(memPtr[bufLoc + 3]) << 8) | memPtr[bufLoc + 4]));
+ 			g_needInputForFrame = true;
+ 			writeToFileAsync(&memPtr[bufLoc], payloadLen + 1, "");
+ 			m_slippiserver->write(&memPtr[bufLoc], payloadLen + 1);
+diff --git a/Source/Core/DolphinNoGUI/MainNoGUI.cpp b/Source/Core/DolphinNoGUI/MainNoGUI.cpp
+index b8a68d2e3..7e9c8e9a8 100644
+--- a/Source/Core/DolphinNoGUI/MainNoGUI.cpp
++++ b/Source/Core/DolphinNoGUI/MainNoGUI.cpp
+@@ -4,6 +4,7 @@
+ 
+ #include <cstddef>
+ #include <cstdio>
++#include <cstdlib>
+ #include <cstring>
+ #include <getopt.h>
+ #include <signal.h>
+@@ -12,6 +13,7 @@
+ #include <unistd.h>
+ 
+ #include "Common/CommonTypes.h"
++#include "Common/CPUDetect.h"
+ #include "Common/Event.h"
+ #include "Common/Flag.h"
+ #include "Common/Logging/LogManager.h"
+@@ -386,25 +388,51 @@ static Platform* GetPlatform()
+ 
+ int main(int argc, char* argv[])
+ {
++    // Replay arithmetic must not depend on whether this host supports FMA.
++    // This opt-in profile matches the interpreter's separately rounded
++    // multiply/add path without enabling unrelated netplay/movie state.
++    const char* arithmetic = std::getenv("SSBM_ORACLE_ARITHMETIC");
++    if (arithmetic && std::strcmp(arithmetic, "deterministic") == 0)
++    {
++        cpu_info.bFMA = false;
++    }
++    else if (arithmetic && std::strcmp(arithmetic, "host-default") != 0)
++    {
++        std::fprintf(stderr, "Invalid SSBM_ORACLE_ARITHMETIC: %s\n", arithmetic);
++        return 2;
++    }
++    std::fprintf(stderr, "SSBM_ORACLE_ARITHMETIC=%s host_fma=%d\n",
++                 arithmetic ? arithmetic : "host-default", cpu_info.bFMA ? 1 : 0);
++
+ 	int ch, help = 0;
+ 	struct option longopts[] = {
++		{ "cout", no_argument, nullptr, 'c' },
+ 		{ "exec", no_argument, nullptr, 'e' },
+ 		{ "help", no_argument, nullptr, 'h' },
++		{ "slippi-input", required_argument, nullptr, 'i' },
+ 		{ "version", no_argument, nullptr, 'v' },
+ 		{ "user", optional_argument, nullptr, 'u'},
+ 		{ nullptr, 0, nullptr, 0 }
+ 	};
+ 
+ 	std::string iso_path = "";
++	std::string slippi_input_path = "";
+ 	std::string user_path = "";
++	bool enable_cout = false;
+ 
+-	while ((ch = getopt_long(argc, argv, "e:h?vu:", longopts, 0)) != -1)
++	while ((ch = getopt_long(argc, argv, "ce:h?i:vu:", longopts, 0)) != -1)
+ 	{
+ 		switch (ch)
+ 		{
++		case 'c':
++			enable_cout = true;
++			break;
+ 		case 'e':
+ 			iso_path.assign(optarg);
+ 			break;
++		case 'i':
++			slippi_input_path.assign(optarg);
++			break;
+ 		case 'u':
+ 			user_path.assign(optarg);
+ 			break;
+@@ -423,7 +451,9 @@ int main(int argc, char* argv[])
+ 		fprintf(stderr, "%s\n\n", scm_rev_str.c_str());
+ 		fprintf(stderr, "A multi-platform GameCube/Wii emulator\n\n");
+ 		fprintf(stderr, "Usage: %s [-e <file>] [-h] [-v]\n", argv[0]);
++		fprintf(stderr, "  -c, --cout     Print playback state to stdout\n");
+ 		fprintf(stderr, "  -e, --exec     Load the specified file\n");
++		fprintf(stderr, "  -i, --slippi-input  Path to Slippi replay config file\n");
+ 		fprintf(stderr, "  -u, --user     Dolphin user directory\n");
+ 		fprintf(stderr, "  -h, --help     Show this help message\n");
+ 		fprintf(stderr, "  -v, --version  Print version and exit\n");
+@@ -440,6 +470,12 @@ int main(int argc, char* argv[])
+ 	UICommon::SetUserDirectory(user_path);
+ 	UICommon::Init();
+ 
++#ifdef IS_PLAYBACK
++	SConfig::GetInstance().m_strSlippiInput =
++		slippi_input_path.empty() ? "Slippi/playback.txt" : slippi_input_path;
++	SConfig::GetInstance().m_coutEnabled = enable_cout;
++#endif
++
+ 	Core::SetOnStoppedCallback([]() { s_running.Clear(); });
+ 	platform->Init();
+ 

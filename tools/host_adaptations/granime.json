@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/granime.c",
+  "source_sha256": "9251633b946fd37158a7ff572e114c5dc41dd8b557e6d7265121c7f731acdc88",
+  "adapted_sha256": "0a95c25bc59d913a82ac98f44f5998c1fb66c234f81d243d06b47054750f2aca",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    __jmp_buf buf;\n    u8 pad[0x118 - 0xF8];",
+      "new": "    jmp_buf buf;",
+      "count": 1,
+      "reason": "The original global stores the target C library's private PowerPC jump-buffer representation and ABI padding. Native execution instead stores the host C library's public jmp_buf type; the object is translation-unit-local in use and only carries the nonlocal animation-search return context."
+    },
+    {
+      "old": "longjmp(&grAnime_8049EE40.buf, 1)",
+      "new": "longjmp(grAnime_8049EE40.buf, 1)",
+      "count": 1,
+      "reason": "C jmp_buf is an array type and decays to the pointer expected by the host longjmp declaration. Exact GALE01 assembly passes the jump-buffer address and value one, which this host-C call preserves."
+    },
+    {
+      "old": "__setjmp(&grAnime_8049EE40.buf)",
+      "new": "setjmp(grAnime_8049EE40.buf)",
+      "count": 1,
+      "reason": "The decomp names the target C library's private __setjmp entry point. Public host setjmp establishes the same nonlocal-return checkpoint using the matching native jmp_buf representation; exact GALE01 control flow tests its zero result before traversing animation objects."
+    },
+    {
+      "old": "    enum _HSD_TypeMask var_r30 = 0;",
+      "new": "    volatile enum _HSD_TypeMask var_r30 = 0;",
+      "count": 1,
+      "reason": "The animation type mask is computed before setjmp, consumed only on the initial traversal call, and never read after longjmp. Volatile gives the host compiler the required nonlocal-jump storage contract without changing the mask calculation, traversal arguments, or post-jump result."
+    },
+    {
+      "old": "typedef void (*Callback1)(HSD_AObj* aobj, HSD_TObj* obj, u32 flags,\n                          float param);\ntypedef void (*Callback2)(HSD_AObj* aobj, int param);\ntypedef void (*Callback4)(HSD_AObj* aobj, HSD_TObj* obj, u32 flags, int param);\ntypedef void (*Callback3)(HSD_AObj* aobj, HSD_TObj* obj, int param);\n\nvoid grAnime_801C6F50(HSD_AObj* aobj, void* obj, u32 flags, void* func,\n                      u32 type, void* param)\n{\n    switch (type) {\n    case 0:\n        ((Event) func)();\n        break;\n    case 1:\n        ((Callback1) func)(aobj, obj, flags, *(float*) param);\n        break;\n    case 2:\n        ((Callback2) func)(aobj, *(int*) param);\n        break;\n    case 3:\n        ((Callback2) func)(aobj, *(int*) param);\n        break;\n    case 4:\n        ((Event) func)();\n        break;\n    case 8:\n        ((Event) func)();\n        break;\n    case 5:\n        ((Callback1) func)(aobj, obj, flags, *(float*) param);\n        break;\n    case 6:\n        ((Callback3) func)(aobj, obj, *(int*) param);\n        break;\n    case 7:\n        ((Callback3) func)(aobj, obj, *(int*) param);\n        break;\n    case 9:\n        ((Callback1) func)(aobj, obj, flags, *(float*) param);\n        break;\n    case 10:\n        ((Callback4) func)(aobj, obj, flags, *(int*) param);\n        break;\n    case 11:\n        ((Callback4) func)(aobj, obj, flags, *(int*) param);\n        break;\n    }\n}\n",
+      "new": "void grAnime_801C6F50(HSD_AObj* aobj, void* obj, u32 flags, void* func,\n                      u32 type, void* param)\n{\n    callbackArg* arg = param;\n    switch (type) {\n    case AOBJ_ARG_A:\n        (*(void (*)(HSD_AObj*)) func)(aobj);\n        return;\n    case AOBJ_ARG_AF:\n        (*(void (*)(HSD_AObj*, f32)) func)(aobj, arg->f);\n        return;\n    case AOBJ_ARG_AV:\n        (*(void (*)(HSD_AObj*, void*)) func)(aobj, arg->v);\n        return;\n    case AOBJ_ARG_AU:\n        (*(void (*)(HSD_AObj*, u32)) func)(aobj, arg->d);\n        return;\n    case AOBJ_ARG_AO:\n        (*(void (*)(HSD_AObj*, void*)) func)(aobj, obj);\n        return;\n    case AOBJ_ARG_AOT:\n        (*(void (*)(HSD_AObj*, void*, HSD_Type)) func)(aobj, obj, flags);\n        return;\n    case AOBJ_ARG_AOF:\n        (*(void (*)(HSD_AObj*, void*, f32)) func)(aobj, obj, arg->f);\n        return;\n    case AOBJ_ARG_AOV:\n        (*(void (*)(HSD_AObj*, void*, void*)) func)(aobj, obj, arg->v);\n        return;\n    case AOBJ_ARG_AOU:\n        (*(void (*)(HSD_AObj*, void*, u32)) func)(aobj, obj, arg->d);\n        return;\n    case AOBJ_ARG_AOTF:\n        (*(void (*)(HSD_AObj*, void*, HSD_Type, f32)) func)(aobj, obj, flags,\n                                                            arg->f);\n        return;\n    case AOBJ_ARG_AOTV:\n        (*(void (*)(HSD_AObj*, void*, HSD_Type, void*)) func)(aobj, obj, flags,\n                                                              arg->v);\n        return;\n    case AOBJ_ARG_AOTU:\n        (*(void (*)(HSD_AObj*, void*, HSD_Type, u32)) func)(aobj, obj, flags,\n                                                            arg->d);\n        return;\n    }\n}\n",
+      "count": 1,
+      "reason": "Port all twelve stage animation callback argument modes through the exact typed dispatch already implemented by pinned aobj.c callbackForeachFunc. The prior Event() casts omit required arguments and corrupt object identity on native stack ABIs; floating and pointer modes also require their declared layouts. Remove superseded four approximate typedefs."
+    }
+  ]
+}

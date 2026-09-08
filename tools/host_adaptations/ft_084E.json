@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/ft_084E.c",
+  "source_sha256": "fd8a8a71f19e25673c9e7bdd06de8188a51e0caf8dbd2a0a70383b0841e3d4c2",
+  "adapted_sha256": "cfba26836c217e9e576959f7cdc74f56ee426226a1d15b0d8d50d7aa543525aa",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "    fp->self_vel.x = (temp_f3 * lstick_x) - (temp_f0 * lstick_y);\n    fp->self_vel.y = (temp_f3 * lstick_y) + (temp_f0 * lstick_x);",
+      "new": "    const f32 temp_f0_lstick_y = temp_f0 * lstick_y;\n    const f32 temp_f0_lstick_x = temp_f0 * lstick_x;\n    fp->self_vel.x =\n        PF_SlippiMulAddF32(temp_f3, lstick_x, -temp_f0_lstick_y);\n    fp->self_vel.y =\n        PF_SlippiMulAddF32(temp_f3, lstick_y, temp_f0_lstick_x);",
+      "count": 1,
+      "reason": "Match ft_80085154 at GALE01 0x8008518C through 0x8008519C: round both temp_f0 products and temp_f3 first, then preserve the PowerPC fmsubs and fmadds single-rounding operations. The complete-match frame-5545 witness produces pre-scale X velocity 0xbfc33619 fused instead of native 0xbfc33618 unfused. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"ft_084E.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ft_084E.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    }
+  ]
+}

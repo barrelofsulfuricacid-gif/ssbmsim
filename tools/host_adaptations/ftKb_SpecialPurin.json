@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftKirby/ftkirbyspecialpurin.c",
+  "source_sha256": "e22706b5803d99d45035d16255d4b20261e351bc8caba005693e81555f6fd9c0",
+  "adapted_sha256": "18cb005db426aece48d953c07a5b532cf10da620eb16323c55d087f97fd3f1ae",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "instructions": "GALE01 fmadds immediately before gr_vel stores: 0x80104024, 0x80104038, 0x80104054, 0x80104068",
+    "class": "multiplied ground-velocity accumulation; opcode evidence retained in ground-momentum-audit.json"
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftkirbyspecialpurin.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftkirbyspecialpurin.h\"",
+      "count": 1,
+      "reason": "Declare shared Slippi single-precision accumulation helper."
+    },
+    {
+      "old": "            fp->gr_vel += scale * (x1C + influence);",
+      "new": "            fp->gr_vel = PF_SlippiMulAddF32(\n                scale, x1C + influence, fp->gr_vel);",
+      "count": 2,
+      "reason": "Preserve the separately rounded acceleration input and the original fused ground-velocity accumulation; retain source branches, clamps, callbacks and surface lookup order."
+    },
+    {
+      "old": "            fp->gr_vel += scale * (x1C - influence);",
+      "new": "            fp->gr_vel = PF_SlippiMulAddF32(\n                scale, x1C - influence, fp->gr_vel);",
+      "count": 2,
+      "reason": "Preserve the separately rounded acceleration input and the original fused ground-velocity accumulation; retain source branches, clamps, callbacks and surface lookup order."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

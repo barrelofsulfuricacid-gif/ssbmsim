@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "source_path": "src/placeholder.h",
+  "source_sha256": "717d2976e723107a35937fc975130a1116a035f8ae84ea59b16ba448b5ff97f1",
+  "adapted_sha256": "18c7b7d8832500e158608ff1b0824f0a7d9f8a5b0c6f2305e8410f1e2f264a67",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_msl_math.h",
+      "sha256": "fb40777591fa156931b939c06807113eb6cbddcfd7d213d937fc9ba134f2b14e"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_ps_math.h",
+      "sha256": "8292c0bc708e4fcf33625270298a46fd5448d4f32c17b251a23d9e5d05b1a02d"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#define __frsqrte(x) sqrt(x)",
+      "new": "#include \"native_msl_math.h\"\n#define __frsqrte(x) PF_GekkoFrsqrte((double) (x))",
+      "count": 1,
+      "reason": "Replace the non-matching analysis placeholder with the exact Gekko reciprocal-square-root estimate used by gameplay source."
+    },
+    {
+      "old": "#define sqrtf__Ff(x) sqrtf(x)",
+      "new": "#define sqrtf(x) PF_MSLSqrtf((x))\n#define sqrtf__Ff(x) PF_MSLSqrtf((x))",
+      "count": 1,
+      "reason": "Resolve both MSL sqrt spellings to the native form of the three-step Gekko frsqrte and fused Newton sequence emitted by GALE01."
+    },
+    {
+      "old": "#define sqrtf_accurate(x) sqrtf(x)",
+      "new": "#define sqrtf_accurate(x) PF_MSLSqrtfAccurate((x))",
+      "count": 1,
+      "reason": "Preserve the fourth Newton refinement used by math_ppc.h sqrtf_accurate instead of collapsing it to host sqrtf."
+    }
+  ]
+}

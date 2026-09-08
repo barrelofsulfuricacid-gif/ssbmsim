@@ -1,0 +1,437 @@
+{
+  "schema": 1,
+  "slippi_revision": "fcf47f10dc244152c2ebaa3a9dec142ea42243b7",
+  "scope": "Gameplay-tagged injections in the listed profiles; custom and other recorded code lists require separate review.",
+  "claim_boundary": "inventory-and-textual-references-not-behavioral-qualification",
+  "injection_lists": [
+    {
+      "path": "Output/InjectionLists/list_netplay.json",
+      "sha256": "1575b847f49fa427ab7cc9ed032433a2ba6b16b56140a2ebbd5b32c299a2870b"
+    },
+    {
+      "path": "Output/InjectionLists/list_console_core.json",
+      "sha256": "7b5463a45506a0a54561e076e23f41e97c79c389e22cda0f40f84d31c29a805e"
+    },
+    {
+      "path": "Output/InjectionLists/list_console_UCF_084.json",
+      "sha256": "7cc99ee0eb92df1ce921165874de0525b7f51d2e08bfffcdbfffe6e7d7b37206"
+    },
+    {
+      "path": "Output/InjectionLists/list_console_stages_stadium.json",
+      "sha256": "2d1caf08dabd939ddc3137d93e66eead937373d52d4e8310921a0dc3487e2725"
+    }
+  ],
+  "hooks": [
+    {
+      "address": "0x8016E510",
+      "source": "External/NeutralSpawn/NeutralSpawn.asm",
+      "source_sha256": "d79326d0f97d31dea6efbb64d5d6c4f97ff8d8f99b11282c3d91f3c668df1144",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/gm_16AE.json",
+        "src/ssbm/native_compat/native_slippi.c"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800D65EC",
+      "source": "External/UCF 0.84/UCF/UCF DBOOC SquatRv Fix.asm",
+      "source_sha256": "6c629c0d079ebbb202b363e1f0e1e77e77966ff42a79f656c8c187bd64d8f960",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_SquatRv.json",
+        "src/ssbm/native_compat/native_pad_input.c"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800C9A44",
+      "source": "External/UCF 0.84/UCF/UCF Dashback.asm",
+      "source_sha256": "529517e39752c2abf3173a267f773d9e3e91fb004ac48234fea538809410fbbd",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_Turn.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x8006B460",
+      "source": "External/UCF 0.84/UCF/UCF Pad Buffer + 1.0 Cardinals.asm",
+      "source_sha256": "8f36ecfb8bd6664ed39b134a4fb01572f33e35c2bcdf5245fc5386ac28b33042",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/fighter.json",
+        "src/ssbm/native_compat/native_pad_input.c"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x8008E54C",
+      "source": "External/UCF 0.84/UCF/UCF SDI.asm",
+      "source_sha256": "9ceb9a06f35d87dc8999ea2241e61f858ce7a7e3604ae80ee663c052209c7fff",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_Damage.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x8009A0B8",
+      "source": "External/UCF 0.84/UCF/UCF Shield Drop Extended.asm",
+      "source_sha256": "d11ec06f1befd3e902a41ec0253e2a73a2226072fb5feada11e0a311e546923e",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_Pass.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800998A4",
+      "source": "External/UCF 0.84/UCF/UCF Shield Drop.asm",
+      "source_sha256": "491e0fd32d0cf0cba2f2f9e57e0293c7e6cdd791fe2d486ad6b99d2a290af5c3",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_Escape.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x80093294",
+      "source": "External/UCF 0.84/UCF/UCF Shield SDI.asm",
+      "source_sha256": "915169971d53a9d2c7b44fcbc6199c9c87296688f83cdd202bdc9e97c781d616",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_Guard.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800908F4",
+      "source": "External/UCF 0.84/UCF/UCF Tumble.asm",
+      "source_sha256": "c9f7540aff1359c41c0afb0a9b856001153c04750a8bf05956251b99da4285e2",
+      "profiles": [
+        "netplay",
+        "console_UCF_084"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_DamageFall.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801239A8",
+      "source": "External/FreezeGlitchFix/FreezeGlitchFix.asm",
+      "source_sha256": "e7df17192111d8f5cee60decd36ee616d77ef851a04472b4bd3a447ff64a85bb",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801C154C",
+      "source": "Common/Initialize Stage Data/Init Stage Data.asm",
+      "source_sha256": "031a9458a9fef8a6b0170f4f5e383ad07dca9ad79d5813a9df3062108edd4344",
+      "profiles": [
+        "netplay",
+        "console_core"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x80068EEC",
+      "source": "Common/Initialize Player Data/Init Player Data.asm",
+      "source_sha256": "58d427d907907bb6efdf8a57628254dd0ed630a457bb0ddbb0a19ae71a428c85",
+      "profiles": [
+        "netplay",
+        "console_core"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x8006A880",
+      "source": "Online/Core/BrawlOffscreenDamage.asm",
+      "source_sha256": "3985e5abb6f9cff7857a6ae340962b712b3b474d7a5df4040580986ff7348203",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/fighter.json",
+        "src/ssbm/native_compat/native_slippi.c"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800D4C1C",
+      "source": "Online/Core/FreezeDeadUpFallPhysics/InitHitVelocity.asm",
+      "source_sha256": "050b8c7f12e47d6a936f4c4ae839e2e44a9363b61c936bcae7d4b665ccfae887",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ft_0D31.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800D4D68",
+      "source": "Online/Core/FreezeDeadUpFallPhysics/UpdateFallVelocity.asm",
+      "source_sha256": "55e4fcf9608944d2bfb0dc334806eaf316ac94f543d089466e736e38740f5b2c",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ft_0D31.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x80080E80",
+      "source": "Online/Core/FreezeDeadUpFallPhysics/UpdateModelPos.asm",
+      "source_sha256": "d77ca0e6bad67a0337a6f88bb739934a813ad43a69d49c423b89fe90cc4abe05",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftdrawcommon.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x8021AAE4",
+      "source": "Online/Core/Hacks/FD/DesyncProofBGTransformations.asm",
+      "source_sha256": "09bf283d7c08551b96289796a3dd80cf3635a33f5df4add8b5de6e2f56ba06c3",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801C65C8",
+      "source": "Online/Core/Hacks/Stadium/CustomZeroBuffer.asm",
+      "source_sha256": "67dea68ffa93458d9a6ab4fabfb24b4d6b53c752e832f62e7dbc83f6aab4087b",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D4760",
+      "source": "Online/Core/Hacks/Stadium/GrPsxIsValid.asm",
+      "source_sha256": "644f3feadc99fe0cdf79cb785925e492f26efd119380b28507ab22261efdbe54",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D457C",
+      "source": "Online/Core/Hacks/Stadium/IngameCheckIfFrozen.asm",
+      "source_sha256": "4d496b1099b7fc0c7f2eb7ca30292ea5dfa6326ac3c5842b15ab2932029a8ae6",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800165AC",
+      "source": "Online/Core/Hacks/Stadium/StadiumFileLoad.asm",
+      "source_sha256": "280031928e8d44cd30766e3afeb86a673a3b9d200084f27bfc1ce44e3959d1da",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x8008653C",
+      "source": "Online/Core/WhispyBlowDirFix/WhispyBlowDirFix.asm",
+      "source_sha256": "681d6c29542b778c5ae01fd6eb5cf0ffdb0ce1cc8e2ff4184786f6e24c20fa34",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftlib.json",
+        "src/ssbm/native_compat/native_slippi.c"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800AC5B8",
+      "source": "Common/NanaDeterminism/NanaDeterminism.asm",
+      "source_sha256": "084ad78d634c36e9c2cd13472ac2d37742fb6b2adba30394f3aadceffdb31bb0",
+      "profiles": [
+        "netplay",
+        "console_core"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_0A01.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D24FC",
+      "source": "Common/PSCameraIndependentMonitor/PSCameraIndependentMonitor.asm",
+      "source_sha256": "b29dfab4041b36bd31f61c8d70e923121dfa34f0ed276a8632203adacd8ef2a9",
+      "profiles": [
+        "netplay",
+        "console_core"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/grpstadium.json",
+        "src/ssbm/native_compat/native_slippi.c"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800DB880",
+      "source": "External/PreventWobbling/Init Wobble Count Air.asm",
+      "source_sha256": "f132397affdf732867c7052ec8425df4313bbacc22f9dae236224e8b263adf9a",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_CaptureWait.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x800DBBD4",
+      "source": "External/PreventWobbling/Init Wobble Count Ground.asm",
+      "source_sha256": "39946cc17f20785d4203b533efe28ab287a4792c7b0ae9965cd38f6f20bef929",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_CaptureWait.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x8008F090",
+      "source": "External/PreventWobbling/Wobble Check.asm",
+      "source_sha256": "b46aa0c1a9964ab306f3a348d6f64f0aa06817c15dabcef87874759242ecaa2e",
+      "profiles": [
+        "netplay"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/ftCo_Damage.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D460C",
+      "source": "Common/Preload Stadium Transformations/Core/GetPreloadedTransition.asm",
+      "source_sha256": "e30ff03bd25cd7bac74e05cbadf151d42a06498aac27a9d8d43649a002b8b8a9",
+      "profiles": [
+        "console_core"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D14C8",
+      "source": "Common/Preload Stadium Transformations/Core/Init isLoaded Bool.asm",
+      "source_sha256": "a7f725c75a45aad128f9ee16045d00c58c9687e2ae0f89b8c819227732657e2a",
+      "profiles": [
+        "console_core"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D45EC",
+      "source": "Common/Preload Stadium Transformations/Core/Load Transformation.asm",
+      "source_sha256": "abae6f191f7e62e813edefab7f9ed1fa0bf55ccc834e72b1902020057ad78cc8",
+      "profiles": [
+        "console_core"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/grpstadium.json",
+        "src/ssbm/native_compat/native_slippi.c"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D4F14",
+      "source": "Common/Preload Stadium Transformations/Core/Reset isLoaded.asm",
+      "source_sha256": "24f1fb94c6c7814516c256f8c6eb90c6298cac70170a23be7428759fcbcacb81",
+      "profiles": [
+        "console_core"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D4610",
+      "source": "Common/Preload Stadium Transformations/Core/SkipNormalDecision1.asm",
+      "source_sha256": "dec0b77822b7e32aab99d1172960243bdd34489bad0e8e86d0063742e99c5129",
+      "profiles": [
+        "console_core"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D4724",
+      "source": "Common/Preload Stadium Transformations/Core/SkipNormalDecision2.asm",
+      "source_sha256": "7aaa66b06fa15054862d851dea205f39dadbd11ea2812f8b2748af93101d4bc9",
+      "profiles": [
+        "console_core"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D45FC",
+      "source": "External/Frozen PS/Core/FreezePokemon.asm",
+      "source_sha256": "50ed563ebce431444fed82f11b04ad323ea049bb74e63985475536228ad6c7a0",
+      "profiles": [
+        "console_stages_stadium"
+      ],
+      "implementation_references": [
+        "tools/host_adaptations/grpstadium.json"
+      ],
+      "audit_status": "behavior-and-configuration-review-pending"
+    },
+    {
+      "address": "0x801D457C",
+      "source": "External/Frozen PS/Toggle/FrzPkmToggleEnable.asm",
+      "source_sha256": "b1d846c668049a2092044103403d1c7ad26f656d867db34f5ab4f56a6f2128d2",
+      "profiles": [
+        "console_stages_stadium"
+      ],
+      "implementation_references": [],
+      "audit_status": "behavior-and-configuration-review-pending"
+    }
+  ]
+}

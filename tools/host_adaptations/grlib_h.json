@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/grlib.h",
+  "source_sha256": "f3dd92f9c6c845f981fd8abe0cc51c031bbe5b59ea20ffdd836cfcfa1efd777e",
+  "adapted_sha256": "3caf304b9e78ceccc8b13098032a5de4b1072c668cb0298229f5f457281827ea",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "/* 1C9EE8 */ int grLib_801C9EE8(Vec3*, float);",
+      "new": "/* 1C9EE8 */ bool grLib_801C9EE8(Vec3*, float);",
+      "count": 1,
+      "reason": "The source definition returns bool on every path, exact GALE01 DOL assembly returns only 0 or 1, and all three production call sites consume the result solely as a condition. Matching the declaration to the definition preserves the source contract and prevents the native i686 caller and callee from disagreeing on the return ABI."
+    }
+  ]
+}

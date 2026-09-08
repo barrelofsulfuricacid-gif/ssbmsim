@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itnesspkfirepillar.c",
+  "source_sha256": "43bfe5000dfc17e112c82da7a6b33c6c9f6bbbee8b95304aa14509690d54558c",
+  "adapted_sha256": "fed619d76a192ca42e742e40940bf6755e4ef65d53235f8c05bd394eab59c529",
+  "replacements": [
+    {
+      "old": "bool inline itNesspkfirepillar_INLINE_Anim_SetScale(",
+      "new": "static inline bool itNesspkfirepillar_INLINE_Anim_SetScale(",
+      "count": 1,
+      "reason": "The helper has one caller in this translation unit and no external declarations or address consumers. Internal linkage preserves its body and permits calls to static inline HSD helpers under strict C."
+    }
+  ]
+}

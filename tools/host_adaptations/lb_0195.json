@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lb_0195.c",
+  "source_sha256": "6e68d0ffdc61baa8bcc0aed049fd98fca5fdc25df2d85dc8634c17508813fdb3",
+  "adapted_sha256": "6054d2e72275373fd11d1b58bb3b1b862b324d106a4384d08484f2c316c66f69",
+  "replacements": [
+    {
+      "old": "void lb_800195D0(void)\n{\n    lb_800192A8(lb_8001955C);\n    lb_8001CC84();\n}",
+      "new": "void lb_800195D0(void)\n{\n}",
+      "count": 1,
+      "reason": "Bound the per-loop hardware service hook in the headless runtime: its complete source call graph services reset-switch, DVD error UI/rendering, memory-card state, video retrace, and audio-load polling, while competitive Slippi replay preloads native assets and exposes none of those device events. The gameplay frame-period setter in the same source remains unchanged."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_JumpAerial.c",
+  "source_sha256": "32da7dd4e7f68c4f3152e0eac9aac4f8c806e1238701c2adbe383af42047cf3b",
+  "adapted_sha256": "28996a406142313d451d662773c6db1d548944c656e2cfbfa7a445dbdba36b91",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"ftCo_JumpAerial.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftCo_JumpAerial.h\"",
+      "count": 1,
+      "reason": "Use original contraction boundaries"
+    },
+    {
+      "old": "void ft_800CB6EC(Fighter* fp, s32 arg1)",
+      "new": "static inline void pf_aerial_turn_rotation(HSD_JObj* jobj, float degrees)\n{\n    HSD_ASSERT(1041, jobj);\n    jobj->rotate.y = -PF_SlippiMulAddF32(degrees, 0.01745329252f,\n                                      -jobj->rotate.y);\n    if (!(jobj->flags & JOBJ_MTX_INDEP_SRT)) {\n        HSD_JObjSetMtxDirty(jobj);\n    }\n}\n\nvoid ft_800CB6EC(Fighter* fp, s32 arg1)",
+      "count": 1,
+      "reason": "Preserve original joint assertion and dirty propagation while fusing degree conversion with rotation accumulation"
+    },
+    {
+      "old": "HSD_JObjAddRotationY(fp->parts->joint, -MTXDegToRad(180.0F / arg1));",
+      "new": "pf_aerial_turn_rotation(fp->parts->joint, 180.0F / arg1);",
+      "count": 1,
+      "reason": "One shared call covers retail standalone and two Yoshi inlined fnmsubs sites"
+    },
+    {
+      "old": "fp->x6A4_transNOffset.z * fp->facing_dir +\n                     fp->mv.co.jumpaerial.init_h_vel",
+      "new": "PF_SlippiMulAddF32(fp->x6A4_transNOffset.z, fp->facing_dir,\n                     fp->mv.co.jumpaerial.init_h_vel)",
+      "count": 1,
+      "reason": "Retail Ness aerial velocity fmadds"
+    }
+  ]
+}

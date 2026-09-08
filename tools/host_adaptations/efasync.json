@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ef/efasync.c",
+  "source_sha256": "56eb819c15045f7d2f33d67cf030aa1b8ab20fc84d122e1568ac4b1a314fa3bd",
+  "adapted_sha256": "e54bbaeb524500018cb69c097d5b3b7e36145caf09781b1f841326eea8f3782f",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_effect_bank_api.h",
+      "sha256": "9a692df9750e1fb2804d74c82f84e3cbf6b87e4aa0e0b76a836ded6ec94f6496"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"types.h\"\n",
+      "new": "#include \"types.h\"\n#include \"native_effect_bank_api.h\"\n",
+      "count": 1,
+      "reason": "Declare the native pointer-free effect-bank binder used in place of runtime DAT and disc access."
+    },
+    {
+      "old": "void efAsync_LoadSync(int idx)\n{\n    EF_DAT_Entry* spC;\n    EF_DAT_Entry* lookup;\n    lookup = &efAsync_DatEntries[idx];\n\n    if (idx >= 50 || idx < 0) {\n        return;\n    }\n    if (!lookup->ef_DAT_file) {\n        return;\n    }\n    if (lookup->data) {\n        return;\n    }\n    {\n        bool chk = lbArchive_80017040(NULL, lookup->ef_DAT_file, &spC,\n                                      lookup->effDataTable_name, 0);\n        if ((u32) spC->ef_DAT_file | (u32) spC->effDataTable_name) {\n            if (chk) {\n                psInitDataBankLoad(idx, (void*) spC->ef_DAT_file,\n                                   (void*) spC->effDataTable_name, NULL, NULL);\n            } else {\n                psInitDataBank(idx, (void*) spC->ef_DAT_file,\n                               (void*) spC->effDataTable_name, NULL, NULL);\n            }\n        }\n        lookup->data = &spC->data;\n    }\n}\n",
+      "new": "void efAsync_LoadSync(int idx)\n{\n    EF_DAT_Entry* lookup;\n\n    if (idx >= 50 || idx < 0) {\n        return;\n    }\n    lookup = &efAsync_DatEntries[idx];\n    if (!lookup->ef_DAT_file || lookup->data) {\n        return;\n    }\n    pf_ssbm_native_effect_bank_require(\n        idx, lookup->ef_DAT_file, lookup->effDataTable_name,\n        &lookup->data);\n}\n",
+      "count": 1,
+      "reason": "Bind the same source-owned particle bank indices and exact model-effect root from the prevalidated native asset pack. Runtime DAT parsing, disc lookup, and relocation are replaced by startup-only typed materialization; the original effect and particle interpreters remain authoritative."
+    }
+  ]
+}

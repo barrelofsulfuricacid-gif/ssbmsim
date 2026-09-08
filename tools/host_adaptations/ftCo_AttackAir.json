@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_AttackAir.c",
+  "source_sha256": "18eb8f663442558e375f07e2cdefe818b311473c93e023fc6d81f012d3ceeeac",
+  "adapted_sha256": "d6e62638693711fce1c094b673822a33930c0c4c2e02510eb4cc93ad2cc2c8ff",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "RETURN_IF(ftCo_80095328(gobj, false));",
+      "new": "RETURN_IF(ftCo_80095328(gobj, NULL));",
+      "count": 1,
+      "reason": "ftCo_80095328 accepts an optional bool output pointer. The DO_IASA macro expands into all five common aerial-attack IASA callbacks, and exact GALE01 assembly passes integer register r4 = 0 at each call. NULL is the defined host-C expression of that same null pointer; false is a scalar bool and is not pointer-compatible in C."
+    }
+  ]
+}

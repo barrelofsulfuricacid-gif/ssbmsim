@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/shadow.c",
+  "source_sha256": "07c16c48bd1a987ae91385c0f0c81037a1c7d07de56ed72bd87269ede03e939c",
+  "adapted_sha256": "8a8c8caaf8a11c976a0ff145e19407c39b8c252bd9b878ae816005c5a3bff835",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    GXCopyTex(idesc->image_ptr, GX_TRUE);",
+      "new": "    /* Shadow pixels feed texture upload only; preserve lifecycle and makeMatrix. */\n    (void) idesc->image_ptr;",
+      "count": 1,
+      "reason": "Bound only shadow image pixel output: shadow-owned buffer is passed to texture upload, never sampled by CPU shadow logic. Preserve allocation, dimensions, active/list state, synchronization call order and subsequent makeMatrix. Other GXCopyTex callers remain fail-closed."
+    }
+  ]
+}

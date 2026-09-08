@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gm/gm_1884.c",
+  "source_sha256": "0d035e94f4e6fd69716cf0f3692bcb3d0d300b598f6d74993391d965ed625cb3",
+  "adapted_sha256": "b2a079f19234cc080946163de706558e044a4deb3cd9665660ec46275994a764",
+  "replacements": [
+    {
+      "old": "#include <dolphin/pad.h>",
+      "new": "#include <dolphin/pad.h>\n\n#define PAD_ANY_UP (1ULL << 36)\n#define PAD_ANY_DOWN (1ULL << 37)\n#define PAD_ANY_LEFT (1ULL << 38)\n#define PAD_ANY_RIGHT (1ULL << 39)\n\n#if defined(__GNUC__)\n#pragma GCC diagnostic ignored \"-Waggressive-loop-optimizations\"\n#endif",
+      "count": 1,
+      "reason": "Restore the four Melee-synthesized 64-bit composite direction bits at their exact pinned doldecomp positions. The definitions match the already qualified gm_1A36 input-map adaptation and are local to this source owner. Suppress GCC's whole-unit aggressive-loop diagnostic for unselected training-menu code whose original 27-byte adjacent-field clear is preserved; the rooted slice consumes only source-owned game-mode state."
+    }
+  ]
+}

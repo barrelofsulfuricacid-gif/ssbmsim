@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gm/gm_1832.c",
+  "source_sha256": "ec9590a275a417ca3b5a14ed58b25ea06e9e137b958af52f415678dc3cf00538",
+  "adapted_sha256": "ad7e5c0ea27c78e6fa1ca2d9c6478fb2a266546f143725ea87dd6f139646bd84",
+  "replacements": [
+    {
+      "old": "    Mtx sp1C;",
+      "new": "    Mtx44 sp1C;",
+      "count": 1,
+      "reason": "Represent the full 4x4 projection object written by MTXOrtho and passed unchanged to GXSetProjection in the unrelated fn_80185408 presentation helper. Exact GALE01 instructions at 0x8018551C and 0x80185538 pass r1+0x1C to both calls; the native type must expose the complete 64-byte destination rather than the decomp's matching-build 3x4 stack declaration."
+    }
+  ]
+}

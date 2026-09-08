@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/sysdolphin/baselib/gobj.c",
+  "source_sha256": "a8eb5cd248fac8a0e0f3f8d0491c91efbf185329655e2042ba1250c7883de75c",
+  "adapted_sha256": "d2327a05100aa9c36a44ecf8fa610ee152bae527280df995cd80244eea5db8ef",
+  "replacements": [
+    {
+      "old": "s32 HSD_GObj_804D783C;\n",
+      "new": "extern s32 HSD_GObj_804D783C;\n",
+      "count": 1,
+      "reason": "Use the native GObj bootstrap's single zero-initialized storage owner. GCC common storage cannot be section-sliced and would otherwise duplicate the host provider when the original per-frame scheduler is retained."
+    }
+  ]
+}

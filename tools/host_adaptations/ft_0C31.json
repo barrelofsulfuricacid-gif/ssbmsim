@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/ft_0C31.c",
+  "source_sha256": "2ed9c5a6987e4712b81741153718aff4cd0dc6df887f59e03a6a28722fefc5b4",
+  "adapted_sha256": "87454dc07873c54df1edff529caab8b9710306724746708f2ea4b01291c0bd4c",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"ft_0C31.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ft_0C31.h\"",
+      "count": 1,
+      "reason": "Declare native arithmetic boundary helpers."
+    },
+    {
+      "old": "(temp_f31 * (temp_r31->mv.co.entry.x8.y - temp_f4)) + temp_f4",
+      "new": "PF_SlippiMulAddF32(temp_f31, temp_r31->mv.co.entry.x8.y - temp_f4, temp_f4)",
+      "count": 1,
+      "reason": "Preserve common entry scale interpolation fmadds at GALE01 800C67AC. Duration conversion, division and endpoint subtraction remain separately rounded."
+    },
+    {
+      "old": "-(temp_r29_3->facing_dir * ftCommon_800804EC(temp_r29_3) -\n                   temp_r29_3->cur_pos.x)",
+      "new": "-PF_SlippiMulAddF32(temp_r29_3->facing_dir, ftCommon_800804EC(temp_r29_3), -temp_r29_3->cur_pos.x)",
+      "count": 1,
+      "reason": "Preserve entry accessory-position fnmsubs, including final negation, at 800C65FC and 800C6A68."
+    },
+    {
+      "old": "-(temp_r31_2->facing_dir * ftCommon_800804EC(temp_r31_2) -\n                   temp_r31_2->cur_pos.x)",
+      "new": "-PF_SlippiMulAddF32(temp_r31_2->facing_dir, ftCommon_800804EC(temp_r31_2), -temp_r31_2->cur_pos.x)",
+      "count": 1,
+      "reason": "Preserve entry accessory-position fnmsubs, including final negation, at 800C65FC and 800C6A68."
+    },
+    {
+      "old": "-((fp->facing_dir * ftCommon_800804EC(fp)) - fp->cur_pos.x)",
+      "new": "-PF_SlippiMulAddF32(fp->facing_dir, ftCommon_800804EC(fp), -fp->cur_pos.x)",
+      "count": 1,
+      "reason": "Preserve the entry-end accessory-position fnmsubs at 800C6FA8, completing all four fused operations in this source unit."
+    }
+  ]
+}

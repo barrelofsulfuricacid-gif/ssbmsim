@@ -1,0 +1,187 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftPikachu/ftpikachuspecialhi.c",
+  "source_sha256": "450e6be863714a2f0d4b459ffebd41c66768aeeeb381b844ff0e0d8ac394866f",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "target_contractions": [
+      {
+        "address": "0x80126238",
+        "op": "fmsubs",
+        "args": "f0, f2, f1, f0",
+        "function": "ftPk_SpecialHiStart1_Anim"
+      },
+      {
+        "address": "0x8012625c",
+        "op": "fmsubs",
+        "args": "f0, f2, f1, f0",
+        "function": "ftPk_SpecialHiStart1_Anim"
+      },
+      {
+        "address": "0x801263a8",
+        "op": "fmsubs",
+        "args": "f0, f2, f1, f0",
+        "function": "ftPk_SpecialAirHiStart1_Anim"
+      },
+      {
+        "address": "0x801263cc",
+        "op": "fmsubs",
+        "args": "f0, f2, f1, f0",
+        "function": "ftPk_SpecialAirHiStart1_Anim"
+      },
+      {
+        "address": "0x80126478",
+        "op": "fmadds",
+        "args": "f31, f3, f1, f0",
+        "function": "ftPk_SpecialHi_8012642C"
+      },
+      {
+        "address": "0x801266bc",
+        "op": "fmadds",
+        "args": "f31, f2, f1, f0",
+        "function": "ftPk_SpecialHiStart1_Coll"
+      },
+      {
+        "address": "0x80126b24",
+        "op": "fmadds",
+        "args": "f31, f2, f1, f0",
+        "function": "ftPk_SpecialHi_ChangeMotion_Unk03"
+      },
+      {
+        "address": "0x80126c6c",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80126C0C"
+      },
+      {
+        "address": "0x80126c7c",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80126C0C"
+      },
+      {
+        "address": "0x80126c8c",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80126C0C"
+      },
+      {
+        "address": "0x80126d3c",
+        "op": "fmadds",
+        "args": "f0, f1, f31, f0",
+        "function": "ftPk_SpecialHi_80126C0C"
+      },
+      {
+        "address": "0x80126e7c",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80126E1C"
+      },
+      {
+        "address": "0x80126e8c",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80126E1C"
+      },
+      {
+        "address": "0x80126e9c",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80126E1C"
+      },
+      {
+        "address": "0x80126f70",
+        "op": "fmadds",
+        "args": "f2, f3, f31, f2",
+        "function": "ftPk_SpecialHi_80126E1C"
+      },
+      {
+        "address": "0x80126f90",
+        "op": "fmadds",
+        "args": "f0, f2, f31, f0",
+        "function": "ftPk_SpecialHi_80126E1C"
+      },
+      {
+        "address": "0x801270b0",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80127064"
+      },
+      {
+        "address": "0x801270c0",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80127064"
+      },
+      {
+        "address": "0x801270d0",
+        "op": "fnmsub",
+        "args": "f0, f4, f0, f2",
+        "function": "ftPk_SpecialHi_80127064"
+      }
+    ],
+    "scope": "All target contractions in this unit; inlined sqrtf contractions use the existing shared native MSL adaptation."
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftpikachuspecialhi.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftpikachuspecialhi.h\"",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "6 * tempf - 3",
+      "new": "PF_SlippiMulAddF32(6.0f, tempf, -3.0f)",
+      "count": 2,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(10 * tempf) - 5",
+      "new": "PF_SlippiMulAddF32(10.0f, tempf, -5.0f)",
+      "count": 2,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fp->facing_dir * atan2f(fp->self_vel.x, fp->self_vel.y)) +\n                  (pika_attr->x78 - half_pi)",
+      "new": "PF_SlippiMulAddF32(fp->facing_dir,\n                  atan2f(fp->self_vel.x, fp->self_vel.y),\n                  pika_attr->x78 - half_pi)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fighter2->facing_dir * angle) + pika_attr->x68",
+      "new": "PF_SlippiMulAddF32(fighter2->facing_dir, angle, pika_attr->x68)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(fp->facing_dir * atan2f(collData->floor.normal.x,\n                                               collData->floor.normal.y)) +\n                      pika_attr->x68",
+      "new": "PF_SlippiMulAddF32(fp->facing_dir,\n                      atan2f(collData->floor.normal.x, collData->floor.normal.y),\n                      pika_attr->x68)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(pika_attr->x90 * stick_mag) + pika_attr->x94",
+      "new": "PF_SlippiMulAddF32(pika_attr->x90, stick_mag, pika_attr->x94)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "((pika_attr->x90 * final_stick_mag) + pika_attr->x94)",
+      "new": "PF_SlippiMulAddF32(pika_attr->x90, final_stick_mag, pika_attr->x94)",
+      "count": 2,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "adapted_sha256": "9c9dbeed5454ad9d45c34b035d0221940a5ea1d3ee4f73f1a5fae4d6f5d18e21"
+}

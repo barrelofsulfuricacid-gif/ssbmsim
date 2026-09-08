@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/ftlib.c",
+  "source_sha256": "78bc9c9a87439b1db063bf033b8f18869d43105917308f6efcf08d83fc7b6693",
+  "adapted_sha256": "9c707f1c715d8ddd2690d1f32bb0a785e8d799ef5710c013df0af946dc93c00c",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "slippi_revision": "fcf47f10dc244152c2ebaa3a9dec142ea42243b7",
+    "hook": "Online/Core/WhispyBlowDirFix/WhispyBlowDirFix.asm",
+    "injection_address": "0x8008653C",
+    "scope": "Online gameplay profile; playback preserves affects-gameplay codes from recorded code list."
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftlib.h\"",
+      "new": "#include \"ftlib.h\"\n#include \"native_slippi.h\"",
+      "count": 1,
+      "reason": "Declare the native Slippi gameplay hook at the original ftLib site."
+    },
+    {
+      "old": "            ftLib_800866DC(cur, &vec);\n            result += sgn(vec.x - v->x);",
+      "new": "            ftLib_800866DC(cur, &vec);\n            if (!pf_ssbm_native_slippi_whispy_excludes_fighter(\n                    cur_fp->motion_id))\n            {\n                result += sgn(vec.x - v->x);\n            }",
+      "count": 1,
+      "reason": "Import Slippi WhispyBlowDirFix at 0x8008653C: exclude signed death actions <= 11 from direction votes after preserving the camera-bone query. Retain all original fighter filters, tie RNG and source order; apply only with the online gameplay profile."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_slippi.h",
+      "sha256": "4da9634e81bae2a376673a32ac597879b88d366f3cda720b50498111604f910c"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi.c",
+      "sha256": "0a5972387ddc6b6f88b8177cdfa698d26f44e27408ec4c4481a4a5d72eae0970"
+    }
+  ]
+}

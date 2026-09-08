@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gm/gm_16AE.c",
+  "source_sha256": "140aac8d052e37e057f003ed89647e9e5333024532b7c6c0752244f7d9415196",
+  "adapted_sha256": "ec0c7d1d440e1cfa078d4f4fdd3979aac80e8f4cd4fcc3d6492dd119239f6c40",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_competitive_presentation.h",
+      "sha256": "c105cf2345adfe92f65cf7729b1c8a67445ac6881757b67e9a1b7e64b56873fe"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_competitive_presentation.c",
+      "sha256": "9adeefcf7c36aef535d5ec4c0c1b32bf6f45998190206995911ef65b3d0604ff"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_gobj_runtime.h",
+      "sha256": "e267b2d6e83194832d6f406f336323440e55fe7460d4c571a32fc263bf3c5efd"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_gobj_runtime.c",
+      "sha256": "61ff2f6a9c128bd7f246e7ecade256ab4a0e21100940242521d70e93c0275e9a"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi.h",
+      "sha256": "4da9634e81bae2a376673a32ac597879b88d366f3cda720b50498111604f910c"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi.c",
+      "sha256": "0a5972387ddc6b6f88b8177cdfa698d26f44e27408ec4c4481a4a5d72eae0970"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi_frame_start.h",
+      "sha256": "3bd85aadda6b067ee81c3877685e0f5571c3ec146ee0f0c0d41d8de61fc1c967"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_slippi_frame_start.c",
+      "sha256": "7f7ba030392e2c3c7b974e9a6616eaecad527b6eb2324828578696617e8a1079"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_texture_tables.c",
+      "sha256": "001eb95c4cf6a4292a94c4be282d9f59fe9a13ade3eaf73eca45f2c87cf8b5f8"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_texture_tables.h",
+      "sha256": "602a46973fdac595af9cfd57625a032095697aee66a132a2136483439e397372"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_gx_viewport.c",
+      "sha256": "d3c32c3343ecca95d2fff77237f0d71a3b7a50258792a6e96d5defc4721838d9"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"gm_16AE.static.h\"\n",
+      "new": "#include \"gm_16AE.static.h\"\n\n#include \"native_competitive_presentation.h\"\n#include \"native_gobj_runtime.h\"\n#include \"native_slippi.h\"\n#include \"native_slippi_frame_start.h\"\n",
+      "count": 1,
+      "reason": "Expose the native rendition of the pinned Slippi tournament NeutralSpawn hook used by online replay matches."
+    },
+    {
+      "old": "    Stage_802252E4(tmp->x24C8.stkind, NULL);\n",
+      "new": "    pf_ssbm_native_slippi_stadium_reset_preload();\n    (void) pf_hsd_gobj_runtime_activate_deferred_stage_start();\n",
+      "count": 1,
+      "reason": "Preserve fn_8016B7F8's source callback order while activating stage-start GObjs that the allocation-free native runtime constructed and suspended before freezing its startup arena. Reset the per-stage Preload Stadium Transformations isLoaded latch at this deferred source Stage construction boundary rather than when the native object was preconstructed."
+    },
+    {
+      "old": "    if (!tmp->x24C8.x1_3) {\n        ifStatus_802F6EA4(4, -1, -1, 0, NULL, fn_8016B784);\n    } else {\n        ifStatus_802F6EA4(8, -1, -1, 0, NULL, fn_8016B784);\n    }\n",
+      "new": "    if (!tmp->x24C8.x1_3) {\n        (void) pf_ifStatus_headless_schedule_go_completion(fn_8016B784);\n    } else {\n        fn_8016B784();\n    }\n",
+      "count": 1,
+      "reason": "Bound the excluded GO-banner model and GX link while retaining its source class-14, PLink-14, priority-0 process lifetime. The normal banner completes after 40 process ticks and only then invokes fn_8016B784, preserving the frame-0 HUD/Stadium state transition and shared-RNG timing; the source arg0=8 branch remains immediate."
+    },
+    {
+      "old": "    db_Setup();\n    gm_801A4B08",
+      "new": "    db_Setup();\n    pf_ssbm_native_slippi_frame_start_install();\n    gm_801A4B08",
+      "count": 1,
+      "reason": "Port project-slippi/slippi-ssbm-asm revision fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Recording/SendFrameStart.s at its exact GALE01 0x8016E74C hook: create the PLink 7 priority-0 recorder immediately after db_Setup and before the remaining match initialization."
+    },
+    {
+      "old": "/// @todo The loop's SFX flag load uses a different equivalent address form.\nvoid fn_8016E2BC(void)\n",
+      "new": "static unsigned int pf_native_slippi_spawn_order(int player_slot)\n{\n    unsigned int spawn_order = 0;\n    int slot;\n\n    for (slot = 0; slot < player_slot; ++slot) {\n        if (Player_GetPlayerSlotType(slot) != Gm_PKind_NA) {\n            ++spawn_order;\n        }\n    }\n    return spawn_order;\n}\n\n/// @todo The loop's SFX flag load uses a different equivalent address form.\nvoid fn_8016E2BC(void)\n",
+      "count": 1,
+      "reason": "Reproduce NeutralSpawn.asm's singles spawn-order scan: count each occupied earlier player slot before applying the stage table."
+    },
+    {
+      "old": "                Player_80032768(i, &sp18);\n                is_teams = lbl_8046B6A0.x24C8.is_teams == true;\n",
+      "new": "                Player_80032768(i, &sp18);\n                if (pf_ssbm_native_slippi_neutral_spawn(\n                        lbl_8046B6A0.x24C8.stkind,\n                        lbl_8046B6A0.x24C8.is_teams == true,\n                        pf_native_slippi_spawn_order(i), &sp18.x, &sp18.y,\n                        &var_f1_2)) {\n                    sp18.z = 0.0F;\n                    Player_80032768(i, &sp18);\n                    Player_SetFacingDirection(i, var_f1_2);\n                }\n                is_teams = lbl_8046B6A0.x24C8.is_teams == true;\n",
+      "count": 1,
+      "reason": "Port project-slippi/slippi-ssbm-asm revision fcf47f10dc244152c2ebaa3a9dec142ea42243b7 External/NeutralSpawn/NeutralSpawn.asm at its exact GALE01 0x8016E510 hook, immediately after the original initial-coordinate store and before player metadata and fighter creation consume those coordinates."
+    }
+  ]
+}

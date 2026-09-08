@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftSamus/ftsamusspeciallw0.c",
+  "source_sha256": "121c356a7277d843628b14daaaba45ca89eea5254ee9ba4518c145f840f25324",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "target_contractions": [
+      {
+        "address": "0x80128b14",
+        "op": "fmadds",
+        "args": "f1, f1, f2, f0",
+        "function": "ftSs_Init_80128AC8"
+      }
+    ],
+    "scope": "All target contractions in this unit; inlined sqrtf contractions use the existing shared native MSL adaptation."
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftsamusspeciallw0.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftsamusspeciallw0.h\"",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "(-da->x4 * value) + 1.5707963705062866f",
+      "new": "PF_SlippiMulAddF32(-da->x4, value, 1.5707963705062866f)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "adapted_sha256": "ad7776edcc3250b9e937fbb3f4dbe24f1e2f9359e598231de799c834c988b770"
+}

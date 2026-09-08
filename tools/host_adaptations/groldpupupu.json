@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/groldpupupu.c",
+  "source_sha256": "804e81e684fbcbaf825f47df48f7bfd0d3b240f5eb926b32ec2d82556c88b89f",
+  "adapted_sha256": "68f6818cfb15f9f07e598fb61fe83fdde07483503523bc2aa7c43fce0308f7d3",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "};\n\nStageData grOp_StageData = {",
+      "new": "};\n\nstatic void grOldPupupu_802107DC_OnDemoInit(int value)\n{\n    grOldPupupu_802107DC(value != 0);\n}\n\nStageData grOp_StageData = {",
+      "count": 1,
+      "reason": "Add a translation-unit-local typed shim for StageData.on_demo_init's int callback contract while preserving the public bool-parameter function and its ABI. The source callback has an empty body, so argument normalization has no gameplay-visible effect."
+    },
+    {
+      "old": "    grOldPupupu_802107DC,\n    grOldPupupu_80210884,",
+      "new": "    grOldPupupu_802107DC_OnDemoInit,\n    grOldPupupu_80210884,",
+      "count": 1,
+      "reason": "Point only Dream Land's on_demo_init table slot at the correctly typed shim, avoiding an incompatible native function-pointer call without changing direct-call behavior."
+    },
+    {
+      "old": "DynamicsDesc* grOldPupupu_80211CA0(enum_t gobj)\n{\n    return false;\n}",
+      "new": "DynamicsDesc* grOldPupupu_80211CA0(enum_t gobj)\n{\n    return NULL;\n}",
+      "count": 1,
+      "reason": "Express the shipped null DynamicsDesc result with C's pointer null constant. The GALE01 function is an eight-byte zero return, and StageData consumes this as an optional pointer callback."
+    }
+  ]
+}

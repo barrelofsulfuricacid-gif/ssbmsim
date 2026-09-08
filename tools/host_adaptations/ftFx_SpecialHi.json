@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftFox/ftfoxspecialhi.c",
+  "source_sha256": "a641804b45d66c33f3a907bb6e49aac9bb217629204143e7fbd3c780f99b42c2",
+  "adapted_sha256": "c3bfcf03bc77dc39823e8330eeb49c261a825113bc37191044ae04a0fdb6bb17",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "        fp->self_vel.x =\n            -((fp->facing_dir * (da->x78_FOX_FIREFOX_REVERSE_ACCEL *\n                                 cosf(fp->mv.fx.SpecialHi.rotateModel))) -\n              fp->self_vel.x);\n        fp->self_vel.y = -((da->x78_FOX_FIREFOX_REVERSE_ACCEL *\n                            sinf(fp->mv.fx.SpecialHi.rotateModel)) -\n                           fp->self_vel.y);",
+      "new": "        const f32 reverse_x = da->x78_FOX_FIREFOX_REVERSE_ACCEL *\n                              cosf(fp->mv.fx.SpecialHi.rotateModel);\n        fp->self_vel.x =\n            PF_SlippiMulAddF32(-fp->facing_dir, reverse_x, fp->self_vel.x);\n        fp->self_vel.y =\n            PF_SlippiMulAddF32(-da->x78_FOX_FIREFOX_REVERSE_ACCEL,\n                 sinf(fp->mv.fx.SpecialHi.rotateModel), fp->self_vel.y);",
+      "count": 1,
+      "reason": "Match ftFx_SpecialAirHi_Phys at GALE01 0x800E77C0 through 0x800E77E4: retain the separately rounded reverse-acceleration/cosine product, then express both target PowerPC fnmsubs operations with one binary32 fmaf rounding. The complete-match frame-4042 Fire Bird witness yields Y velocity 0x3f7154df fused instead of native 0x3f7154e0 unfused. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"ftfoxspecialhi.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftfoxspecialhi.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/fobj.c",
+  "source_sha256": "fa24a983f583ce31e0f8c809fe9084d4df7c5c4eb57be2d8a044537f790f32e9",
+  "adapted_sha256": "568b1a694c3de9b4fbd330fc48292fd2ed331c23d93200572a0ce86144e065f1",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "        fobjdata.fv = fobj->d0 * fobj->time + fobj->p0;",
+      "new": "        fobjdata.fv = PF_SlippiMulAddF32(fobj->d0, fobj->time, fobj->p0);",
+      "count": 1,
+      "reason": "Match FObjUpdateAnim at GALE01 0x8036AF98: linear animation channels use one PowerPC fmadds for d0*time+p0. The native import globally disables contraction, so this operation must express the target's single rounding explicitly. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"fobj.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"fobj.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

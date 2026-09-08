@@ -1,0 +1,181 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lbvector.c",
+  "source_sha256": "86fb5f0d484345ad9264ab8b9cafcc753b972a40d5d22156b3792e9567485bd5",
+  "adapted_sha256": "6025273ba8fd01e5802b1160af4b4ab921a98be3e73d231267ff36a82855717e",
+  "replacements": [
+    {
+      "old": "    u8 _[16];\n\n    Mtx projMtx;",
+      "new": "    Mtx44 projMtx;",
+      "count": 1,
+      "reason": "Represent the projection matrix as the 4x4 object written by MTXPerspective and MTXOrtho instead of relying on the original stack-adjacent 16-byte pad plus 3x4 matching-build layout."
+    },
+    {
+      "old": "void lbVector_Mirror(Vec3* a, Vec3* unit_mirror_axis)\n{\n    float f =\n        (unit_mirror_axis->x * a->x + unit_mirror_axis->y * a->y) * -2.0f;\n\n    a->x += unit_mirror_axis->x * f;\n    a->y += unit_mirror_axis->y * f;\n}\n",
+      "new": "void lbVector_Mirror(Vec3* a, Vec3* unit_mirror_axis)\n{\n    float y_product = unit_mirror_axis->y * a->y;\n    float f = PF_SlippiMulAddF32(unit_mirror_axis->x, a->x, y_product) * -2.0f;\n\n    a->x = PF_SlippiMulAddF32(unit_mirror_axis->x, f, a->x);\n    a->y = PF_SlippiMulAddF32(unit_mirror_axis->y, f, a->y);\n}\n",
+      "count": 1,
+      "reason": "Preserve GALE01 0x8000DC84, 0x8000DC8C, and 0x8000DC9C as three explicit binary32 fmadds operations. The supported host disables implicit contraction, so the unadapted expression rounds the multiply and add separately and diverges by one binary32 step during wall reflection. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"lbvector.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"lbvector.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    },
+    {
+      "old": "(a->x * b->x + a->y * b->y + a->z * b->z) / lena_lenb",
+      "new": "PF_SlippiMulAddF32(a->z, b->z, PF_SlippiMulAddF32(a->x, b->x, a->y * b->y)) / lena_lenb",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "(a->x * b->x + a->y * b->y) / lena_lenb",
+      "new": "PF_SlippiMulAddF32(a->x, b->x, a->y * b->y) / lena_lenb",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "return (a->x * b->x + a->y * b->y) / (sqrtf",
+      "new": "return PF_SlippiMulAddF32(a->x, b->x, a->y * b->y) / (sqrtf",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "    return 0.9878619909286499f * angle -\n           0.15527099370956421f * angle * angle * angle +\n           0.0056429998949170113f * angle * angle * angle * angle * angle;",
+      "new": "    float cubic = 0.15527099370956421f * angle * angle * angle;\n    float quartic = 0.0056429998949170113f * angle * angle * angle * angle;\n    return PF_SlippiMulAddF32(angle, quartic,\n        PF_SlippiMulAddF32(0.9878619909286499f, angle, -cubic));",
+      "count": 2,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->y * unit_axis_yz_y - v->z * unit_axis_yz_z",
+      "new": "PF_SlippiMulAddF32(v->y, unit_axis_yz_y, -(v->z * unit_axis_yz_z))",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->y * unit_axis_yz_z + v->z * unit_axis_yz_y",
+      "new": "PF_SlippiMulAddF32(v->y, unit_axis_yz_z, v->z * unit_axis_yz_y)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "x * len_axis_yz - z * axis->x",
+      "new": "PF_SlippiMulAddF32(x, len_axis_yz, -(z * axis->x))",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "x * axis->x + z * len_axis_yz",
+      "new": "PF_SlippiMulAddF32(x, axis->x, z * len_axis_yz)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "x2 * c - y * s",
+      "new": "PF_SlippiMulAddF32(x2, c, -(y * s))",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "x2 * s + y * c",
+      "new": "PF_SlippiMulAddF32(x2, s, y * c)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "x3 * len_axis_yz + z2 * axis->x",
+      "new": "PF_SlippiMulAddF32(x3, len_axis_yz, z2 * axis->x)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "-x3 * axis->x + z2 * len_axis_yz",
+      "new": "PF_SlippiMulAddF32(-x3, axis->x, z2 * len_axis_yz)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "y * unit_axis_yz_y + z * unit_axis_yz_z",
+      "new": "PF_SlippiMulAddF32(y, unit_axis_yz_y, z * unit_axis_yz_z)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "-y * unit_axis_yz_z + z * unit_axis_yz_y",
+      "new": "PF_SlippiMulAddF32(-y, unit_axis_yz_z, z * unit_axis_yz_y)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->y * c - v->z * s",
+      "new": "PF_SlippiMulAddF32(v->y, c, -(v->z * s))",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->y * s + v->z * c",
+      "new": "PF_SlippiMulAddF32(v->y, s, v->z * c)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->x * c + v->z * s",
+      "new": "PF_SlippiMulAddF32(v->x, c, v->z * s)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->z * c - v->x * s",
+      "new": "PF_SlippiMulAddF32(v->z, c, -(v->x * s))",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->x * c - v->y * s",
+      "new": "PF_SlippiMulAddF32(v->x, c, -(v->y * s))",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "v->x * s + v->y * c",
+      "new": "PF_SlippiMulAddF32(v->x, s, v->y * c)",
+      "count": 1,
+      "reason": "Preserve GALE01 fused vector angle and rotation arithmetic at 8000D748-8000DD9C, including polynomial subordinate-product rounding and both arbitrary-axis and cardinal-axis rotation paths. No trigonometric approximation, branch, square-root contract, or clamping threshold is changed."
+    },
+    {
+      "old": "cz * sxsy - cx * sz",
+      "new": "PF_SlippiMulAddF32(cz, sxsy, -(cx * sz))",
+      "count": 1,
+      "reason": "Complete the shared lbvector rotation-family audit: Euler-matrix mixed components use four fused binary32 operations at GALE01 8000E7F4-8000E808. Preserve rounded sxsy/cxsy and subordinate products, other matrix entries and zero translation."
+    },
+    {
+      "old": "sz * sxsy + cx * cz",
+      "new": "PF_SlippiMulAddF32(sz, sxsy, cx * cz)",
+      "count": 1,
+      "reason": "Complete the shared lbvector rotation-family audit: Euler-matrix mixed components use four fused binary32 operations at GALE01 8000E7F4-8000E808. Preserve rounded sxsy/cxsy and subordinate products, other matrix entries and zero translation."
+    },
+    {
+      "old": "cz * cxsy + sx * sz",
+      "new": "PF_SlippiMulAddF32(cz, cxsy, sx * sz)",
+      "count": 1,
+      "reason": "Complete the shared lbvector rotation-family audit: Euler-matrix mixed components use four fused binary32 operations at GALE01 8000E7F4-8000E808. Preserve rounded sxsy/cxsy and subordinate products, other matrix entries and zero translation."
+    },
+    {
+      "old": "sz * cxsy - sx * cz",
+      "new": "PF_SlippiMulAddF32(sz, cxsy, -(sx * cz))",
+      "count": 1,
+      "reason": "Complete the shared lbvector rotation-family audit: Euler-matrix mixed components use four fused binary32 operations at GALE01 8000E7F4-8000E808. Preserve rounded sxsy/cxsy and subordinate products, other matrix entries and zero translation."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

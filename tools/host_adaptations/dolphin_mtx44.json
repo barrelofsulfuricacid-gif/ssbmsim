@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "source_path": "extern/dolphin/src/dolphin/mtx/mtx44.c",
+  "source_sha256": "016c4c7ef3926d769a9eedf9cb56fc6d2f61545621df9b25fec7353cd4f1859b",
+  "adapted_sha256": "1ceb8922771fbfb796193839d1b6fb8b2eb8e20d50d0d5004b19830d4263ae72",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include <dolphin.h>",
+      "new": "#include <dolphin/os.h>",
+      "count": 1,
+      "reason": "Include only the native assertion contract instead of the target SDK umbrella; demo, device, and presentation declarations are unrelated to these projection formulas."
+    },
+    {
+      "old": "void MTXFrustum(Mtx m,",
+      "new": "void MTXFrustum(Mtx44 m,",
+      "count": 2,
+      "reason": "Expose the complete 4x4 output extent already written by the source body and declared by Aurora; the original Mtx spelling otherwise invokes host C out-of-bounds behavior on row three."
+    },
+    {
+      "old": "void MTXPerspective(Mtx m,",
+      "new": "void MTXPerspective(Mtx44 m,",
+      "count": 2,
+      "reason": "Expose the complete 4x4 output extent already written by the source body and declared by Aurora; the original Mtx spelling otherwise invokes host C out-of-bounds behavior on row three."
+    },
+    {
+      "old": "void MTXOrtho(Mtx m,",
+      "new": "void MTXOrtho(Mtx44 m,",
+      "count": 2,
+      "reason": "Expose the complete 4x4 output extent already written by the source body and declared by Aurora; the original Mtx spelling otherwise invokes host C out-of-bounds behavior on row three."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ftdata.c",
+  "source_sha256": "aa55d8157453d4cd26d503780e2edf0f0bcb2b81badcdac77391dc5e24721579",
+  "adapted_sha256": "83347872019b8f5c90259dd37e170f91bfb8db8d203ce7a8c4370b3fdbae54d9",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_archive_root_api.h",
+      "sha256": "8a59f13dee89619ddfcc051d46f31d30ab75f02e238472074822ee71e7ca17fa"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"ftdata.h\"\n",
+      "new": "#include \"ftdata.h\"\n#include \"native_archive_root_api.h\"\n",
+      "count": 1,
+      "reason": "Declare the startup-only native archive-root binding used in place of runtime character DAT parsing."
+    },
+    {
+      "old": "        lbArchive_80017040(NULL, ftData_803C1F40[kind].a, &gFtDataList[kind],\n                           ftData_803C1F40[kind].b, 0);",
+      "new": "        gFtDataList[kind] = pf_ssbm_native_archive_root_require(\n            ftData_803C1F40[kind].a, ftData_803C1F40[kind].b);",
+      "count": 1,
+      "reason": "Materialize the exact pointer-linked fighter data graph from the startup-mapped native asset pack while retaining the original per-kind cache and call order."
+    },
+    {
+      "old": "        if (ftData_803C2360[kind][costume_id].matanim_joint_name != NULL) {\n            lbArchive_80017040(\n                &temp_r5->x14_archive,\n                ftData_803C2360[kind][costume_id].dat_filename, temp_r5,\n                ftData_803C2360[kind][costume_id].joint_name, &temp_r5->x4,\n                ftData_803C2360[kind][costume_id].matanim_joint_name, 0);\n        } else {\n            lbArchive_80017040(\n                &temp_r5->x14_archive,\n                ftData_803C2360[kind][costume_id].dat_filename, temp_r5,\n                ftData_803C2360[kind][costume_id].joint_name, 0,\n                ftData_803C2360[kind][costume_id].matanim_joint_name);\n            CostumeListsForeachCharacter[kind].costume_list[costume_id].x4 =\n                NULL;\n        }",
+      "new": "        pf_ssbm_native_archive_costume_require(\n            lbFileGetFullName(\n                ftData_803C2360[kind][costume_id].dat_filename),\n            ftData_803C2360[kind][costume_id].joint_name,\n            ftData_803C2360[kind][costume_id].matanim_joint_name,\n            (void**) &temp_r5->joint, (void**) &temp_r5->x4,\n            (void**) &temp_r5->x14_archive);",
+      "count": 2,
+      "reason": "Resolve the source basename through Melee's original locale-aware lbFileGetFullName contract, then bind each costume's exact joint and optional material-animation roots plus a stable native archive handle without runtime DAT parsing, preserving both original loader entry points and their cache condition."
+    },
+    {
+      "old": "void ftData_80085A14(FighterKind kind)",
+      "new": "void pf_source_ftData_80085A14(FighterKind kind)",
+      "count": 1,
+      "reason": "Keep the original AJ file loader available as source evidence while the exported native entry point below binds offline-normalized immutable FigaTree graphs."
+    },
+    {
+      "old": "void ftData_80085CD8(Fighter* fp, Fighter* arg1, int msid)",
+      "new": "void pf_source_ftData_80085CD8(Fighter* fp, Fighter* arg1, int msid)",
+      "count": 1,
+      "reason": "Retain the original per-fighter mini-DAT copy and relocation routine as source evidence while the native entry point consumes the equivalent pre-relocated graph."
+    },
+    {
+      "old": "FigaTree* ftData_80085E50(Fighter* arg0, int msid)",
+      "new": "FigaTree* pf_source_ftData_80085E50(Fighter* arg0, int msid)",
+      "count": 1,
+      "reason": "Retain the original per-fighter animation mini-DAT parser as source evidence while the native entry point returns its offline-normalized root."
+    },
+    {
+      "old": "Fighter* ftData_80086060(Fighter* fp)\n{\n    if (fp->kind == FTKIND_NANA &&\n        Player_GetPlayerSlotType(fp->player_id) != Gm_PKind_Demo)\n    {\n        Fighter_GObj* gobj = Player_GetEntityAtIndex(fp->player_id, 0);\n        if (gobj != NULL) {\n            return GET_FIGHTER(gobj);\n        }\n    }\n    return NULL;\n}\n",
+      "new": "Fighter* ftData_80086060(Fighter* fp)\n{\n    if (fp->kind == FTKIND_NANA &&\n        Player_GetPlayerSlotType(fp->player_id) != Gm_PKind_Demo)\n    {\n        Fighter_GObj* gobj = Player_GetEntityAtIndex(fp->player_id, 0);\n        if (gobj != NULL) {\n            return GET_FIGHTER(gobj);\n        }\n    }\n    return NULL;\n}\n\nvoid ftData_80085A14(FighterKind kind)\n{\n    ftData* data = gFtDataList[kind];\n    int i;\n    if (ftData_Table_Unk0[kind].data == NULL) {\n        for (i = 0; i < (u32) ftData_Table_Unk0[kind].count; ++i) {\n            u32 size = data->xC[i].x8;\n            if (size != 0) {\n                if (size > 0x8000) {\n                    HSD_ASSERTREPORT(0x9AF, 0,\n                                     \"fighter figatree over! %x\\n\", size);\n                }\n                data->xC[i].x14 = (uintptr_t)\n                    pf_ssbm_native_archive_root_require(\n                        ftData_803C23E4[kind], data->xC[i].x0);\n            }\n        }\n        ftData_Table_Unk0[kind].data = data;\n    }\n}\n\nvoid ftData_80085CD8(Fighter* fp, Fighter* source, int msid)\n{\n    if (msid < source->x58C) {\n        struct Fighter_WaitAnimData* action =\n            (struct Fighter_WaitAnimData*) ftData_80085FD4(source, msid);\n        if (action->x14 != (u32) fp->x5A4) {\n            fp->x590 = (FigaTree*) action->x14;\n            fp->x5A4 = (void*) action->x14;\n        }\n    }\n}\n\nFigaTree* ftData_80085E50(Fighter* fp, int msid)\n{\n    if (msid < fp->x58C) {\n        struct ftData_80085FD4_ret* action = ftData_80085FD4(fp, msid);\n        if (action->x14 != (u32) fp->x5A8) {\n            fp->x598 = (FigaTree*) action->x14;\n            fp->x5A8 = (void*) action->x14;\n        }\n        return fp->x598;\n    }\n    return NULL;\n}\n",
+      "count": 1,
+      "reason": "Replace runtime AJ filesystem access, mini-DAT copying, parsing, and relocation with startup binding of the same immutable FigaTree descriptor roots. The animation consumers only read these descriptors while constructing per-fighter AObjs, so sharing the pointer-linked native graph preserves action identity, caching, Nana source selection, and update behavior without parsing or allocation in step()."
+    },
+    {
+      "old": "    ((ft_8045993C_t*) &list[FTKIND_MAX])[i].pad_x0 = 0;\n    ((ft_8045993C_t*) &list[FTKIND_MAX])[i].x6_b0 = 0;\n    ((ft_8045993C_t*) &list[FTKIND_MAX])[i].x6_b1_b2 = 0;",
+      "new": "    (void) list;\n    ft_8045993C[i].pad_x0 = 0;\n    ft_8045993C[i].x6_b0 = 0;\n    ft_8045993C[i].x6_b1_b2 = 0;",
+      "count": 1,
+      "reason": "The GALE01 DOL places ft_8045993C immediately after gFtDataList and writes records 0 through 5. The native linker does not preserve cross-object BSS adjacency; addressing the named six-record array performs the same ordered writes without corrupting unrelated host globals."
+    },
+    {
+      "old": "    ftData_UnkCountStruct* unk0 =\n        (ftData_UnkCountStruct*) &CostumeListsForeachCharacter[FTKIND_MAX];\n    ftData_UnkCountStruct* pairs =\n        (ftData_UnkCountStruct*) ((u8*) CostumeListsForeachCharacter + 5940);",
+      "new": "    ftData_UnkCountStruct* unk0 = ftData_Table_Unk0;\n    ftData_UnkCountStruct* pairs = ftData_UnkIntPairs;",
+      "count": 1,
+      "reason": "Exact GALE01 data layout places ftData_Table_Unk0 after CostumeListsForeachCharacter and ftData_UnkIntPairs at the hard-coded 5940-byte displacement. Named arrays preserve all 33 ordered null writes under native linker layout."
+    }
+  ]
+}

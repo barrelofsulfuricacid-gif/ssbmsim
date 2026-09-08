@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftLuigi/ftluigispecials.c",
+  "source_sha256": "056b9771ed13d9de2c46f0af0f6b22bf61839004e007ff05ef8898f7dec39298",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "oracle_revision": "01c531bd275f6f3ac153ed8cff9d33bbaa9f1a61",
+    "target_contractions": [
+      {
+        "address": "0x801432b8",
+        "op": "fmadds",
+        "args": "f1, f2, f1, f0",
+        "function": "ftLg_SpecialS_Anim"
+      },
+      {
+        "address": "0x80143364",
+        "op": "fmadds",
+        "args": "f1, f2, f1, f0",
+        "function": "ftLg_SpecialAirS_Anim"
+      },
+      {
+        "address": "0x80143738",
+        "op": "fmadds",
+        "args": "f1, f2, f1, f0",
+        "function": "ftLg_SpecialSMisfire_Anim"
+      },
+      {
+        "address": "0x801437e4",
+        "op": "fmadds",
+        "args": "f1, f2, f1, f0",
+        "function": "ftLg_SpecialAirSMisfire_Anim"
+      },
+      {
+        "address": "0x80143cc0",
+        "op": "fmadds",
+        "args": "f0, f3, f1, f0",
+        "function": "ftLg_SpecialSFly_Enter"
+      },
+      {
+        "address": "0x80143d28",
+        "op": "fmadds",
+        "args": "f0, f3, f4, f0",
+        "function": "ftLg_SpecialSFly_Enter"
+      }
+    ],
+    "scope": "All target contractions in this unit; inlined sqrtf contractions use the existing shared native MSL adaptation."
+  },
+  "replacements": [
+    {
+      "old": "#include \"ftluigispecials.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"ftluigispecials.h\"",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "fp->mv.lg.SpecialS.chargeFrames *\n                                sa->x14_LUIGI_GREENMISSILE_DAMAGE_SLOPE +\n                            sa->x10_LUIGI_GREENMISSILE_DAMAGE_TILT",
+      "new": "PF_SlippiMulAddF32(\n                            sa->x14_LUIGI_GREENMISSILE_DAMAGE_SLOPE,\n                            (float) fp->mv.lg.SpecialS.chargeFrames,\n                            sa->x10_LUIGI_GREENMISSILE_DAMAGE_TILT)",
+      "count": 4,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "sa->x28_LUIGI_GREENMISSILE_MUL_X *\n                             fp->mv.lg.SpecialS.chargeFrames +\n                         sa->x24_LUIGI_GREENMISSILE_VEL_X",
+      "new": "PF_SlippiMulAddF32(sa->x28_LUIGI_GREENMISSILE_MUL_X,\n                             (float) fp->mv.lg.SpecialS.chargeFrames,\n                             sa->x24_LUIGI_GREENMISSILE_VEL_X)",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    },
+    {
+      "old": "0.5f * vel_y +\n                         vel_y * (0.5f * fp->mv.lg.SpecialS.chargeFrames /\n                                  sa->xC_LUIGI_GREENMISSILE_MAX_CHARGE_FRAMES)",
+      "new": "PF_SlippiMulAddF32(0.5f, vel_y,\n                         vel_y * (0.5f * fp->mv.lg.SpecialS.chargeFrames /\n                                  sa->xC_LUIGI_GREENMISSILE_MAX_CHARGE_FRAMES))",
+      "count": 1,
+      "reason": "Preserve the audited target fused operation and its binary32 rounding boundary."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "adapted_sha256": "a4083738207b07fcce60198a2ace50c36c6de3128eed5d31b41356326fd9cb94"
+}

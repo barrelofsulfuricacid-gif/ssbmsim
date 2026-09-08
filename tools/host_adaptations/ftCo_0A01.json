@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_0A01.c",
+  "source_sha256": "72437c3b3c87d1dab0a8bfdcc879e8bc2715936f5f6fcfa4617d82b75c712ec8",
+  "adapted_sha256": "50bec2c1c7bc3bd3fe4a89b0795cf2cff9e2e98ce236e3af4a61049e8c64e371",
+  "evidence": {
+    "kind": "gale01-dol-live-register-value",
+    "dol_sha1": "08e0bf20134dfcb260699671004527b2d6bb1a45",
+    "function": "ftCo_800ADE48",
+    "instructions": [
+      {
+        "address": "0x800AE1D4",
+        "bytes": "3BE00000",
+        "operation": "li r31, 0"
+      },
+      {
+        "address": "0x800AE270",
+        "bytes": "2C1F0000",
+        "operation": "cmpwi r31, 0"
+      },
+      {
+        "address": "0x800B0778",
+        "bytes": "3BFE1A88",
+        "operation": "addi r31, r30, 0x1A88"
+      },
+      {
+        "address": "0x800B08F4",
+        "bytes": "4BFFD555",
+        "operation": "bl ftCo_800ADE48"
+      },
+      {
+        "address": "0x800B22F8",
+        "bytes": "3BE00000",
+        "operation": "li r31, 0"
+      },
+      {
+        "address": "0x800B2494",
+        "bytes": "4BFFB9B5",
+        "operation": "bl ftCo_800ADE48"
+      }
+    ]
+  },
+  "replacements": [
+    {
+      "old": "static bool ftCo_800ADE48(Fighter* fp)\n{\n    s32 switch_cmd;\n",
+      "new": "static bool ftCo_800ADE48(Fighter* fp, s32 switch_cmd)\n{\n",
+      "count": 1,
+      "reason": "Make the GALE01 call-site value compared in r31 at 0x800AE270 an explicit source argument instead of reading an uninitialized host-C local. This preserves the shipped value contract without a guest register file or instruction execution."
+    },
+    {
+      "old": "    ftCo_800ADE48(fp);\n}\n\nvoid ftCo_800AEA8C(Fighter* fp)\n",
+      "new": "    ftCo_800ADE48(fp, arg2);\n}\n\nvoid ftCo_800AEA8C(Fighter* fp)\n",
+      "count": 1,
+      "reason": "Preserve ftCo_800AE7AC's GALE01 r31 value: 0x800AE7C8 copies the nonzero command argument from r5 before the call at 0x800AEA60."
+    },
+    {
+      "old": "    ftCo_800ADE48(fp);\n}\n\nvoid ftCo_800B24B8(Fighter* fp)\n",
+      "new": "    ftCo_800ADE48(fp, false);\n}\n\nvoid ftCo_800B24B8(Fighter* fp)\n",
+      "count": 1,
+      "reason": "Preserve ftCo_800B21C8's no-target path: GALE01 explicitly clears r31 at 0x800B22F8 and retains zero through the call at 0x800B2494."
+    },
+    {
+      "old": "ftCo_800ADE48(fp);",
+      "new": "ftCo_800ADE48(fp, true);",
+      "count": 33,
+      "reason": "Every remaining direct GALE01 call site was audited to carry a nonzero fighter, CPU-data, target-slot, or checked command value in r31. Express only the zero-versus-nonzero predicate observed by ftCo_800ADE48."
+    },
+    {
+      "old": "#include \"ftCo_0A01.h\"",
+      "new": "#include \"ftCo_0A01.h\"\n#include \"native_numeric.h\"",
+      "count": 1,
+      "reason": "Declare the binary64 multiply/add helper matching Slippi deterministic and interpreter rounding."
+    },
+    {
+      "old": "            fp->cur_pos.x =\n                0.95 * fp->cur_pos.x + 0.05 * data->x448->cur_pos.x;\n            fp->cur_pos.y =\n                0.95 * fp->cur_pos.y + 0.05 * data->x448->cur_pos.y;",
+      "new": "            fp->cur_pos.x = (float) PF_SlippiMulAddF64(\n                0.95, fp->cur_pos.x, 0.05 * data->x448->cur_pos.x);\n            fp->cur_pos.y = (float) PF_SlippiMulAddF64(\n                0.95, fp->cur_pos.y, 0.05 * data->x448->cur_pos.y);",
+      "count": 1,
+      "reason": "Preserve the original follower smoothing operation order with separately rounded binary64 multiplication and addition, then binary32 storage. Interpreter and JIT with host FMA disabled agree with recorded Slippi state; host-fused binary64 playback differs. This applies to both coordinates and every follower update."
+    },
+    {
+      "old": "inline s32 ftCo_800A3908_inline1(float x, float y, Vec3* out_pos,",
+      "new": "static inline s32 ftCo_800A3908_inline1(float x, float y, Vec3* out_pos,",
+      "count": 1,
+      "reason": "Give the newly split helper internal linkage like its sole static callee. The function is referenced only within this translation unit, so this removes GCC's static-in-nonstatic-inline diagnostic without changing code, data, or runtime linkage."
+    },
+    {
+      "old": "void ftCo_800AC5A0(Fighter* fp)\n{\n    struct CpuFighter* data;\n    bool var_r0;\n    s8 stick_x;\n    s8 stick_y;",
+      "new": "void ftCo_800AC5A0(Fighter* fp)\n{\n    struct CpuFighter* data;\n    bool var_r0;\n    s8 stick_x = 0;\n    s8 stick_y = 0;",
+      "count": 1,
+      "reason": "Import project-slippi/slippi-ssbm-asm fcf47f10dc244152c2ebaa3a9dec142ea42243b7 Common/NanaDeterminism/NanaDeterminism.asm at 0x800AC5B8. Initialize both throw-DI command values to zero before any control flow so the near-zero knockback path cannot read uninitialized host locals. The upstream hook applies to the shared CPU function without a fighter-kind predicate; preserve nonzero-vector normalization, command order and all original branches."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    }
+  ]
+}

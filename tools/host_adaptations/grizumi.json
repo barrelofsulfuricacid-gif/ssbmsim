@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/gr/grizumi.c",
+  "source_sha256": "5a313df3d1c585ca1f1704ed194efbb915bd8c505e0e66c04b1d85d7609437a1",
+  "adapted_sha256": "5d4f4e4af6de7c19875c5ce667fcb8acd90f175ec11d11a1f9d2dea409554324",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_archive_root_api.h",
+      "sha256": "8a59f13dee89619ddfcc051d46f31d30ab75f02e238472074822ee71e7ca17fa"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_image_copy.h",
+      "sha256": "4e77210d10add13832627700b9f9044c04255049b0cf2ba3725a2d0db6c26166"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"grdatfiles.h\"\n",
+      "new": "#include \"grdatfiles.h\"\n#include \"native_archive_root_api.h\"\n#include \"native_image_copy.h\"\n",
+      "count": 1,
+      "reason": "Declare the startup-only native archive public-root resolver used by Fountain's source-owned auxiliary model lifecycle."
+    },
+    {
+      "old": "};\n\nStageData grIz_StageData = {",
+      "new": "};\n\nstatic void grIzumi_801CBB84_OnDemoInit(int x)\n{\n    grIzumi_801CBB84(x != 0);\n}\n\nStageData grIz_StageData = {",
+      "count": 1,
+      "reason": "Add a translation-unit-local typed shim for StageData.on_demo_init's int callback contract while preserving the public bool-parameter function and its direct-call ABI. The source callback ignores the normalized value."
+    },
+    {
+      "old": "    grIzumi_801CBB84,\n    grIzumi_OnLoad,",
+      "new": "    grIzumi_801CBB84_OnDemoInit,\n    grIzumi_OnLoad,",
+      "count": 1,
+      "reason": "Point only Fountain of Dreams' on_demo_init table slot at the correctly typed shim, avoiding incompatible native function-pointer calls."
+    },
+    {
+      "old": "lbDvd_80017740(0, 2001, 4, 4, size + 31 & ~31, 0, 7, 16, 0);",
+      "new": "lbDvd_80017740(0, 2001, 4, 4, (size + 31) & ~31, 0, 7, 16, 0);",
+      "count": 1,
+      "reason": "Make the existing C precedence explicit for the 32-byte buffer-size alignment expression; the computed value and source operation order are unchanged."
+    },
+    {
+      "old": "HSD_Joint* j = HSD_ArchiveGetPublicAddress(grDatFiles_GetArchive()->unk0,\n                                               \"GrdIzumiStar_TopN_joint\");",
+      "new": "HSD_Joint* j = pf_ssbm_native_archive_public_root_require(\n        grDatFiles_GetArchive()->unk0, \"GrdIzumiStar_TopN_joint\");",
+      "count": 1,
+      "reason": "Resolve Fountain's star joint by its original public-root name from the prevalidated startup pack while preserving the original stage object creation path."
+    },
+    {
+      "old": "refl->image = HSD_ArchiveGetPublicAddress(\n        dat->unk0, \"GrdIzumi_cd_wt_GrdIzumiDummy1_1_image_desc\");",
+      "new": "refl->image = pf_ssbm_native_archive_public_root_require(\n        dat->unk0, \"GrdIzumi_cd_wt_GrdIzumiDummy1_1_image_desc\");",
+      "count": 1,
+      "reason": "Resolve Fountain's source-owned reflection image descriptor through the same native archive handle and keep all following descriptor reset and allocation order unchanged."
+    },
+    {
+      "old": "        lb_800122C8(refl->image, 0, 0, 1);",
+      "new": "        pf_hsd_image_desc_copy_without_pixels(refl->image, 0, 0, 1, true);",
+      "count": 1,
+      "reason": "The reflection image feeds stage texture upload only. Preserve the source image-copy Z-cache/sync preparation and every surrounding camera dispatch and matrix update; omit only the audited pixel write. lb_800122C8 otherwise only forwards with sync=true."
+    }
+  ]
+}

@@ -1,0 +1,327 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itsamusgrapple.c",
+  "source_sha256": "3432a6b9c69255a9f5f40a184fdb94cfeee55c6a0ad2285c1b36f572f10e9df6",
+  "adapted_sha256": "75443d8badf9308c0cf302558ec72b85a64d005deb3f893b69fd44be192c512b",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"itsamusgrapple.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"itsamusgrapple.h\"",
+      "count": 1,
+      "reason": "Target arithmetic helpers"
+    },
+    {
+      "old": "link->pos.x = (dir.x * dist) + pos->x;",
+      "new": "link->pos.x = PF_SlippiMulAddF32(dir.x, dist, pos->x);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.y = (dir.y * dist) + pos->y;",
+      "new": "link->pos.y = PF_SlippiMulAddF32(dir.y, dist, pos->y);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.z = (dir.z * dist) + pos->z;",
+      "new": "link->pos.z = PF_SlippiMulAddF32(dir.z, dist, pos->z);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.x = (dir.x * attrs->x38) + link->pos.x;",
+      "new": "prev->pos.x = PF_SlippiMulAddF32(dir.x, attrs->x38, link->pos.x);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.y = (dir.y * attrs->x38) + link->pos.y;",
+      "new": "prev->pos.y = PF_SlippiMulAddF32(dir.y, attrs->x38, link->pos.y);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.z = (dir.z * attrs->x38) + link->pos.z;",
+      "new": "prev->pos.z = PF_SlippiMulAddF32(dir.z, attrs->x38, link->pos.z);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.x = (dir.x * attrs->x3C) + link->pos.x;",
+      "new": "prev->pos.x = PF_SlippiMulAddF32(dir.x, attrs->x3C, link->pos.x);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.y = (dir.y * attrs->x3C) + link->pos.y;",
+      "new": "prev->pos.y = PF_SlippiMulAddF32(dir.y, attrs->x3C, link->pos.y);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.z = (dir.z * attrs->x3C) + link->pos.z;",
+      "new": "prev->pos.z = PF_SlippiMulAddF32(dir.z, attrs->x3C, link->pos.z);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.x = dir.x * attrs->x38 + cur->pos.x;",
+      "new": "next->pos.x = PF_SlippiMulAddF32(dir.x, attrs->x38, cur->pos.x);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.y = dir.y * attrs->x38 + cur->pos.y;",
+      "new": "next->pos.y = PF_SlippiMulAddF32(dir.y, attrs->x38, cur->pos.y);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.z = dir.z * attrs->x38 + cur->pos.z;",
+      "new": "next->pos.z = PF_SlippiMulAddF32(dir.z, attrs->x38, cur->pos.z);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.x = dir.x * attrs->x3C + cur->pos.x;",
+      "new": "next->pos.x = PF_SlippiMulAddF32(dir.x, attrs->x3C, cur->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.y = dir.y * attrs->x3C + cur->pos.y;",
+      "new": "next->pos.y = PF_SlippiMulAddF32(dir.y, attrs->x3C, cur->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.z = dir.z * attrs->x3C + cur->pos.z;",
+      "new": "next->pos.z = PF_SlippiMulAddF32(dir.z, attrs->x3C, cur->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.x = (dir.x * attrs->x38) + cur->pos.x;",
+      "new": "next->pos.x = PF_SlippiMulAddF32(dir.x, attrs->x38, cur->pos.x);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.y = (dir.y * attrs->x38) + cur->pos.y;",
+      "new": "next->pos.y = PF_SlippiMulAddF32(dir.y, attrs->x38, cur->pos.y);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.z = (dir.z * attrs->x38) + cur->pos.z;",
+      "new": "next->pos.z = PF_SlippiMulAddF32(dir.z, attrs->x38, cur->pos.z);",
+      "count": 2,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.x = (dir.x * attrs->x3C) + cur->pos.x;",
+      "new": "next->pos.x = PF_SlippiMulAddF32(dir.x, attrs->x3C, cur->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.y = (dir.y * attrs->x3C) + cur->pos.y;",
+      "new": "next->pos.y = PF_SlippiMulAddF32(dir.y, attrs->x3C, cur->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.z = (dir.z * attrs->x3C) + cur->pos.z;",
+      "new": "next->pos.z = PF_SlippiMulAddF32(dir.z, attrs->x3C, cur->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.x = (dir.x * attrs->x38) + pos->x;",
+      "new": "link->pos.x = PF_SlippiMulAddF32(dir.x, attrs->x38, pos->x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.y = (dir.y * attrs->x38) + pos->y;",
+      "new": "link->pos.y = PF_SlippiMulAddF32(dir.y, attrs->x38, pos->y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.z = (dir.z * attrs->x38) + pos->z;",
+      "new": "link->pos.z = PF_SlippiMulAddF32(dir.z, attrs->x38, pos->z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.x = (dir_ptr->x * attrs->x38) + link->pos.x;",
+      "new": "prev->pos.x = PF_SlippiMulAddF32(dir_ptr->x, attrs->x38, link->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.y = (dir_ptr->y * attrs->x38) + link->pos.y;",
+      "new": "prev->pos.y = PF_SlippiMulAddF32(dir_ptr->y, attrs->x38, link->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.z = (dir_ptr->z * attrs->x38) + link->pos.z;",
+      "new": "prev->pos.z = PF_SlippiMulAddF32(dir_ptr->z, attrs->x38, link->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.x = (dir_ptr->x * attrs->x3C) + link->pos.x;",
+      "new": "prev->pos.x = PF_SlippiMulAddF32(dir_ptr->x, attrs->x3C, link->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.y = (dir_ptr->y * attrs->x3C) + link->pos.y;",
+      "new": "prev->pos.y = PF_SlippiMulAddF32(dir_ptr->y, attrs->x3C, link->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "prev->pos.z = (dir_ptr->z * attrs->x3C) + link->pos.z;",
+      "new": "prev->pos.z = PF_SlippiMulAddF32(dir_ptr->z, attrs->x3C, link->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.x = (dir_ptr->x * attrs->x38) + cur->pos.x;",
+      "new": "next->pos.x = PF_SlippiMulAddF32(dir_ptr->x, attrs->x38, cur->pos.x);",
+      "count": 4,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.y = (dir_ptr->y * attrs->x38) + cur->pos.y;",
+      "new": "next->pos.y = PF_SlippiMulAddF32(dir_ptr->y, attrs->x38, cur->pos.y);",
+      "count": 4,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "next->pos.z = (dir_ptr->z * attrs->x38) + cur->pos.z;",
+      "new": "next->pos.z = PF_SlippiMulAddF32(dir_ptr->z, attrs->x38, cur->pos.z);",
+      "count": 4,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.x = (dir_ptr->x * attrs->x38) + head->pos.x;",
+      "new": "link->pos.x = PF_SlippiMulAddF32(dir_ptr->x, attrs->x38, head->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.y = (dir_ptr->y * attrs->x38) + head->pos.y;",
+      "new": "link->pos.y = PF_SlippiMulAddF32(dir_ptr->y, attrs->x38, head->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.z = (dir_ptr->z * attrs->x38) + head->pos.z;",
+      "new": "link->pos.z = PF_SlippiMulAddF32(dir_ptr->z, attrs->x38, head->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "pos->x = (dir_ptr->x * attrs->x38) + head->pos.x;",
+      "new": "pos->x = PF_SlippiMulAddF32(dir_ptr->x, attrs->x38, head->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "pos->y = (dir_ptr->y * attrs->x38) + head->pos.y;",
+      "new": "pos->y = PF_SlippiMulAddF32(dir_ptr->y, attrs->x38, head->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "pos->z = (dir_ptr->z * attrs->x38) + head->pos.z;",
+      "new": "pos->z = PF_SlippiMulAddF32(dir_ptr->z, attrs->x38, head->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.x = (dir_ptr->x * attrs->x38) + head_link->pos.x;",
+      "new": "link->pos.x = PF_SlippiMulAddF32(dir_ptr->x, attrs->x38, head_link->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.y = (dir_ptr->y * attrs->x38) + head_link->pos.y;",
+      "new": "link->pos.y = PF_SlippiMulAddF32(dir_ptr->y, attrs->x38, head_link->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "link->pos.z = (dir_ptr->z * attrs->x38) + head_link->pos.z;",
+      "new": "link->pos.z = PF_SlippiMulAddF32(dir_ptr->z, attrs->x38, head_link->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "pos_ptr->x = (dir_ptr->x * attrs->x38) + head_link->pos.x;",
+      "new": "pos_ptr->x = PF_SlippiMulAddF32(dir_ptr->x, attrs->x38, head_link->pos.x);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "pos->y = (dir_ptr->y * attrs->x38) + head_link->pos.y;",
+      "new": "pos->y = PF_SlippiMulAddF32(dir_ptr->y, attrs->x38, head_link->pos.y);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "pos_ptr->z = (dir_ptr->z * attrs->x38) + head_link->pos.z;",
+      "new": "pos_ptr->z = PF_SlippiMulAddF32(dir_ptr->z, attrs->x38, head_link->pos.z);",
+      "count": 1,
+      "reason": "Retail fused chain projection; all axes and traversals"
+    },
+    {
+      "old": "-((0.6f * HSD_Randf()) - vel_y)",
+      "new": "-PF_SlippiMulAddF32(0.6f, HSD_Randf(), -vel_y)",
+      "count": 1,
+      "reason": "Retail fnmsubs preserves final negation and RNG call count"
+    },
+    {
+      "old": "(0.6f * HSD_Randf()) + vel_y",
+      "new": "PF_SlippiMulAddF32(0.6f, HSD_Randf(), vel_y)",
+      "count": 1,
+      "reason": "Retail fmadds preserves RNG call count"
+    },
+    {
+      "old": "-((one * HSD_Randf()) - vely)",
+      "new": "-PF_SlippiMulAddF32(one, HSD_Randf(), -vely)",
+      "count": 1,
+      "reason": "Retail fnmsubs preserves final negation and RNG call count"
+    },
+    {
+      "old": "(one * HSD_Randf()) + vely",
+      "new": "PF_SlippiMulAddF32(one, HSD_Randf(), vely)",
+      "count": 1,
+      "reason": "Retail fmadds preserves RNG call count"
+    },
+    {
+      "old": "(attrs->x8 * (attrs->xC * attrs->x38)) +\n               ((1.0f - attrs->x8) * (attrs->xC * attrs->x10))",
+      "new": "PF_SlippiMulAddF32(attrs->x8, attrs->xC * attrs->x38,\n               (1.0f - attrs->x8) * (attrs->xC * attrs->x10))",
+      "count": 1,
+      "reason": "Retail fused scale interpolation"
+    },
+    {
+      "old": "iter->vel.x += 0.12 * (dx - iter->vel.x);",
+      "new": "iter->vel.x = PF_SlippiMulAddF64(0.12, (double) (dx - iter->vel.x), (double) iter->vel.x);",
+      "count": 1,
+      "reason": "Retail binary64 damping contraction after binary32 difference"
+    },
+    {
+      "old": "iter->vel.z += 0.12 * remaining;",
+      "new": "iter->vel.z = PF_SlippiMulAddF64(0.12, (double) remaining, (double) iter->vel.z);",
+      "count": 1,
+      "reason": "Retail binary64 damping contraction"
+    }
+  ]
+}

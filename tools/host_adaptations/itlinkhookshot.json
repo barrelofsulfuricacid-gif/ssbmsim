@@ -1,0 +1,1285 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itlinkhookshot.c",
+  "source_sha256": "1369c5f3fcb8fee983e64446d0e4a66a9b5b48c3f4ca3923592cf01f965136f0",
+  "adapted_sha256": "018b88cc8efb819aa5cdba0594f4fb7489610bfa43faa4ceb1a7edd1c5ef6fe9",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include \"itlinkhookshot.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"itlinkhookshot.h\"",
+      "count": 1,
+      "reason": "Use audited binary32 and binary64 target contraction boundaries."
+    },
+    {
+      "old": "float it_802A3C98(Vec3* arg0, Vec3* arg1, Vec3* arg2)\n{\n    f32 inv;\n    f32 len;\n    arg2->x = arg0->x - arg1->x;\n    arg2->y = arg0->y - arg1->y;\n    arg2->z = arg0->z - arg1->z;\n\n    len = sqrtf(arg2->x * arg2->x + arg2->y * arg2->y + arg2->z * arg2->z);\n    if (len == (f64) 0.0F) {\n        inv = (f64) 0.0F;\n    } else {\n        inv = (f64) 1.0F / len;\n    }\n    arg2->x *= inv;\n    arg2->y *= inv;\n    arg2->z *= inv;\n    return len;\n}\n",
+      "new": "float it_802A3C98(Vec3* arg0, Vec3* arg1, Vec3* arg2)\n{\n    f32 inv;\n    f32 len;\n    arg2->x = arg0->x - arg1->x;\n    arg2->y = arg0->y - arg1->y;\n    arg2->z = arg0->z - arg1->z;\n\n    len = sqrtf(arg2->x * arg2->x + arg2->y * arg2->y + arg2->z * arg2->z);\n    if (len == (f64) 0.0F) {\n        inv = (f64) 0.0F;\n    } else {\n        inv = (f64) 1.0F / len;\n    }\n    arg2->x *= inv;\n    arg2->y *= inv;\n    arg2->z *= inv;\n    return len;\n}\n\nstatic inline float pf_hookshot_distance_inline(Vec3* arg0, Vec3* arg1, Vec3* arg2)\n{\n    f32 inv;\n    f32 len;\n    arg2->x = arg0->x - arg1->x;\n    arg2->y = arg0->y - arg1->y;\n    arg2->z = arg0->z - arg1->z;\n\n    len = sqrtf(PF_SlippiMulAddF32(arg2->z, arg2->z,\n        PF_SlippiMulAddF32(arg2->x, arg2->x, arg2->y * arg2->y)));\n    if (len == (f64) 0.0F) {\n        inv = (f64) 0.0F;\n    } else {\n        inv = (f64) 1.0F / len;\n    }\n    arg2->x *= inv;\n    arg2->y *= inv;\n    arg2->z *= inv;\n    return len;\n}\n",
+      "count": 1,
+      "reason": "Preserve the original public helper, and import its distinct compiler-inlined arithmetic for internal call sites."
+    },
+    {
+      "old": "    it_802A3C98(&link_0->pos, arg1, &vec);",
+      "new": "    pf_hookshot_distance_inline(&link_0->pos, arg1, &vec);",
+      "count": 2,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "        len = it_802A3C98(&link_1->pos, &link_0->pos, &vec);",
+      "new": "        len = pf_hookshot_distance_inline(&link_1->pos, &link_0->pos, &vec);",
+      "count": 3,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "    len = it_802A3C98(&link_0->pos, arg1, &vec);",
+      "new": "    len = pf_hookshot_distance_inline(&link_0->pos, arg1, &vec);",
+      "count": 3,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "            len = it_802A3C98(&link_1->pos, &cur->pos, &vec);",
+      "new": "            len = pf_hookshot_distance_inline(&link_1->pos, &cur->pos, &vec);",
+      "count": 2,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "            len = it_802A3C98(arg1, &cur->pos, &vec);",
+      "new": "            len = pf_hookshot_distance_inline(arg1, &cur->pos, &vec);",
+      "count": 2,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "    len = it_802A3C98(&cur->pos, anchor, &vec);",
+      "new": "    len = pf_hookshot_distance_inline(&cur->pos, anchor, &vec);",
+      "count": 1,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "        len = it_802A3C98(&link_1->pos, &cur->pos, &vec);",
+      "new": "        len = pf_hookshot_distance_inline(&link_1->pos, &cur->pos, &vec);",
+      "count": 1,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "        len = it_802A3C98(&link_1->pos, arg1, &vec);",
+      "new": "        len = pf_hookshot_distance_inline(&link_1->pos, arg1, &vec);",
+      "count": 2,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "    len = it_802A3C98(&link_0->pos, arg2, &vec);",
+      "new": "    len = pf_hookshot_distance_inline(&link_0->pos, arg2, &vec);",
+      "count": 1,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "        len = it_802A3C98(&link_1->pos, arg2, &vec);",
+      "new": "        len = pf_hookshot_distance_inline(&link_1->pos, arg2, &vec);",
+      "count": 1,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "        len = it_802A3C98(&link_1->pos, &link_2->pos, &vec);",
+      "new": "        len = pf_hookshot_distance_inline(&link_1->pos, &link_2->pos, &vec);",
+      "count": 1,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "    len = it_802A3C98(arg2, &link_2->pos, &vec);",
+      "new": "    len = pf_hookshot_distance_inline(arg2, &link_2->pos, &vec);",
+      "count": 1,
+      "reason": "All twenty local calls correspond to target compiler-inlined distance calculations; keep the external function unchanged."
+    },
+    {
+      "old": "vec->x * vec->x + vec->y * vec->y + vec->z * vec->z",
+      "new": "PF_SlippiMulAddF32(vec->z, vec->z,\n        PF_SlippiMulAddF32(vec->x, vec->x, vec->y * vec->y))",
+      "count": 2,
+      "reason": "Preserve both fused squared-length sums in every explicitly inlined distance variant."
+    },
+    {
+      "old": "vec->x * vec->x + vec->y * vec->y +\n                                   vec->z * vec->z",
+      "new": "PF_SlippiMulAddF32(vec->z, vec->z,\n        PF_SlippiMulAddF32(vec->x, vec->x, vec->y * vec->y))",
+      "count": 1,
+      "reason": "Preserve both fused squared-length sums in every explicitly inlined distance variant."
+    },
+    {
+      "old": "(vec.x * arg8) + arg1->x",
+      "new": "PF_SlippiMulAddF32(vec.x, arg8, arg1->x)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.y * arg8) + arg1->y",
+      "new": "PF_SlippiMulAddF32(vec.y, arg8, arg1->y)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.z * arg8) + arg1->z",
+      "new": "PF_SlippiMulAddF32(vec.z, arg8, arg1->z)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.x * arg2->x30) + link_0->pos.x",
+      "new": "PF_SlippiMulAddF32(vec.x, arg2->x30, link_0->pos.x)",
+      "count": 4,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.y * arg2->x30) + link_0->pos.y",
+      "new": "PF_SlippiMulAddF32(vec.y, arg2->x30, link_0->pos.y)",
+      "count": 4,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.z * arg2->x30) + link_0->pos.z",
+      "new": "PF_SlippiMulAddF32(vec.z, arg2->x30, link_0->pos.z)",
+      "count": 4,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec2->x * *arg2) + vec1->x",
+      "new": "PF_SlippiMulAddF32(vec2->x, *arg2, vec1->x)",
+      "count": 1,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec2->y * *arg2) + vec1->y",
+      "new": "PF_SlippiMulAddF32(vec2->y, *arg2, vec1->y)",
+      "count": 1,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec2->z * *arg2) + vec1->z",
+      "new": "PF_SlippiMulAddF32(vec2->z, *arg2, vec1->z)",
+      "count": 1,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.x * attr->x30) + link_0->pos.x",
+      "new": "PF_SlippiMulAddF32(vec.x, attr->x30, link_0->pos.x)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.y * attr->x30) + link_0->pos.y",
+      "new": "PF_SlippiMulAddF32(vec.y, attr->x30, link_0->pos.y)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.z * attr->x30) + link_0->pos.z",
+      "new": "PF_SlippiMulAddF32(vec.z, attr->x30, link_0->pos.z)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.x * attr->x30) + cur->pos.x",
+      "new": "PF_SlippiMulAddF32(vec.x, attr->x30, cur->pos.x)",
+      "count": 3,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.y * attr->x30) + cur->pos.y",
+      "new": "PF_SlippiMulAddF32(vec.y, attr->x30, cur->pos.y)",
+      "count": 3,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.z * attr->x30) + cur->pos.z",
+      "new": "PF_SlippiMulAddF32(vec.z, attr->x30, cur->pos.z)",
+      "count": 3,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.x * attr->x30) + anchor->x",
+      "new": "PF_SlippiMulAddF32(vec.x, attr->x30, anchor->x)",
+      "count": 1,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.y * attr->x30) + anchor->y",
+      "new": "PF_SlippiMulAddF32(vec.y, attr->x30, anchor->y)",
+      "count": 1,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.z * attr->x30) + anchor->z",
+      "new": "PF_SlippiMulAddF32(vec.z, attr->x30, anchor->z)",
+      "count": 1,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.x * arg2->x30) + cur->pos.x",
+      "new": "PF_SlippiMulAddF32(vec.x, arg2->x30, cur->pos.x)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.y * arg2->x30) + cur->pos.y",
+      "new": "PF_SlippiMulAddF32(vec.y, arg2->x30, cur->pos.y)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.z * arg2->x30) + cur->pos.z",
+      "new": "PF_SlippiMulAddF32(vec.z, arg2->x30, cur->pos.z)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.x * arg3->x30) + link_2->pos.x",
+      "new": "PF_SlippiMulAddF32(vec.x, arg3->x30, link_2->pos.x)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.y * arg3->x30) + link_2->pos.y",
+      "new": "PF_SlippiMulAddF32(vec.y, arg3->x30, link_2->pos.y)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "(vec.z * arg3->x30) + link_2->pos.z",
+      "new": "PF_SlippiMulAddF32(vec.z, arg3->x30, link_2->pos.z)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "dir.x * attrs->x30 + cur->pos.x",
+      "new": "PF_SlippiMulAddF32(dir.x, attrs->x30, cur->pos.x)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "dir.y * attrs->x30 + cur->pos.y",
+      "new": "PF_SlippiMulAddF32(dir.y, attrs->x30, cur->pos.y)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "dir.z * attrs->x30 + cur->pos.z",
+      "new": "PF_SlippiMulAddF32(dir.z, attrs->x30, cur->pos.z)",
+      "count": 2,
+      "reason": "Preserve target fused segment projection for all axes and both chain traversal directions."
+    },
+    {
+      "old": "return t * a + (1.0F - t) * b;",
+      "new": "return PF_SlippiMulAddF32(t, a, (1.0F - t) * b);",
+      "count": 1,
+      "reason": "Preserve target fmadds in link-count interpolation."
+    },
+    {
+      "old": "(f32) ((0.6499999761581421 * (1.0 - (f64) temp_f1)) +\n                     0.3499999940395355)",
+      "new": "(f32) PF_SlippiMulAddF64(0.6499999761581421,\n                                      1.0 - (f64) temp_f1, 0.3499999940395355)",
+      "count": 1,
+      "reason": "Preserve target binary64 fmadd in hookshot joint scaling."
+    },
+    {
+      "old": "guess = 0.5 * guess * (3.0 - guess * guess * x);",
+      "new": "guess = 0.5 * guess * -PF_SlippiMulAddF64(x, guess * guess, -3.0);",
+      "count": 3,
+      "reason": "Preserve the same three double refinements as the shared target sqrt implementation."
+    },
+    {
+      "old": "*(&y + 6)",
+      "new": "y",
+      "count": 2,
+      "reason": "Use the declared volatile binary32 spill instead of a retail stack-layout offset outside the local object."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "evidence": {
+    "class": "Hookshot chain contraction and in-bounds volatile square-root spill",
+    "internal_distance_calls": 20,
+    "coordinate_source_expressions": 57,
+    "target_fused_operations": 195,
+    "external_distance_helper": "Preserved without contraction, matching original out-of-line function",
+    "target_instructions": [
+      {
+        "address": "0x802a2680",
+        "op": "fmadds",
+        "function": "it_802A2568"
+      },
+      {
+        "address": "0x802a2e28",
+        "op": "fmadd",
+        "function": "itLinkhookshot_UnkMotion8_Anim"
+      },
+      {
+        "address": "0x802a3d0c",
+        "op": "fnmsub",
+        "function": "it_802A3C98"
+      },
+      {
+        "address": "0x802a3d1c",
+        "op": "fnmsub",
+        "function": "it_802A3C98"
+      },
+      {
+        "address": "0x802a3d2c",
+        "op": "fnmsub",
+        "function": "it_802A3C98"
+      },
+      {
+        "address": "0x802a4530",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4534",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4554",
+        "op": "fnmsub",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4564",
+        "op": "fnmsub",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4574",
+        "op": "fnmsub",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a45bc",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a45c8",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a45d4",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4668",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a466c",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4684",
+        "op": "fnmsub",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4694",
+        "op": "fnmsub",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a46a4",
+        "op": "fnmsub",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a46f0",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4700",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a4710",
+        "op": "fmadds",
+        "function": "it_802A44CC"
+      },
+      {
+        "address": "0x802a478c",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4790",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a47b0",
+        "op": "fnmsub",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a47c0",
+        "op": "fnmsub",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a47d0",
+        "op": "fnmsub",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4818",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4824",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4830",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a48e8",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a48ec",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4904",
+        "op": "fnmsub",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4914",
+        "op": "fnmsub",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4924",
+        "op": "fnmsub",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4970",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4980",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4990",
+        "op": "fmadds",
+        "function": "it_802A4758"
+      },
+      {
+        "address": "0x802a4a14",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4a18",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4a38",
+        "op": "fnmsub",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4a48",
+        "op": "fnmsub",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4a58",
+        "op": "fnmsub",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4aa0",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4aac",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4ab8",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4b0c",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4b10",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4b28",
+        "op": "fnmsub",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4b38",
+        "op": "fnmsub",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4b48",
+        "op": "fnmsub",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4b94",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4ba4",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a4bb4",
+        "op": "fmadds",
+        "function": "it_802A49B0"
+      },
+      {
+        "address": "0x802a5048",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a504c",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5064",
+        "op": "fnmsub",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5074",
+        "op": "fnmsub",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5084",
+        "op": "fnmsub",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a50d0",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a50e0",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a50f0",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5154",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5158",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5170",
+        "op": "fnmsub",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5180",
+        "op": "fnmsub",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5190",
+        "op": "fnmsub",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a51e0",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a51f0",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a5200",
+        "op": "fmadds",
+        "function": "it_802A4BFC"
+      },
+      {
+        "address": "0x802a54ac",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a54b0",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a54c8",
+        "op": "fnmsub",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a54d8",
+        "op": "fnmsub",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a54e8",
+        "op": "fnmsub",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a5534",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a5544",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a5554",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a55b8",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a55bc",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a55d4",
+        "op": "fnmsub",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a55e4",
+        "op": "fnmsub",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a55f4",
+        "op": "fnmsub",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a5644",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a5654",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a5664",
+        "op": "fmadds",
+        "function": "it_802A5320"
+      },
+      {
+        "address": "0x802a5840",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5844",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5864",
+        "op": "fnmsub",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5874",
+        "op": "fnmsub",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5884",
+        "op": "fnmsub",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a58d8",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a58e8",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a58f8",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a59b8",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a59bc",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a59d4",
+        "op": "fnmsub",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a59e4",
+        "op": "fnmsub",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a59f4",
+        "op": "fnmsub",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5a40",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5a50",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5a60",
+        "op": "fmadds",
+        "function": "it_802A5770"
+      },
+      {
+        "address": "0x802a5c08",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5c0c",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5c24",
+        "op": "fnmsub",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5c34",
+        "op": "fnmsub",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5c44",
+        "op": "fnmsub",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5c90",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5ca0",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5cb0",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5ce4",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5ce8",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5d00",
+        "op": "fnmsub",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5d10",
+        "op": "fnmsub",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5d20",
+        "op": "fnmsub",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5d70",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5d80",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5d90",
+        "op": "fmadds",
+        "function": "it_802A5AE0"
+      },
+      {
+        "address": "0x802a5e88",
+        "op": "fmadds",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5e8c",
+        "op": "fmadds",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5eac",
+        "op": "fnmsub",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5ebc",
+        "op": "fnmsub",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5ecc",
+        "op": "fnmsub",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5f30",
+        "op": "fmadds",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5f34",
+        "op": "fmadds",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5f4c",
+        "op": "fnmsub",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5f5c",
+        "op": "fnmsub",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a5f6c",
+        "op": "fnmsub",
+        "function": "it_802A5E28"
+      },
+      {
+        "address": "0x802a60f0",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a60f4",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6114",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6124",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6134",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6198",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a619c",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a61b4",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a61c4",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a61d4",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6290",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6294",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a62ac",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a62bc",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a62cc",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6318",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6328",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6338",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6388",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a638c",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a63ac",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a63bc",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a63cc",
+        "op": "fnmsub",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6420",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6430",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a6440",
+        "op": "fmadds",
+        "function": "it_802A5FE0"
+      },
+      {
+        "address": "0x802a65ac",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a65b0",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a65c8",
+        "op": "fnmsub",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a65d8",
+        "op": "fnmsub",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a65e8",
+        "op": "fnmsub",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a6634",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a6644",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a6654",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a66ac",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a66b0",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a66d0",
+        "op": "fnmsub",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a66e0",
+        "op": "fnmsub",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a66f0",
+        "op": "fnmsub",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a6744",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a6754",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a6764",
+        "op": "fmadds",
+        "function": "it_802A6474"
+      },
+      {
+        "address": "0x802a67ec",
+        "op": "fmadds",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a67f0",
+        "op": "fmadds",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a6810",
+        "op": "fnmsub",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a6820",
+        "op": "fnmsub",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a6830",
+        "op": "fnmsub",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a6894",
+        "op": "fmadds",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a6898",
+        "op": "fmadds",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a68b0",
+        "op": "fnmsub",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a68c0",
+        "op": "fnmsub",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a68d0",
+        "op": "fnmsub",
+        "function": "it_802A678C"
+      },
+      {
+        "address": "0x802a6b94",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6b98",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6bb0",
+        "op": "fnmsub",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6bc0",
+        "op": "fnmsub",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6bd0",
+        "op": "fnmsub",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6c1c",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6c2c",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6c3c",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6ca0",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6ca4",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6cbc",
+        "op": "fnmsub",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6ccc",
+        "op": "fnmsub",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6cdc",
+        "op": "fnmsub",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6d2c",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6d3c",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      },
+      {
+        "address": "0x802a6d4c",
+        "op": "fmadds",
+        "function": "it_802A6A78"
+      }
+    ]
+  }
+}

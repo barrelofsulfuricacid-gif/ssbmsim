@@ -1,0 +1,233 @@
+{
+  "schema": 1,
+  "source_path": "extern/dolphin/src/dolphin/mtx/mtx.c",
+  "source_sha256": "594e946b2686708a44f50683acb142c7f7e138eac520905e11f089e333414caa",
+  "adapted_sha256": "f4cb00777be0bbe4794b2bac6f75dd96c7860bc411d162447de5892312a84ab6",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_ps_math.h",
+      "sha256": "8292c0bc708e4fcf33625270298a46fd5448d4f32c17b251a23d9e5d05b1a02d"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include <dolphin.h>",
+      "new": "#include \"native_numeric.h\"\n#include <dolphin/os.h>\n#include \"native_ps_math.h\"",
+      "count": 1,
+      "reason": "Include the native assertion contract directly instead of the target SDK umbrella, whose unrelated demo and device declarations are outside this matrix translation unit."
+    },
+    {
+      "old": "void PSMTXIdentity(register Mtx m)",
+      "new": "#if 0\nvoid PSMTXIdentity(register Mtx m)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit; TARGET_PC callers select the adjacent source-owned C implementation."
+    },
+    {
+      "old": "void C_MTXCopy(Mtx src, Mtx dst)",
+      "new": "#endif\nvoid C_MTXCopy(const Mtx src, Mtx dst)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "asm void PSMTXCopy(register Mtx src, register Mtx dst)",
+      "new": "#if 0\nasm void PSMTXCopy(register Mtx src, register Mtx dst)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_MTXConcat(Mtx a, Mtx b, Mtx ab)",
+      "new": "#endif\nvoid C_MTXConcat(const Mtx a, const Mtx b, Mtx ab)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "asm void PSMTXConcat(register Mtx mA, register Mtx mB, register Mtx mAB)",
+      "new": "#if 0\nasm void PSMTXConcat(register Mtx mA, register Mtx mB, register Mtx mAB)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_MTXTranspose(Mtx src, Mtx xPose)",
+      "new": "#endif\nvoid C_MTXTranspose(const Mtx src, Mtx xPose)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "void PSMTXTranspose(register Mtx src, register Mtx xPose)",
+      "new": "#if 0\nvoid PSMTXTranspose(register Mtx src, register Mtx xPose)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "u32 C_MTXInverse(Mtx src, Mtx inv)",
+      "new": "#endif\nu32 C_MTXInverse(const Mtx src, Mtx inv)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "asm u32 PSMTXInverse(register Mtx src, register Mtx inv){",
+      "new": "#if 0\nasm u32 PSMTXInverse(register Mtx src, register Mtx inv){",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "u32 C_MTXInvXpose(Mtx src, Mtx invX)",
+      "new": "#endif\nu32 C_MTXInvXpose(const Mtx src, Mtx invX)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "asm u32 PSMTXInvXpose(register Mtx src, register Mtx invX)",
+      "new": "#if 0\nasm u32 PSMTXInvXpose(register Mtx src, register Mtx invX)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void MTXRotRad(Mtx m, char axis, f32 rad)",
+      "new": "#endif\nvoid MTXRotRad(Mtx m, char axis, f32 rad)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "void PSMTXRotTrig(register Mtx m, register char axis, register f32 sinA,",
+      "new": "#if 0\nvoid PSMTXRotTrig(register Mtx m, register char axis, register f32 sinA,",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_MTXRotTrig(Mtx m, char axis, f32 sinA, f32 cosA)",
+      "new": "#endif\nvoid C_MTXRotTrig(Mtx m, char axis, f32 sinA, f32 cosA)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "void PSMTXRotAxisRad(register Mtx m, Vec* axis, register f32 rad)",
+      "new": "#if 0\nvoid PSMTXRotAxisRad(register Mtx m, Vec* axis, register f32 rad)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_MTXRotAxisRad(Mtx m, Vec* axis, f32 rad)",
+      "new": "#endif\nvoid C_MTXRotAxisRad(Mtx m, const Vec* axis, f32 rad)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "void PSMTXTrans(register Mtx m, register f32 xT, register f32 yT,",
+      "new": "void C_MTXTrans(register Mtx m, register f32 xT, register f32 yT,",
+      "count": 1,
+      "reason": "Expose the target translation constructor under Aurora's native C symbol; its scalar source writes are retained and the two paired stores are translated separately below."
+    },
+    {
+      "old": "    asm {\n        psq_st c0,  4(m), 0, qr0\n        psq_st c0, 32(m), 0, qr0\n    }",
+      "new": "    m[0][1] = c0;\n    m[0][2] = c0;\n    m[2][0] = c0;\n    m[2][1] = c0;",
+      "count": 1,
+      "reason": "Translate the two paired zero stores at byte offsets 4 and 32 into the same four ordered scalar field writes; all other source writes and their order remain unchanged."
+    },
+    {
+      "old": "void MTXTransApply(Mtx src, Mtx dst, f32 xT, f32 yT, f32 zT)",
+      "new": "void MTXTransApply(const Mtx src, Mtx dst, f32 xT, f32 yT, f32 zT)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible const declaration; the source reads but does not mutate the input matrix."
+    },
+    {
+      "old": "asm void PSMTXScale(register Mtx m, register f32 xS, register f32 yS,",
+      "new": "#if 0\nasm void PSMTXScale(register Mtx m, register f32 xS, register f32 yS,",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_MTXScale(Mtx m, f32 xS, f32 yS, f32 zS)",
+      "new": "#endif\nvoid C_MTXScale(Mtx m, f32 xS, f32 yS, f32 zS)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "void PSMTXQuat(register Mtx m, register Quaternion* q)",
+      "new": "#if 0\nvoid PSMTXQuat(register Mtx m, register Quaternion* q)",
+      "count": 1,
+      "reason": "Exclude the PowerPC paired-single implementation from the native host translation unit."
+    },
+    {
+      "old": "void C_MTXQuat(Mtx m, QuaternionPtr q)",
+      "new": "#endif\nvoid C_MTXQuat(Mtx m, const Quaternion* q)",
+      "count": 1,
+      "reason": "Resume compilation at the source-owned portable C matrix implementation."
+    },
+    {
+      "old": "    ASSERTMSGLINE(0x5C9, m, \"MTXQuat():  NULL MtxPtr 'm' \");",
+      "new": "    ASSERTMSGLINE(0x5C9, m, \"MTXQuat():  NULL MtxPtr 'm' \" );",
+      "count": 1,
+      "reason": "Give the exact PSMTXQuat body replacement a unique formatting sentinel without changing the assertion expression."
+    },
+    {
+      "old": "    ASSERTMSGLINE(0x5CA, q, \"MTXQuat():  NULL QuaternionPtr 'q' \");",
+      "new": "    ASSERTMSGLINE(0x5CA, q, \"MTXQuat():  NULL QuaternionPtr 'q' \" );",
+      "count": 1,
+      "reason": "Give the exact PSMTXQuat body replacement a unique formatting sentinel without changing the assertion expression."
+    },
+    {
+      "old": "                  \"MTXQuat():  zero-value quaternion \");",
+      "new": "                  \"MTXQuat():  zero-value quaternion \" );",
+      "count": 1,
+      "reason": "Give the exact PSMTXQuat body replacement a unique formatting sentinel without changing the assertion expression."
+    },
+    {
+      "old": "#endif\nvoid C_MTXQuat(Mtx m, const Quaternion* q)\n{\n    f32 s;\n    f32 xs;\n    f32 ys;\n    f32 zs;\n    f32 wx;\n    f32 wy;\n    f32 wz;\n    f32 xx;\n    f32 xy;\n    f32 xz;\n    f32 yy;\n    f32 yz;\n    f32 zz;\n\n    ASSERTMSGLINE(0x5C9, m, \"MTXQuat():  NULL MtxPtr 'm' \" );\n    ASSERTMSGLINE(0x5CA, q, \"MTXQuat():  NULL QuaternionPtr 'q' \" );\n    ASSERTMSGLINE(0x5CB, q->x || q->y || q->z || q->w,\n                  \"MTXQuat():  zero-value quaternion \" );\n    s = 2 /\n        ((q->w * q->w) + ((q->z * q->z) + ((q->x * q->x) + (q->y * q->y))));\n    xs = q->x * s;\n    ys = q->y * s;\n    zs = q->z * s;\n    wx = q->w * xs;\n    wy = q->w * ys;\n    wz = q->w * zs;\n    xx = q->x * xs;\n    xy = q->x * ys;\n    xz = q->x * zs;\n    yy = q->y * ys;\n    yz = q->y * zs;\n    zz = q->z * zs;\n    m[0][0] = (1 - (yy + zz));\n    m[0][1] = (xy - wz);\n    m[0][2] = (xz + wy);\n    m[0][3] = 0;\n    m[1][0] = (xy + wz);\n    m[1][1] = (1 - (xx + zz));\n    m[1][2] = (yz - wx);\n    m[1][3] = 0;\n    m[2][0] = (xz - wy);\n    m[2][1] = (yz + wx);\n    m[2][2] = (1 - (xx + yy));\n    m[2][3] = 0;\n}",
+      "new": "#endif\nvoid C_MTXQuat(Mtx m, const Quaternion* q)\n{\n    const f32 x2 = q->x * q->x;\n    const f32 y2 = q->y * q->y;\n    const f32 z2 = q->z * q->z;\n    const f32 x2_z2 = PF_SlippiMulAddF32(q->z, q->z, x2);\n    const f32 y2_w2 = PF_SlippiMulAddF32(q->w, q->w, y2);\n    const f32 norm = x2_z2 + y2_w2;\n    const f32 reciprocal_estimate =\n        (f32) PF_GekkoFres((double) norm);\n    const f32 reciprocal_correction =\n        PF_SlippiMulAddF32(-norm, reciprocal_estimate, 2.0F);\n    const f32 reciprocal = reciprocal_estimate * reciprocal_correction;\n    const f32 scale = reciprocal * 2.0F;\n    const f32 yw = q->y * q->w;\n    const f32 xw = q->x * q->w;\n    const f32 zw = q->z * q->w;\n    const f32 xy_plus_zw = PF_SlippiMulAddF32(q->x, q->y, zw);\n    const f32 xy_minus_zw = PF_SlippiMulAddF32(q->x, q->y, -zw);\n    const f32 xz_plus_yw = PF_SlippiMulAddF32(q->x, q->z, yw);\n    const f32 yz_plus_xw = PF_SlippiMulAddF32(q->y, q->z, xw);\n    const f32 xz_minus_yw = PF_SlippiMulAddF32(-yw, 2.0F, xz_plus_yw);\n    const f32 yz_minus_xw = PF_SlippiMulAddF32(-xw, 2.0F, yz_plus_xw);\n\n    ASSERTMSGLINE(0x5C9, m, \"MTXQuat():  NULL MtxPtr 'm' \" );\n    ASSERTMSGLINE(0x5CA, q, \"MTXQuat():  NULL QuaternionPtr 'q' \" );\n    ASSERTMSGLINE(0x5CB, q->x || q->y || q->z || q->w,\n                  \"MTXQuat():  zero-value quaternion \" );\n    m[0][0] = PF_SlippiMulAddF32(-(z2 + y2), scale, 1.0F);\n    m[0][1] = xy_minus_zw * scale;\n    m[0][2] = xz_plus_yw * scale;\n    m[0][3] = 0.0F;\n    m[1][0] = xy_plus_zw * scale;\n    m[1][1] = PF_SlippiMulAddF32(-x2_z2, scale, 1.0F);\n    m[1][2] = yz_minus_xw * scale;\n    m[1][3] = 0.0F;\n    m[2][0] = xz_minus_yw * scale;\n    m[2][1] = yz_plus_xw * scale;\n    m[2][2] = PF_SlippiMulAddF32(-(x2 + y2), scale, 1.0F);\n    m[2][3] = 0.0F;\n}",
+      "count": 1,
+      "reason": "Translate GALE01 PSMTXQuat at 0x80342690 as pure native binary32 arithmetic: exact fres lookup, one fused reciprocal refinement, paired-single sum order, fused products, and final lane stores. This preserves the target numeric contract without emulating instructions or guest state. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "{\n    const f32 x2 = q->x * q->x;",
+      "new": "{\n    ASSERTMSGLINE(0x5C9, m, \"MTXQuat():  NULL MtxPtr 'm' \" );\n    ASSERTMSGLINE(0x5CA, q, \"MTXQuat():  NULL QuaternionPtr 'q' \" );\n    ASSERTMSGLINE(0x5CB, q->x || q->y || q->z || q->w,\n                  \"MTXQuat():  zero-value quaternion \" );\n\n    const f32 x2 = q->x * q->x;",
+      "count": 1,
+      "reason": "Keep the original null and zero-quaternion assertions before the first input read while retaining the exact translated arithmetic."
+    },
+    {
+      "old": "\n\n    ASSERTMSGLINE(0x5C9, m, \"MTXQuat():  NULL MtxPtr 'm' \" );\n    ASSERTMSGLINE(0x5CA, q, \"MTXQuat():  NULL QuaternionPtr 'q' \" );\n    ASSERTMSGLINE(0x5CB, q->x || q->y || q->z || q->w,\n                  \"MTXQuat():  zero-value quaternion \" );\n    m[0][0]",
+      "new": "\n\n    m[0][0]",
+      "count": 1,
+      "reason": "Remove the displaced duplicate assertion block after restoring it to the source-owned position above all quaternion reads."
+    },
+    {
+      "old": "void MTXScaleApply(Mtx src, Mtx dst, f32 xS, f32 yS, f32 zS)",
+      "new": "void MTXScaleApply(const Mtx src, Mtx dst, f32 xS, f32 yS, f32 zS)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible const declaration; the source only reads the input matrix."
+    },
+    {
+      "old": "void MTXReflect(Mtx m, Vec* p, Vec* n)",
+      "new": "void MTXReflect(Mtx m, const Vec* p, const Vec* n)",
+      "count": 1,
+      "reason": "Match Aurora's source-compatible const declaration; the source only reads the point and normal."
+    },
+    {
+      "old": "void MTXLookAt(Mtx m, Vec* camPos, Vec* camUp, Vec* target)",
+      "new": "#if 0\nvoid MTXLookAt(Mtx m, Vec* camPos, Vec* camUp, Vec* target)",
+      "count": 1,
+      "reason": "Aurora maps MTXLookAt to the adjacent C_MTXLookAt implementation on native hosts; exclude the duplicate target spelling whose only extra operations are disabled assertions."
+    },
+    {
+      "old": "void C_MTXLookAt(Mtx m, Vec* camPos, Vec* camUp, Vec* target)",
+      "new": "#endif\nvoid C_MTXLookAt(Mtx m, const Point3d* camPos, const Vec* camUp, const Point3d* target)",
+      "count": 1,
+      "reason": "Resume at the source-owned C implementation and match Aurora's const parameter spelling; all inputs remain read-only."
+    },
+    {
+      "old": "    m[0][0] =\n        0 + a[0][2] * b[2][0] + ((a[0][0] * b[0][0]) + (a[0][1] * b[1][0]));\n    m[0][1] =\n        0 + a[0][2] * b[2][1] + ((a[0][0] * b[0][1]) + (a[0][1] * b[1][1]));\n    m[0][2] =\n        0 + a[0][2] * b[2][2] + ((a[0][0] * b[0][2]) + (a[0][1] * b[1][2]));\n    m[0][3] = a[0][3] +\n              (a[0][2] * b[2][3] + (a[0][0] * b[0][3] + (a[0][1] * b[1][3])));\n\n    m[1][0] =\n        0 + a[1][2] * b[2][0] + ((a[1][0] * b[0][0]) + (a[1][1] * b[1][0]));\n    m[1][1] =\n        0 + a[1][2] * b[2][1] + ((a[1][0] * b[0][1]) + (a[1][1] * b[1][1]));\n    m[1][2] =\n        0 + a[1][2] * b[2][2] + ((a[1][0] * b[0][2]) + (a[1][1] * b[1][2]));\n    m[1][3] = a[1][3] +\n              (a[1][2] * b[2][3] + (a[1][0] * b[0][3] + (a[1][1] * b[1][3])));\n\n    m[2][0] =\n        0 + a[2][2] * b[2][0] + ((a[2][0] * b[0][0]) + (a[2][1] * b[1][0]));\n    m[2][1] =\n        0 + a[2][2] * b[2][1] + ((a[2][0] * b[0][1]) + (a[2][1] * b[1][1]));\n    m[2][2] =\n        0 + a[2][2] * b[2][2] + ((a[2][0] * b[0][2]) + (a[2][1] * b[1][2]));\n    m[2][3] = a[2][3] +\n              (a[2][2] * b[2][3] + (a[2][0] * b[0][3] + (a[2][1] * b[1][3])));",
+      "new": "    m[0][0] = a[0][0] * b[0][0];\n    m[0][0] = PF_SlippiMulAddF32(a[0][1], b[1][0], m[0][0]);\n    m[0][0] = PF_SlippiMulAddF32(a[0][2], b[2][0], m[0][0]);\n    m[0][1] = a[0][0] * b[0][1];\n    m[0][1] = PF_SlippiMulAddF32(a[0][1], b[1][1], m[0][1]);\n    m[0][1] = PF_SlippiMulAddF32(a[0][2], b[2][1], m[0][1]);\n    m[0][2] = a[0][0] * b[0][2];\n    m[0][2] = PF_SlippiMulAddF32(a[0][1], b[1][2], m[0][2]);\n    m[0][2] = PF_SlippiMulAddF32(a[0][2], b[2][2], m[0][2]);\n    m[0][2] = PF_SlippiMulAddF32(0.0F, a[0][3], m[0][2]);\n    m[0][3] = a[0][0] * b[0][3];\n    m[0][3] = PF_SlippiMulAddF32(a[0][1], b[1][3], m[0][3]);\n    m[0][3] = PF_SlippiMulAddF32(a[0][2], b[2][3], m[0][3]);\n    m[0][3] = PF_SlippiMulAddF32(1.0F, a[0][3], m[0][3]);\n\n    m[1][0] = a[1][0] * b[0][0];\n    m[1][0] = PF_SlippiMulAddF32(a[1][1], b[1][0], m[1][0]);\n    m[1][0] = PF_SlippiMulAddF32(a[1][2], b[2][0], m[1][0]);\n    m[1][1] = a[1][0] * b[0][1];\n    m[1][1] = PF_SlippiMulAddF32(a[1][1], b[1][1], m[1][1]);\n    m[1][1] = PF_SlippiMulAddF32(a[1][2], b[2][1], m[1][1]);\n    m[1][2] = a[1][0] * b[0][2];\n    m[1][2] = PF_SlippiMulAddF32(a[1][1], b[1][2], m[1][2]);\n    m[1][2] = PF_SlippiMulAddF32(a[1][2], b[2][2], m[1][2]);\n    m[1][2] = PF_SlippiMulAddF32(0.0F, a[1][3], m[1][2]);\n    m[1][3] = a[1][0] * b[0][3];\n    m[1][3] = PF_SlippiMulAddF32(a[1][1], b[1][3], m[1][3]);\n    m[1][3] = PF_SlippiMulAddF32(a[1][2], b[2][3], m[1][3]);\n    m[1][3] = PF_SlippiMulAddF32(1.0F, a[1][3], m[1][3]);\n\n    m[2][0] = a[2][0] * b[0][0];\n    m[2][0] = PF_SlippiMulAddF32(a[2][1], b[1][0], m[2][0]);\n    m[2][0] = PF_SlippiMulAddF32(a[2][2], b[2][0], m[2][0]);\n    m[2][1] = a[2][0] * b[0][1];\n    m[2][1] = PF_SlippiMulAddF32(a[2][1], b[1][1], m[2][1]);\n    m[2][1] = PF_SlippiMulAddF32(a[2][2], b[2][1], m[2][1]);\n    m[2][2] = a[2][0] * b[0][2];\n    m[2][2] = PF_SlippiMulAddF32(a[2][1], b[1][2], m[2][2]);\n    m[2][2] = PF_SlippiMulAddF32(a[2][2], b[2][2], m[2][2]);\n    m[2][2] = PF_SlippiMulAddF32(0.0F, a[2][3], m[2][2]);\n    m[2][3] = a[2][0] * b[0][3];\n    m[2][3] = PF_SlippiMulAddF32(a[2][1], b[1][3], m[2][3]);\n    m[2][3] = PF_SlippiMulAddF32(a[2][2], b[2][3], m[2][3]);\n    m[2][3] = PF_SlippiMulAddF32(1.0F, a[2][3], m[2][3]);",
+      "count": 1,
+      "reason": "Translate GALE01's exact PSMTXConcat lane schedule: one rounded paired multiply, two ordered paired fused-adds, and the Unit01 translation fused-add, while retaining the portable alias-safe temporary matrix. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    }
+  ]
+}

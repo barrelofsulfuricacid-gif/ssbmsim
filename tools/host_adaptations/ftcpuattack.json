@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ftcpuattack.c",
+  "source_sha256": "7a2cc2e0debca64103ead034a9ad5cf0129e2a7eea7e74caee5ea05f520bf4e7",
+  "replacements": [
+    {
+      "old": "sqrt_tmp - 1",
+      "new": "&sqrt_tmp[3]",
+      "count": 2,
+      "reason": "Use the otherwise unused final scratch element for the source sqrtf_store volatile binary32 round trip. Negative array indexing reconstructs a retail compiler stack layout and is undefined on the native host. Preserve helper arithmetic, caller order, all existing scratch slots and outputs. This completes the negative sqrt scratch-index repair across every occurrence in the pinned source tree."
+    }
+  ],
+  "adapted_sha256": "035819a4a79addc9aff56605526a0a7cd0952c42a46a4fe5e56d5b94a38fa109"
+}

@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Pass.c",
+  "source_sha256": "5a54a6cd1171bab28687ce55a96d0ed3a1eb36356b5c94a66b4af60ff6d1eaa1",
+  "adapted_sha256": "b19e4ad070df6590de979913646af7277c2457bc5c0d67d3bcdd52131e1c31f9",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"ftCo_Pass.h\"",
+      "new": "#include \"ftCo_Pass.h\"\n#include \"native_pad_input.h\"",
+      "count": 1,
+      "reason": "Declare the native state translated from the pinned UCF 0.84 pad-buffer hook."
+    },
+    {
+      "old": "bool ftCo_8009A080(Fighter_GObj* gobj)\n{\n    u8 _[8] = { 0 };\n    Fighter* fp = gobj->user_data;\n    if (fp->input.held_buttons[0] & HSD_PAD_LR && ftCo_80099F1C(gobj)) {\n        ftCo_8009A228(gobj);\n        return true;\n    }\n    return false;\n}\n",
+      "new": "bool ftCo_8009A080(Fighter_GObj* gobj)\n{\n    u8 _[8] = { 0 };\n    Fighter* fp = gobj->user_data;\n    if (fp->input.held_buttons[0] & HSD_PAD_LR &&\n        (fp->input.lstick[0].y <= -p_ftCommonData->x464 ||\n         pf_ssbm_native_ucf084_shield_drop_buffer_count(\n             fp->x618_player_id) > 1) &&\n        fp->x671_timer_lstick_tilt_y < p_ftCommonData->x468 &&\n        mpColl_IsOnPlatform(&fp->coll_data))\n    {\n        ftCo_8009A228(gobj);\n        return true;\n    }\n    return false;\n}\n",
+      "count": 1,
+      "reason": "Translate project-slippi/slippi-ssbm-asm fcf47f10 UCF Shield Drop Extended.asm at GALE01 0x8009A0B8. At this one source decision only, preserve vanilla down qualification or set the comparison result when the per-port UCF pad-buffer count is greater than one; retain the original Y-age, pass-through-floor, and held-shield conditions in their source order."
+    }
+  ]
+}

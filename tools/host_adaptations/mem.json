@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/MSL/mem.c",
+  "source_sha256": "d9162b591b0af3283e9901ded5d4ba9739184ebd8238d644005bc949c172aca2",
+  "adapted_sha256": "788a7985983e3bd7a9a15e4c7939923b851656d408b2a67cf7344465c8b2656c",
+  "replacements": [
+    {
+      "old": "#include \"mem_funcs.h\"",
+      "new": "/* Native C uses the original byte-copy path for every length. */",
+      "count": 1,
+      "reason": "Do not expose the MSL header directory globally, where it would shadow host string, math, stdio, and type headers. The only declarations in mem_funcs.h belong to the removed Metrowerks-only long-copy path; memchr and memcmp remain unchanged."
+    },
+    {
+      "old": "void* memmove(void* dst, const void* src, size_t len)\n{\n    u8* csrc;\n    u8* cdst;\n\n    int reverse = (u32) src < (u32) dst;\n\n    if (len >= 32) {\n        if (((u32) dst ^ (u32) src) & 3) {\n            if (!reverse) {\n                __copy_longs_unaligned(dst, src, len);\n            } else {\n                __copy_longs_rev_unaligned(dst, src, len);\n            }\n        } else {\n            if (!reverse) {\n                __copy_longs_aligned(dst, src, len);\n            } else {\n                __copy_longs_rev_aligned(dst, src, len);\n            }\n        }\n\n        return dst;\n    } else {\n        if (!reverse) {\n            csrc = ((u8*) src) - 1;\n            cdst = ((u8*) dst) - 1;\n            len++;\n\n            while (--len > 0) {\n                *++cdst = *++csrc;\n            }\n        } else {\n            csrc = (u8*) src + len;\n            cdst = (u8*) dst + len;\n            len++;\n\n            while (--len > 0) {\n                *--cdst = *--csrc;\n            }\n        }\n    }\n\n    return dst;\n}",
+      "new": "void* memmove(void* dst, const void* src, size_t len)\n{\n    u8* csrc;\n    u8* cdst;\n\n    int reverse = (u32) src < (u32) dst;\n\n    if (!reverse) {\n        csrc = ((u8*) src) - 1;\n        cdst = ((u8*) dst) - 1;\n        len++;\n\n        while (--len > 0) {\n            *++cdst = *++csrc;\n        }\n    } else {\n        csrc = (u8*) src + len;\n        cdst = (u8*) dst + len;\n        len++;\n\n        while (--len > 0) {\n            *--cdst = *--csrc;\n        }\n    }\n\n    return dst;\n}",
+      "count": 1,
+      "reason": "Run MSL's own overlap-direction byte-copy loop for every length on native C. Metrowerks' 32-byte optimization helpers rely on assignable cast expressions that standard C does not support, and their non-Metrowerks bodies are empty. The retained loop produces the same destination bytes and return pointer for aligned, unaligned, overlapping, and non-overlapping ranges without host libc substitution."
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "scope": "falcon-common-ucf084-hitlag-input",
+  "domain": "falcon-common-ucf084-hitlag-input",
+  "character": "falcon",
+  "live_source": {
+    "capture_sha256": "fb636ab13fd6ecdcb8f10f11af3640b8fbf6759a18f7e5ce01e9a7904f581b6e",
+    "repeat_capture_sha256": "612a9eb7e72adb7b4119246242ff511613be40eb4d12a83b112e8aa0a7a0b38b",
+    "disc_sha256": "0de05981a34156b9cedcef73c73d4244ac05cf6149ab3c9cfed917698819e464",
+    "release_artifact_sha256": "87e9ef6d80ed03354a1647d0616016dbc91399aa9e86a69ae5a398edd0a0c2bd",
+    "launcher_sha256": "9eb024aa9347648f020e2a76666e5c5597b77b32ef26752f563c99f0772b1e82",
+    "decomp_revision": "9509dc04406fb2028bfab01243841ba4787c0fb7",
+    "current_decomp_revision": "ae8d6cbb2bcf1f0e92868613e3ef6a36c1bb42fd",
+    "dolphin_version": "3.5.1",
+    "libmelee_version": "0.47.2",
+    "capture_schema": 14,
+    "fighter": "CPTFALCON",
+    "opponent": "CPTFALCON",
+    "oracle": "SSBM GALE01 NTSC-U revision 2 with UCF 0.84 via Dolphin/Slippi",
+    "oracle_gameplay_policy": {
+      "schema": "ssbm-ntsc102-ucf084-oracle-v2",
+      "target": "GALE01 NTSC-U revision 2 with UCF 0.84",
+      "ucf_version": "0.84",
+      "ucf_official_release_tag": "ucf0.84_2024-06-27",
+      "ucf_official_release_revision": "01122231ea97683cf7adea43d732ce0a4784c849",
+      "policy_sha256": "a8368a3901828602833fba82f2c1e2490df6537151ff5cd6a216419a6051b7cc"
+    },
+    "stage": "FINAL_DESTINATION",
+    "row_count": 16
+  },
+  "checkpoint_pack": {
+    "protocol": "immutable-multislot-slippi-state-file-control-v2",
+    "expected_rows": 16,
+    "warm_budget_seconds": 10.0,
+    "cold_budget_seconds": 20.0,
+    "capture_route": "damage-hit",
+    "capture_shards": [
+      ["sdi_raw_delta_62_reject"],
+      ["sdi_raw_delta_63_accept"],
+      ["shield_sdi_raw_delta_62_reject"],
+      ["shield_sdi_raw_delta_63_accept"]
+    ],
+    "capture_plan": {
+      "batch_exi_inputs": false,
+      "checkpoint_slot_count": 4,
+      "input_memory_probe_schema": 2,
+      "record_input_window_only": true,
+      "damage_response_cases": [
+        {"id":"sdi_raw_delta_62_reject","setup":{"main":[0,0]},"pre_hit":[{"main":[0,0]},{"main":[18022,0]}],"hitlag":[{"main":[25394,0]},{"main":[0,0]},{"main":[0,0]}]},
+        {"id":"sdi_raw_delta_63_accept","setup":{"main":[0,0]},"pre_hit":[{"main":[0,0]},{"main":[18022,0]}],"hitlag":[{"main":[25804,0]},{"main":[0,0]},{"main":[0,0]}]},
+        {"id":"shield_sdi_raw_delta_62_reject","shield":true,"setup":{"main":[0,0]},"pre_hit":[{"main":[0,0]},{"main":[18022,0]}],"hitlag":[{"main":[25394,0]},{"main":[0,0]},{"main":[0,0]}]},
+        {"id":"shield_sdi_raw_delta_63_accept","shield":true,"setup":{"main":[0,0]},"pre_hit":[{"main":[0,0]},{"main":[18022,0]}],"hitlag":[{"main":[25804,0]},{"main":[0,0]},{"main":[0,0]}]}
+      ]
+    }
+  },
+  "checkpoint_cases": [
+    {"id":"sdi_raw_delta_62_reject","start_label":"damage_response_sdi_raw_delta_62_reject_place"},
+    {"id":"sdi_raw_delta_63_accept","start_label":"damage_response_sdi_raw_delta_63_accept_place"},
+    {"id":"shield_sdi_raw_delta_62_reject","start_label":"damage_response_shield_sdi_raw_delta_62_reject_place"},
+    {"id":"shield_sdi_raw_delta_63_accept","start_label":"damage_response_shield_sdi_raw_delta_63_accept_place"}
+  ],
+  "selection": {
+    "paths": [
+      "generated/data/ssbm_ucf084_hitlag_input_oracle.json",
+      "src/sim/sim_combat.c",
+      "src/sim/sim_internal.h",
+      "src/sim/sim_movement.c",
+      "src/sim/sim_tick.c",
+      "src/tools/movement_trace.c",
+      "tools/capture_ssbm_movement.py",
+      "tools/generate_ssbm_stored_trace_oracle.py",
+      "tools/ssbm_live_trace.py",
+      "tools/ssbm_natural_movement_domain.py",
+      "tools/ssbm_ucf084_hitlag_input_coverage.json",
+      "tools/verify_ssbm_ucf084_damage_input.py"
+    ]
+  },
+  "stored_oracle": {
+    "kind": "native-csv-trace-v1",
+    "source_trace_sha256": "cbfa5f43cc098d49d8982124de4a9c0059d3c0a798c4e1da7b6ccf3cd39a0649",
+    "production_trace_sha256": "cbc1031ef6b2ac46ab72d63022d3aed3aea780693aa94438f80fb4621cd7f13c",
+    "require_exact_source_match": false,
+    "serialized_fields": ["effective_main_x_q15","effective_main_y_q15","tilt_x_age","tilt_y_age","ucf_tilt_x_age","ucf_tilt_y_age","action_state","hitlag_ticks","grounded","position_x_f32_from_origin"],
+    "action_mapping": {
+      "DAMAGE_NEUTRAL_2": {"action_state":13,"action_tick_offset":null},
+      "SHIELD_STUN": {"action_state":13,"action_tick_offset":null}
+    },
+    "cases": [
+      {"id":"sdi_raw_delta_62_reject","runner_arguments":["--ucf-sdi-hitlag"],"source_label_prefix":"damage_response_sdi_raw_delta_62_reject_","sample_count":4,"input_phases":[{"ticks":1,"lanes":[{"raw_main":[0,0]},{}]},{"ticks":1,"lanes":[{"main":[18022,0],"raw_main":[44,0]},{}]},{"ticks":1,"lanes":[{"main":[25394,0],"raw_main":[62,0]},{}]},{"ticks":1,"lanes":[{"raw_main":[0,0]},{}]}]},
+      {"id":"sdi_raw_delta_63_accept","runner_arguments":["--ucf-sdi-hitlag"],"source_label_prefix":"damage_response_sdi_raw_delta_63_accept_","sample_count":4,"input_phases":[{"ticks":1,"lanes":[{"raw_main":[0,0]},{}]},{"ticks":1,"lanes":[{"main":[18022,0],"raw_main":[44,0]},{}]},{"ticks":1,"lanes":[{"main":[25804,0],"raw_main":[63,0]},{}]},{"ticks":1,"lanes":[{"raw_main":[0,0]},{}]}]},
+      {"id":"shield_sdi_raw_delta_62_reject","runner_arguments":["--ucf-shield-sdi-hitlag"],"source_label_prefix":"damage_response_shield_sdi_raw_delta_62_reject_","sample_count":4,"input_phases":[{"ticks":1,"lanes":[{"left_trigger":65535,"raw_main":[0,0]},{}]},{"ticks":1,"lanes":[{"left_trigger":65535,"main":[18022,0],"raw_main":[44,0]},{}]},{"ticks":1,"lanes":[{"left_trigger":65535,"main":[25394,0],"raw_main":[62,0]},{}]},{"ticks":1,"lanes":[{"left_trigger":65535,"raw_main":[0,0]},{}]}]},
+      {"id":"shield_sdi_raw_delta_63_accept","runner_arguments":["--ucf-shield-sdi-hitlag"],"source_label_prefix":"damage_response_shield_sdi_raw_delta_63_accept_","sample_count":4,"input_phases":[{"ticks":1,"lanes":[{"left_trigger":65535,"raw_main":[0,0]},{}]},{"ticks":1,"lanes":[{"left_trigger":65535,"main":[18022,0],"raw_main":[44,0]},{}]},{"ticks":1,"lanes":[{"left_trigger":65535,"main":[25804,0],"raw_main":[63,0]},{}]},{"ticks":1,"lanes":[{"left_trigger":65535,"raw_main":[0,0]},{}]}]}
+    ],
+    "generator": {"script":"tools/generate_ssbm_stored_trace_oracle.py","output":"generated/data/ssbm_ucf084_hitlag_input_oracle.json"},
+    "runner": {"executable":"movement_trace","arguments":[]}
+  }
+}

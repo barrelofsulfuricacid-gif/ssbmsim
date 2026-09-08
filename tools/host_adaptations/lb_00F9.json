@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/lb/lb_00F9.c",
+  "source_sha256": "2db3aad0b4ecd2671974da5bac3d35891fdadf4066534bc57e748bb7e31a1155",
+  "adapted_sha256": "413ea7420796aa688e65637e4106fed734c89274758322ed9eacc6a0bb471d31",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "&view_mtx[0]",
+      "new": "view_mtx",
+      "count": 2,
+      "reason": "The two expressions have the same address and MtxPtr value, as confirmed by the exact GALE01 stack address passed to HSD_CObjGetViewingMtx and GXLoadPosMtxImm. Passing the array object rather than naming only its first 16-byte row preserves the complete 48-byte Mtx extent for native object-size analysis and removes a false subobject overflow without changing matrix storage or either call."
+    },
+    {
+      "old": "dz * dz + (dx * dx + dy * dy)",
+      "new": "PF_SlippiMulAddF32(dz, dz, PF_SlippiMulAddF32(dx, dx, dy * dy))",
+      "count": 1,
+      "reason": "Preserve initialization chain length dot-product fmadds at 8000FFA8/8000FFAC; Y product is separately rounded."
+    },
+    {
+      "old": ".5 * guess * (3.0 - guess * guess * dist_sq)",
+      "new": ".5 * guess * -PF_SlippiMulAddF64(dist_sq, guess * guess, -3.0)",
+      "count": 3,
+      "reason": "Preserve all three explicit initialization reciprocal-square-root fnmsub refinements, including final negation (8000FFC4/FFD4/FFE4)."
+    },
+    {
+      "old": "arg1->x += var_r30->x4.x * scale0;",
+      "new": "arg1->x = PF_SlippiMulAddF32(var_r30->x4.x, scale0, arg1->x);",
+      "count": 1,
+      "reason": "Preserve rectangular interaction-force accumulation fmadds (800102B0-800102D0)."
+    },
+    {
+      "old": "arg1->x += scale1 * (delta.x * scale0);",
+      "new": "arg1->x = PF_SlippiMulAddF32(scale1, delta.x * scale0, arg1->x);",
+      "count": 1,
+      "reason": "Preserve radial interaction-force accumulation; inner scaled delta remains separately rounded (80010340-80010368)."
+    },
+    {
+      "old": "arg1->y += var_r30->x4.y * scale0;",
+      "new": "arg1->y = PF_SlippiMulAddF32(var_r30->x4.y, scale0, arg1->y);",
+      "count": 1,
+      "reason": "Preserve rectangular interaction-force accumulation fmadds (800102B0-800102D0)."
+    },
+    {
+      "old": "arg1->y += scale1 * (delta.y * scale0);",
+      "new": "arg1->y = PF_SlippiMulAddF32(scale1, delta.y * scale0, arg1->y);",
+      "count": 1,
+      "reason": "Preserve radial interaction-force accumulation; inner scaled delta remains separately rounded (80010340-80010368)."
+    },
+    {
+      "old": "arg1->z += var_r30->x4.z * scale0;",
+      "new": "arg1->z = PF_SlippiMulAddF32(var_r30->x4.z, scale0, arg1->z);",
+      "count": 1,
+      "reason": "Preserve rectangular interaction-force accumulation fmadds (800102B0-800102D0)."
+    },
+    {
+      "old": "arg1->z += scale1 * (delta.z * scale0);",
+      "new": "arg1->z = PF_SlippiMulAddF32(scale1, delta.z * scale0, arg1->z);",
+      "count": 1,
+      "reason": "Preserve radial interaction-force accumulation; inner scaled delta remains separately rounded (80010340-80010368)."
+    },
+    {
+      "old": "-dist1 / (dist0 - dist1) * (x0 - x2) + x2",
+      "new": "PF_SlippiMulAddF32(-dist1 / (dist0 - dist1), x0 - x2, x2)",
+      "count": 1,
+      "reason": "Preserve floor intersection interpolation fmadds 80010428 and strict original branch conditions."
+    },
+    {
+      "old": "link_dir.x * cur->desc.lb_unk0.unk_48 +\n                            cur->desc.lb_unk0.unk_2C.x",
+      "new": "PF_SlippiMulAddF32(link_dir.x, cur->desc.lb_unk0.unk_48, cur->desc.lb_unk0.unk_2C.x)",
+      "count": 1,
+      "reason": "Preserve all collider and both ground-branch endpoint projections (80010AE4/AF8/B0C, 80010CF8/CFC, 80010EC4/EC8)."
+    },
+    {
+      "old": "link_dir.x * cur->desc.lb_unk0.unk_48 +\n                                    cur->desc.lb_unk0.unk_2C.x",
+      "new": "PF_SlippiMulAddF32(link_dir.x, cur->desc.lb_unk0.unk_48, cur->desc.lb_unk0.unk_2C.x)",
+      "count": 1,
+      "reason": "Preserve all collider and both ground-branch endpoint projections (80010AE4/AF8/B0C, 80010CF8/CFC, 80010EC4/EC8)."
+    },
+    {
+      "old": "link_dir.x * cur->desc.lb_unk0.unk_48 +\n                                cur->desc.lb_unk0.unk_2C.x",
+      "new": "PF_SlippiMulAddF32(link_dir.x, cur->desc.lb_unk0.unk_48, cur->desc.lb_unk0.unk_2C.x)",
+      "count": 1,
+      "reason": "Preserve all collider and both ground-branch endpoint projections (80010AE4/AF8/B0C, 80010CF8/CFC, 80010EC4/EC8)."
+    },
+    {
+      "old": "link_dir.y * cur->desc.lb_unk0.unk_48 +\n                            cur->desc.lb_unk0.unk_2C.y",
+      "new": "PF_SlippiMulAddF32(link_dir.y, cur->desc.lb_unk0.unk_48, cur->desc.lb_unk0.unk_2C.y)",
+      "count": 1,
+      "reason": "Preserve all collider and both ground-branch endpoint projections (80010AE4/AF8/B0C, 80010CF8/CFC, 80010EC4/EC8)."
+    },
+    {
+      "old": "link_dir.y * cur->desc.lb_unk0.unk_48 +\n                                    cur->desc.lb_unk0.unk_2C.y",
+      "new": "PF_SlippiMulAddF32(link_dir.y, cur->desc.lb_unk0.unk_48, cur->desc.lb_unk0.unk_2C.y)",
+      "count": 1,
+      "reason": "Preserve all collider and both ground-branch endpoint projections (80010AE4/AF8/B0C, 80010CF8/CFC, 80010EC4/EC8)."
+    },
+    {
+      "old": "link_dir.y * cur->desc.lb_unk0.unk_48 +\n                                cur->desc.lb_unk0.unk_2C.y",
+      "new": "PF_SlippiMulAddF32(link_dir.y, cur->desc.lb_unk0.unk_48, cur->desc.lb_unk0.unk_2C.y)",
+      "count": 1,
+      "reason": "Preserve all collider and both ground-branch endpoint projections (80010AE4/AF8/B0C, 80010CF8/CFC, 80010EC4/EC8)."
+    },
+    {
+      "old": "link_dir.z * cur->desc.lb_unk0.unk_48 +\n                            cur->desc.lb_unk0.unk_2C.z",
+      "new": "PF_SlippiMulAddF32(link_dir.z, cur->desc.lb_unk0.unk_48, cur->desc.lb_unk0.unk_2C.z)",
+      "count": 1,
+      "reason": "Preserve all collider and both ground-branch endpoint projections (80010AE4/AF8/B0C, 80010CF8/CFC, 80010EC4/EC8)."
+    },
+    {
+      "old": "coll_dist * coll_dist -\n                                              adj_radius * adj_radius",
+      "new": "PF_SlippiMulAddF32(coll_dist, coll_dist, -(adj_radius * adj_radius))",
+      "count": 1,
+      "reason": "Preserve collider tangent squared-distance fmsubs at 80010C04 before shared native sqrtf."
+    },
+    {
+      "old": "-(height_diff * height_diff -\n                                            cur->desc.lb_unk0.unk_48 *\n                                                cur->desc.lb_unk0.unk_48)",
+      "new": "-PF_SlippiMulAddF32(height_diff, height_diff, -(cur->desc.lb_unk0.unk_48 * cur->desc.lb_unk0.unk_48))",
+      "count": 1,
+      "reason": "Preserve ground tangent squared-distance fnmsubs at 80010F3C, including signed zero from final negation."
+    }
+  ]
+}

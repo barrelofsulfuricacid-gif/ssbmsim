@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/sysdolphin/baselib/hsd_3A64.c",
+  "source_sha256": "f5f5a2641bf5cc2a0f4ee2013f42ef8bfbd44cfcd38ce5997370c6a69e2b5865",
+  "adapted_sha256": "3e28da944732172cdf470329bc1c10fc38e77bcb3bbe42ffb9394554c4f80e23",
+  "replacements": [
+    {
+      "old": "#include <stdio.h>",
+      "new": "#include <stdio.h>\n#include <stdlib.h>",
+      "count": 1,
+      "reason": "Declare abort for fail-closed host bounds violations."
+    },
+    {
+      "old": "vsnprintf((char*) buffer, -1, fmt, args);",
+      "new": "{\n            int native_length = vsnprintf((char*) buffer, sizeof(buffer), fmt, args);\n            if (native_length < 0 || (size_t) native_length >= sizeof(buffer)) {\n                abort();\n            }\n        }",
+      "count": 2,
+      "reason": "The console uses -1 as an unlimited formatting bound; native fortified libc rejects SIZE_MAX. Preserve every fitting output byte and reject an overrun before the result is consumed, rather than silently truncating."
+    },
+    {
+      "old": "u8 encoded[128];",
+      "new": "u8 encoded[128 * 7 + 2];",
+      "count": 2,
+      "reason": "Stage the original encoder in a bounded native stack scratch: each of at most 128 iterations emits at most five kerning bytes plus two glyph bytes, then close and terminator. Reject outputs exceeding the original 128-byte buffer before source state mutations."
+    },
+    {
+      "old": "encoded_len = HSD_SisLib_803A67EC(encoded, buffer);",
+      "new": "encoded_len = HSD_SisLib_803A67EC(encoded, buffer);\n        if (encoded_len < 0 || encoded_len >= 128) { abort(); }",
+      "count": 1,
+      "reason": "Fail closed when encoded text exceeds the original source buffer; do not continue with altered or overflowing output."
+    },
+    {
+      "old": "new_size = HSD_SisLib_803A67EC(encoded, buffer);",
+      "new": "new_size = HSD_SisLib_803A67EC(encoded, buffer);\n            if (new_size < 0 || new_size >= 128) { abort(); }",
+      "count": 1,
+      "reason": "Apply the same original-buffer contract to text replacement and text creation."
+    }
+  ]
+}

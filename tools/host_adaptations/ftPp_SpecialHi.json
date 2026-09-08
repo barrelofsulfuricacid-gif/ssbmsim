@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftPopo/ftpopospecialhi.c",
+  "source_sha256": "4299e232d147cc01ae3c98cc9fa6029eb2627358286be21c2eb1911965364a7b",
+  "adapted_sha256": "b0450464b055f76ee8510e13cea21ce59e2e04f6f8f6093d57e0bcafdc1f7918",
+  "replacements": [
+    {
+      "old": "end: {\n    // original code returns without a value\n}\n}\n\nvoid ftPp_SpecialS_801210C8",
+      "new": "end: {\n    return false;\n}\n}\n\nvoid ftPp_SpecialS_801210C8",
+      "count": 1,
+      "reason": "Return the function's existing false outcome when the climber string item is absent; every pinned caller discards this return and the successful transition still returns true."
+    }
+  ]
+}

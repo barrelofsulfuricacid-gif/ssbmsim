@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/cm/types.h",
+  "source_sha256": "cdc362a5bd4ef8a6140ef6e36d39a79cd6df19d17852c00662bd46e329313376",
+  "adapted_sha256": "0b9592f1e9ae6680ba11be03b4257812e44ad74c8e59957ef64ec020e1f4cc4a",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    /* 0x344 */ union {\n        s32 s32;\n        Vec3 vec;\n        s32 (*cb)(Vec3*);\n    } x344;",
+      "new": "    /* 0x344 */ union {\n        s32 s32;\n        Vec3 vec;\n        bool (*cb)(Vec3*);\n    } x344;",
+      "count": 1,
+      "reason": "Camera_8002E948 is the only assignment to x344.cb and accepts bool (*)(Vec*); both source callbacks return bool, and every x344.cb consumer tests the result only as a condition. The function pointer remains one 32-bit field, so the asserted Camera layout is unchanged."
+    }
+  ]
+}

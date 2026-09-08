@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/gm/gmregclear.c",
+  "source_sha256": "1323e3c908306fab97594b1605e046e81a088c6d46501894c50e1124cc06c42d",
+  "adapted_sha256": "31d51eae15d604801516bd236665d5b04f0e34bcbed6e28c3c84f6e550b10847",
+  "replacements": [
+    {
+      "old": "#include <dolphin/pad.h>",
+      "new": "#include <dolphin/pad.h>\n\n#define PAD_STICK_UP (1 << 16)\n#define PAD_STICK_DOWN (1 << 17)",
+      "count": 1,
+      "reason": "Restore the two Melee-synthesized stick-direction input bits used by this unit at their exact pinned doldecomp positions. Aurora intentionally supplies only the physical SDK PAD contract; these game-owned flags match the already qualified gm_1A36 input-map adaptation."
+    },
+    {
+      "old": "    data.state = (data.state = &lbl_80472D28);",
+      "new": "    data.state = &lbl_80472D28;",
+      "count": 1,
+      "reason": "Collapse a redundant nested assignment that writes the same pointer twice without an intervening sequence point. The native result is identical, while avoiding host-compiler undefined-behavior diagnostics."
+    }
+  ]
+}

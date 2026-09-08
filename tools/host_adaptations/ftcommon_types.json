@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/types.h",
+  "source_sha256": "c9fdeaa8642e00046bf7498ca1bbfd6d0d7fef86094e1d2e751a456e9cf8046f",
+  "adapted_sha256": "2efae9a1900cede6b1375072fd3b40306118a9cc469736869bb68643d64d343a",
+  "replacements": [
+    {
+      "old": "        /* fp+2340 */ bool timer;",
+      "new": "        /* fp+2340 */ int timer;",
+      "count": 1,
+      "reason": "Match GALE01 ftCo_800C61B0 at 0x800C61E0, which stores the complete Player_GetUnk4C word with stw r3, 0x2340(r31); a bool truncates the five-frame versus-entry stagger to one frame."
+    }
+  ]
+}

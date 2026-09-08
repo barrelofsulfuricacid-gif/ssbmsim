@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ty/tydisplay.c",
+  "source_sha256": "ebd8c5822caab114d24ed515993a8bf77003785fd64d2989eae801ad921f5051",
+  "adapted_sha256": "c2f54ffde9a9625bb8a2b4fa5e74604c08bab75552ad824254300ebdb91ea3a7",
+  "replacements": [
+    {
+      "old": "inline void _tyDisplay_80319994_sort(TyDspConfig* cfg, TyDspGrid* grid)",
+      "new": "static inline void _tyDisplay_80319994_sort(TyDspConfig* cfg, TyDspGrid* grid)",
+      "count": 1,
+      "reason": "Give the translation-unit helper internal linkage under ISO C inline semantics. Its callers and matched sorting behavior are unchanged."
+    },
+    {
+      "old": "inline void _tyDisplay_80318CB4_sort(TyDspConfig* cfg, TyDspGrid* grid)",
+      "new": "static inline void _tyDisplay_80318CB4_sort(TyDspConfig* cfg, TyDspGrid* grid)",
+      "count": 1,
+      "reason": "Give the translation-unit helper internal linkage so its calls to static quicksort helpers remain valid under the host compiler."
+    }
+  ]
+}

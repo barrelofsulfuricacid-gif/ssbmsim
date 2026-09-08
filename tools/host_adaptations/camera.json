@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/cm/camera.c",
+  "source_sha256": "b149ae8c5f8c2e393bdfe2b6107311501fe5d23771ee9ec21a91d837d88fe8f3",
+  "adapted_sha256": "875447ead913fb5aaa8545146c55dad65e5eca71d12dda91835f73cd5254a9d8",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "    {\n        s32 i;\n        for (i = 0; i < 16; i++) {\n            if (cm_80452C68._B0[0][i].type == 0) {\n                cm_80452C68._B0[0][i].type = arg0;\n                if (arg1 != NULL) {\n                    cm_80452C68._B0[0][i].x0 = *arg1;\n                } else {\n                    cm_80452C68._B0[0][i].x0.z = 0.0f;\n                    cm_80452C68._B0[0][i].x0.y = 0.0f;\n                    cm_80452C68._B0[0][i].x0.x = 0.0f;\n                }\n            }\n        }\n    }",
+      "new": "    {\n        s32 i;\n        for (i = 0; i < 16; i++) {\n            struct CameraQuake* quake = &cm_80452C68._B0[i / 8][i % 8];\n            if (quake->type == 0) {\n                quake->type = arg0;\n                if (arg1 != NULL) {\n                    quake->x0 = *arg1;\n                } else {\n                    quake->x0.z = 0.0f;\n                    quake->x0.y = 0.0f;\n                    quake->x0.x = 0.0f;\n                }\n            }\n        }\n    }",
+      "count": 1,
+      "reason": "The source declares two contiguous rows of eight CameraQuake records but indexes the first row from 0 through 15. Exact GALE01 DOL code at 0x80030EF4 uses four outer iterations with four 0x10-byte records each, visiting all 16 records from offsets 0xB0 through 0x1AF in row-major order. Explicit two-dimensional indexing preserves that order and layout without invoking host C out-of-row array indexing."
+    },
+    {
+      "old": "    cm_80452C68.x344.cb = (s32 (*)(Vec3*)) cb;",
+      "new": "    cm_80452C68.x344.cb = cb;",
+      "count": 1,
+      "reason": "The adapted cm/types.h records the source-observed bool callback contract. Removing the incompatible return-type cast makes the assignment and all conditional consumers use that same contract without changing pointer size, storage, or call order."
+    },
+    {
+      "old": "    struct CameraStaticData {\n        CameraModeCallbacks callbacks;\n        HSD_WObjDesc interest;\n        HSD_WObjDesc eyepos;\n        HSD_CameraDescPerspective desc;\n    }* data = (struct CameraStaticData*) &cm_803BCB18;\n",
+      "new": "",
+      "count": 1,
+      "reason": "The synthetic aggregate reconstructs original DOL small-data linker adjacency between cm_803BCB18 and cm_803BCB64. Independent ELF statics have no such adjacency, so access the already named camera descriptor directly instead of reproducing a guest address layout."
+    },
+    {
+      "old": "data->desc.aspect",
+      "new": "cm_803BCB64.aspect",
+      "count": 1,
+      "reason": "Preserve the exact source-owned camera aspect value through its semantic global rather than DOL linker-order pointer arithmetic."
+    },
+    {
+      "old": "data->desc.viewport.xmax - data->desc.viewport.xmin",
+      "new": "cm_803BCB64.viewport.xmax - cm_803BCB64.viewport.xmin",
+      "count": 1,
+      "reason": "Preserve the exact 640-pixel source viewport width through the named descriptor; the synthetic adjacent object read resolves to zero on ELF and produces a NaN camera translation."
+    },
+    {
+      "old": "data->desc.viewport.ymax - data->desc.viewport.ymin",
+      "new": "cm_803BCB64.viewport.ymax - cm_803BCB64.viewport.ymin",
+      "count": 1,
+      "reason": "Preserve the exact 480-pixel source viewport height through the named descriptor; this removes only the original linker-layout assumption."
+    },
+    {
+      "old": "#include \"camera.h\"",
+      "new": "#include \"camera.h\"\n#include \"native_numeric.h\"",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "return (((spread - globals->x34) / (temp_f4 - globals->x34)) *\n                (globals->x30 - globals->x2C)) +\n               globals->x2C;",
+      "new": "return PF_SlippiMulAddF32(\n            (spread - globals->x34) / (temp_f4 - globals->x34),\n            globals->x30 - globals->x2C, globals->x2C);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "return (cm_803BCCA0.x20 - cm_803BCCA0.x1C) *\n                   ((spread - cm_803BCCA0.x24) /\n                    (cm_803BCCA0.x28 - cm_803BCCA0.x24)) +\n               cm_803BCCA0.x1C;",
+      "new": "return PF_SlippiMulAddF32(cm_803BCCA0.x20 - cm_803BCCA0.x1C,\n            (spread - cm_803BCCA0.x24) /\n                (cm_803BCCA0.x28 - cm_803BCCA0.x24), cm_803BCCA0.x1C);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "base = y_sum * (0.5f - t) + sp24.y;",
+      "new": "base = PF_SlippiMulAddF32(y_sum, 0.5f - t, sp24.y);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "transform->target_interest.y = y_off + (bounds->y_max - dist_y * tan_u);",
+      "new": "transform->target_interest.y = y_off + PF_SlippiMulAddF32(-dist_y, tan_u, bounds->y_max);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "transform->target_interest.x = (bounds->x_max - dist_x * tan_r) - x_off;",
+      "new": "transform->target_interest.x = PF_SlippiMulAddF32(-dist_x, tan_r, bounds->x_max) - x_off;",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "fov_u = 0.5f * MTXDegToRad(transform->fov) + angle;",
+      "new": "fov_u = PF_SlippiMulAddF32(0.5f, MTXDegToRad(transform->fov), angle);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "fov_d = 0.5f * MTXDegToRad(transform->fov) - angle;",
+      "new": "fov_d = PF_SlippiMulAddF32(0.5f, MTXDegToRad(transform->fov), -angle);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "fov_r = 0.5f * MTXDegToRad(transform->fov) - angle;",
+      "new": "fov_r = PF_SlippiMulAddF32(0.5f, MTXDegToRad(transform->fov), -angle);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "fov_l = 0.5f * MTXDegToRad(transform->fov) + angle;",
+      "new": "fov_l = PF_SlippiMulAddF32(0.5f, MTXDegToRad(transform->fov), angle);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "transform->interest.x += offset_x * lerp_factor;",
+      "new": "transform->interest.x = PF_SlippiMulAddF32(offset_x, lerp_factor, transform->interest.x);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "transform->interest.y += offset_y * lerp_factor;",
+      "new": "transform->interest.y = PF_SlippiMulAddF32(offset_y, lerp_factor, transform->interest.y);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "transform->position.x += dist.x * scale;",
+      "new": "transform->position.x = PF_SlippiMulAddF32(dist.x, scale, transform->position.x);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "transform->position.y += dist.y * scale;",
+      "new": "transform->position.y = PF_SlippiMulAddF32(dist.y, scale, transform->position.y);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "transform->position.z += dist.z * scale;",
+      "new": "transform->position.z = PF_SlippiMulAddF32(dist.z, scale, transform->position.z);",
+      "count": 1,
+      "reason": "Preserve the retail single-result fused arithmetic in Camera_80029AAC, Camera_80029C88 and Camera_80029CF8, including their inlined interpolation helpers; audited retail disassembly records all fourteen operations. No tolerance or replay-specific values."
+    },
+    {
+      "old": "(subject->ext.h.x * tracking_multiplier) + base_pos.x",
+      "new": "PF_SlippiMulAddF32(subject->ext.h.x, tracking_multiplier, base_pos.x)",
+      "count": 1,
+      "reason": "Camera_8002958C retail fmadds at 0x80029718/7CC/880/934 and 0x80029A64 preserve four ordered subject-bound projections and the depth-dependent vertical margin. Same camera arithmetic class as transform/smoothing."
+    },
+    {
+      "old": "(subject->ext.h.y * tracking_multiplier) + base_pos.x",
+      "new": "PF_SlippiMulAddF32(subject->ext.h.y, tracking_multiplier, base_pos.x)",
+      "count": 1,
+      "reason": "Camera_8002958C retail fmadds at 0x80029718/7CC/880/934 and 0x80029A64 preserve four ordered subject-bound projections and the depth-dependent vertical margin. Same camera arithmetic class as transform/smoothing."
+    },
+    {
+      "old": "(subject->ext.v.y * tracking_multiplier) + base_pos.y",
+      "new": "PF_SlippiMulAddF32(subject->ext.v.y, tracking_multiplier, base_pos.y)",
+      "count": 1,
+      "reason": "Camera_8002958C retail fmadds at 0x80029718/7CC/880/934 and 0x80029A64 preserve four ordered subject-bound projections and the depth-dependent vertical margin. Same camera arithmetic class as transform/smoothing."
+    },
+    {
+      "old": "(subject->ext.v.x * tracking_multiplier) + base_pos.y",
+      "new": "PF_SlippiMulAddF32(subject->ext.v.x, tracking_multiplier, base_pos.y)",
+      "count": 1,
+      "reason": "Camera_8002958C retail fmadds at 0x80029718/7CC/880/934 and 0x80029A64 preserve four ordered subject-bound projections and the depth-dependent vertical margin. Same camera arithmetic class as transform/smoothing."
+    },
+    {
+      "old": "((390.0f * z_factor) + 10.0f)",
+      "new": "PF_SlippiMulAddF32(390.0f, z_factor, 10.0f)",
+      "count": 1,
+      "reason": "Camera_8002958C retail fmadds at 0x80029718/7CC/880/934 and 0x80029A64 preserve four ordered subject-bound projections and the depth-dependent vertical margin. Same camera arithmetic class as transform/smoothing."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    }
+  ]
+}

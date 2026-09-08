@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/sysdolphin/baselib/particle.c",
+  "source_sha256": "12857a1954beef2167cbd4160ff5592487273462fecdae651df406d679a7af8f",
+  "adapted_sha256": "535f602d78fd65f4741cc29df5c976e6b582d5d8c7b9df636900399fb6e560d9",
+  "replacements": [
+    {
+      "old": "void psInitDataBank(int bank, int* cmdBank, int* texBank, u32* ref,\n                    int* formBank)\n{\n    if (bank < 65) {\n        psInitDataBankLocate((HSD_Archive*) cmdBank, (HSD_Archive*) texBank,\n                             formBank);\n        psInitDataBankLoad(bank, cmdBank, texBank, ref, formBank);\n    }\n}\n",
+      "new": "void psInitDataBank(int bank, int* cmdBank, int* texBank, u32* ref,\n                    int* formBank)\n{\n    if (bank < 65) {\n        psInitDataBankLocate((HSD_Archive*) cmdBank, (HSD_Archive*) texBank,\n                             formBank);\n        psInitDataBankLoad(bank, cmdBank, texBank, ref, formBank);\n    }\n}\n\nvoid pf_ps_install_native_bank(int bank, void** command_lists,\n                               int command_count, void** texture_groups,\n                               void* particle_references)\n{\n    if (bank < 0 || bank >= 65) {\n        return;\n    }\n    ptclref_804D0E5C[bank] = (HSD_PSCmdList**) command_lists;\n    psCmdListArray[bank] = command_count;\n    psTexGroupArray[bank] = (HSD_PSTexGroup**) texture_groups;\n    hsd_804D0948[bank] = (u32*) particle_references;\n}\n",
+      "count": 1,
+      "reason": "Expose the source particle interpreter's existing bank tables to the pointer-free native asset binder. This adds no alternate update path: generators and particles continue through the original arrays and source-owned interpreter."
+    },
+    {
+      "old": "    ParticleData* data = (ParticleData*) hsd_804D08E8;\n",
+      "new": "    (void) sizeof(ParticleData);\n",
+      "count": 1,
+      "reason": "The target DOL placed the particle globals contiguously, but native linker layout is not an ABI. Remove the synthetic base object and address the original semantic globals directly below."
+    },
+    {
+      "old": "    head = &data->particle[gen->linkNo];\n",
+      "new": "    head = &hsd_804D0908[gen->linkNo];\n",
+      "count": 1,
+      "reason": "Select the source-owned per-link particle head directly instead of reconstructing it through DOL BSS adjacency."
+    },
+    {
+      "old": "                if (data->jobj[jidx] != NULL) {\n                    HSD_JObjUnref(data->jobj[jidx]);\n                    data->jobj[jidx] = NULL;\n",
+      "new": "                if (hsd_804D08E8[jidx] != NULL) {\n                    HSD_JObjUnref(hsd_804D08E8[jidx]);\n                    hsd_804D08E8[jidx] = NULL;\n",
+      "count": 1,
+      "reason": "Use the original particle JObj table by symbol so deletion remains independent of native linker placement."
+    },
+    {
+      "old": "            HSD_ObjFree(&data->alloc_data, prt);\n",
+      "new": "            HSD_ObjFree(&hsd_804D0F60.alloc_data, prt);\n",
+      "count": 1,
+      "reason": "Free through the original particle allocator symbol instead of deriving its address from an assumed DOL BSS span."
+    }
+  ]
+}

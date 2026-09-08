@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ftafterimage.c",
+  "source_sha256": "ba1bd20665a03c208b6955d518c208c194bf08b4b9658b06e56030c79d037f22",
+  "adapted_sha256": "0034576a1946ed1adc5453f0f72f51632e99f3ef78e7b97708f7d7d3d3fce5ec",
+  "replacements": [
+    {
+      "old": "void ftCo_800C2600(Fighter_GObj* gobj, u32 arg1)\n{",
+      "new": "#if 0\nvoid ftCo_800C2600(Fighter_GObj* gobj, u32 arg1)\n{",
+      "count": 1,
+      "reason": "Begin excluding only the sword-afterimage GX draw body. Its sole caller is the fighter GObj rendering path, and every external dependency unique to this function is GX, render-state, camera-view, or draw-only interpolation support. The per-frame ftCo_800C2FD8 sampler below remains source-owned because fighter processing updates its ring buffer and item/joint state."
+    },
+    {
+      "old": "\nvoid ftCo_800C2FD8(Fighter_GObj* gobj)\n{",
+      "new": "\n#endif\n\nvoid ftCo_800C2600(Fighter_GObj* gobj, u32 arg1)\n{\n    (void) gobj;\n    (void) arg1;\n}\n\nvoid ftCo_800C2FD8(Fighter_GObj* gobj)\n{",
+      "count": 1,
+      "reason": "Replace the excluded presentation callback with an inert signature-preserving headless contract, then resume the original source before the gameplay-side afterimage sampler. This removes no fighter-process writes and changes no callback table shape or ABI."
+    }
+  ]
+}

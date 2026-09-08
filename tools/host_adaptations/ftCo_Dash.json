@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Dash.c",
+  "source_sha256": "7251dcee053adcaf812b245c569574a112713758d8d24f2e5101d98dbe6fdd84",
+  "adapted_sha256": "510a151e39a7bbbdd175bb41d028d83b91ebca95336725ed684435bfcff22e72",
+  "evidence": {
+    "dol_sha1": "08e0bf20134dfcb260699671004527b2d6bb1a45",
+    "function": "ftCo_Dash_IASA",
+    "instructions": "GALE01 0x800CA508 fmuls followed by 0x800CA518 fmadds"
+  },
+  "replacements": [
+    {
+      "old": "#include <placeholder.h>\n",
+      "new": "#include \"native_numeric.h\"\n#include <placeholder.h>\n\n#include <math.h>\n",
+      "count": 1,
+      "reason": "Declare the explicit native binary32 fused operation used to preserve GALE01's dash-exit arithmetic."
+    },
+    {
+      "old": "        float temp_f0 = fp->gr_vel * p_ftCommonData->x54;\n        fp->gr_vel += -temp_f0 * friction;",
+      "new": "        float temp_f0 = fp->gr_vel * p_ftCommonData->x54;\n        fp->gr_vel = PF_SlippiMulAddF32(-temp_f0, friction, fp->gr_vel);",
+      "count": 1,
+      "reason": "Match ftCo_Dash_IASA at GALE01 0x800CA508 through 0x800CA51C: retain the separately rounded gr_vel*x54 fmuls, then express the original negation and fmadds with one binary32 rounding. The complete Yoshi/Falcon frame-4826 witness uses gr_vel 0x3f8b8522, x54 0x3f400000, and friction 0x3fc00000, yielding 0xbe0b8522 fused instead of 0xbe0b8520 unfused. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

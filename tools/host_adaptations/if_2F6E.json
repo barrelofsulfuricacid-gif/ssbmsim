@@ -1,0 +1,15 @@
+{
+  "adapted_sha256": "2c35303d832909b1b934c8437b35767cf6887b45ce29fc251db104923097bd0e",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "count": 1,
+      "new": "        if (e->x0 != NULL) {\n            HSD_GObjPLink_80390228(e->x0);\n        }\n        if (e->x14 == NULL) {\n            e->x0 = NULL;\n            e->x18 = (IfStatusCb) arg4;\n            e->x1C = (IfStatusCb) arg5;\n            return;\n        }\n        gobj = GObj_Create(0xE, 0xE, 0);",
+      "old": "        if (e->x0 != NULL) {\n            HSD_GObjPLink_80390228(e->x0);\n        }\n        gobj = GObj_Create(0xE, 0xE, 0);",
+      "reason": "Headless IfAll.dat scene models are unavailable by deliberate interface-scope exclusion (headless startup omits ifStatus model init, same precedent as the ifmagnify adaptation), so e->x14 is NULL and HSD_JObjLoadJoint(e->x14->joint) segfaults on any indexed match banner (READY/GO/GAME!/TIME OVER via ifStatus_802F7034 indices 0/5/6/7 and unkB-1). Reproducer: 43843c48 game-end banner 6EA4(5) SIGSEGV at 0x08077346 after native frame 11311; gdb confirms all eight scene-model pointers NULL from scene load. The guard skips only the JObj/GObj presentation reconstruction when the model is absent, after unlinking any stale banner exactly as the source does, and records the NULL owner plus the requested callbacks so later free/poll paths see the documented empty state. No gameplay consumer is affected: ifStatus_802F7034 passes NULL callbacks, banner SFX/audio is headless-stubbed, banner anim procs only drive presentation and completion callbacks, and the gm_16AE match-flow callbacks that carry real flow never fire in headless runs (zero hits across an 11311-frame intro-to-gameover trace). Console behavior with models present is unchanged (guard not taken)."
+    }
+  ],
+  "schema": 1,
+  "source_path": "src/melee/if/if_2F6E.c",
+  "source_sha256": "8392a774b07a5426da902ad1f8722d62f024c376f6452971337b2c2c08dd9643"
+}

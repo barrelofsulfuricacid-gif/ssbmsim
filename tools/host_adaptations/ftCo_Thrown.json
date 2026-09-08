@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Thrown.c",
+  "source_sha256": "0e590733c1c281c91560fdf47c23ea94a20ce14b09500d175b7a93c15b129b5a",
+  "adapted_sha256": "9f96b131a7bdac8f834f032792326f908d4fe5d13adf24d365b66f040a3d07d8",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include <melee/pl/plbonuslib.h>\n",
+      "new": "#include \"native_numeric.h\"\n#include <melee/pl/plbonuslib.h>\n\n#include <math.h>\n",
+      "count": 1,
+      "reason": "Declare the native binary32 fused operation used to express GALE01's PowerPC fmadds instructions in the thrown-position callback."
+    },
+    {
+      "old": "    pos.x = (fp->facing_dir * (fp->x1A70.z * fp->x34_scale.y)) + pos.x;\n    pos.y += fp->x1A70.y * fp->x34_scale.y;",
+      "new": "    float scaled_z = fp->x1A70.z * fp->x34_scale.y;\n    pos.x = PF_SlippiMulAddF32(fp->facing_dir, scaled_z, pos.x);\n    pos.y = PF_SlippiMulAddF32(fp->x1A70.y, fp->x34_scale.y, pos.y);",
+      "count": 1,
+      "reason": "Match ftCo_800DE508 at GALE01 0x800DE54C, 0x800DE558, and 0x800DE56C: retain the separately rounded Z-scale multiply, then reproduce the original fused X and Y additions exactly. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

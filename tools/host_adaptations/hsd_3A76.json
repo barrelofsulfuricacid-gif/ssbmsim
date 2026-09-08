@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/sysdolphin/baselib/hsd_3A76.c",
+  "source_sha256": "f23ce602945fe0c39fd2ff75d8c153199bd9f1e11d629a0033bff0802cb9af34",
+  "adapted_sha256": "07549b0214986391524a516b0f63b08a3ed7338e014348a9eb6ac888da0b6054",
+  "replacements": [
+    {
+      "old": "            Mtx projection_m;",
+      "new": "            Mtx44 projection_m;",
+      "count": 1,
+      "reason": "The native nonmatching path passes this local to MTXOrtho, which writes a complete 4x4 projection. Allocate its required 64 bytes instead of the source 48-byte affine matrix; retain all 16 original computed values and GXSetProjection consumer. MUST_MATCH stack-placement code remains disabled."
+    }
+  ]
+}

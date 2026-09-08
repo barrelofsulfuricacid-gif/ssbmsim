@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itkyasarinegg.c",
+  "source_sha256": "339f571a37e7be9fd35a432ea352c6deb95199089d8289dddd0ab2efffb66283",
+  "adapted_sha256": "efaefe3b70974c659db92deda7685fa5cbf4942346bfb5eb0ce441e81a0632d9",
+  "replacements": [
+    {
+      "old": "bool itKyasarinegg_UnkMotion4_Anim(Item_GObj* gobj)\n{\n    it_802751D8(gobj);\n}",
+      "new": "bool itKyasarinegg_UnkMotion4_Anim(Item_GObj* gobj)\n{\n    return it_802751D8(gobj);\n}",
+      "count": 1,
+      "reason": "Propagate the decomp-owned animation-completion result, matching the same it_802751D8 callback pattern used by the other item animation state tables."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/aobj.c",
+  "source_sha256": "3a99a90a0bf63b4c11f3b08ffa1bb087a3667db20499fa93a7e470d6bcb4a3d4",
+  "adapted_sha256": "726bf7b7053145e3b713075d4b1ce5e1043d578db7ad2a44ab84393e1d0cae08",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include <math.h>\n",
+      "new": "#include <math.h>\n#include \"native_msl_math.h\"\n",
+      "count": 1,
+      "reason": "The native build intentionally resolves the host math header, while GALE01 resolves src/MSL/math.h and emits its local fmodf with signed-64 conversion plus fused fnmsubs rounding. The compatibility helper reproduces that source and DOL behavior without host libm."
+    },
+    {
+      "old": "fmodf(x, y)",
+      "new": "PF_MSLFmodf(x, y)",
+      "count": 1,
+      "reason": "Route the animation rewind remainder through the exact native form of the source-owned MSL helper."
+    }
+  ]
+}

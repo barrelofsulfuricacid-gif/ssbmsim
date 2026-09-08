@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/types.h",
+  "source_sha256": "74b7246a0fe4199def6610aa0692378e86a404a0eea815bca5bc422e44b125a8",
+  "adapted_sha256": "6017053e82e79cec55b810491095e24abad762909a1df56e75cb33a082b730a9",
+  "replacements": [
+    {
+      "old": "/* fp+186C */ int x186c;",
+      "new": "/* fp+186C */ float x186c;\n#if UINTPTR_MAX > UINT32_MAX\n        u32 native_pad_after_x186c;\n#endif",
+      "count": 1,
+      "reason": "Match the primary DmgResult damage field and preserve that native overlay's eight-byte-aligned tail extent before the secondary result begins."
+    },
+    {
+      "old": "/* fp+1870 */ struct DmgLogEntry* x1870;",
+      "new": "/* fp+1870 */ float x1870;",
+      "count": 1,
+      "reason": "Match the direction field written at offset zero by ftColl_8007A06C's DmgResult overlay instead of treating those bits as a pointer."
+    },
+    {
+      "old": "/* fp+1894 */ int x1894;",
+      "new": "/* fp+1894 */ HSD_GObj* x1894;",
+      "count": 1,
+      "reason": "Preserve the source HSD_GObj pointer written by the DmgResult overlay and later dereferenced by ftColl_8007BE3C without native pointer truncation."
+    },
+    {
+      "old": "/* fp+1898 */ float x1898;",
+      "new": "/* fp+1898 */ float x1898;\n#if UINTPTR_MAX > UINT32_MAX\n        u32 native_pad_after_x1898;\n#endif",
+      "count": 1,
+      "reason": "Preserve the secondary native DmgResult tail extent so the following hitlag field cannot overlap its eight-byte-aligned representation."
+    },
+    {
+      "old": "/* +23C */ UNK_T x23C;",
+      "new": "/* +23C */ s32 x23C;",
+      "count": 1,
+      "reason": "Match the integer damage-fly-roll threshold consumed by ftCo_8008DCE0 while preserving the original 32-bit asset field width."
+    },
+    {
+      "old": "/* +5EC */ UNK_T x5EC;",
+      "new": "/* +5EC */ u32 x5EC;",
+      "count": 1,
+      "reason": "Match the unsigned fighter timer value passed directly to ftCommon_8007EFC0 while preserving the original 32-bit asset field width."
+    },
+    {
+      "old": "    int x1C;",
+      "new": "    FtSFXArr* x1C;",
+      "count": 1,
+      "reason": "Match the alternate damage-fall sound-array pointer later consumed by ft_800889F4."
+    },
+    {
+      "old": "        struct {\n            u8 throw_flags_b0 : 1;",
+      "new": "        struct __attribute__((scalar_storage_order(\"big-endian\"))) {\n            u8 throw_flags_b0 : 1;",
+      "count": 1,
+      "reason": "Give the named throw flag bits their PowerPC MSB-first masks while retaining the host-order raw u32 overlay used by native code."
+    },
+    {
+      "old": "    /* fp+2218:0 */ u8 allow_interrupt : 1;",
+      "new": "    struct __attribute__((scalar_storage_order(\"big-endian\"))) {\n    /* fp+2218:0 */ u8 allow_interrupt : 1;",
+      "count": 1,
+      "reason": "Put the gameplay fighter flag block in an anonymous reverse-storage-order aggregate so every named u8 and cross-byte u16 bitfield keeps its original PowerPC byte and bit position on i686."
+    },
+    {
+      "old": "    /* fp+222A:7 */ u8 x222A_b7 : 1;\n\n    /* fp+222C */ union Fighter_FighterVars {",
+      "new": "    /* fp+222A:7 */ u8 x222A_b7 : 1;\n    };\n\n    /* fp+222C */ union Fighter_FighterVars {",
+      "count": 1,
+      "reason": "Close the host-only anonymous PowerPC-layout fighter flag aggregate before character-specific runtime variables."
+    },
+    {
+      "old": "/* fp+190C */ UNK_T x190C;",
+      "new": "/* fp+190C */ FtSFXArr* x190C;",
+      "count": 1,
+      "reason": "Match the retained damage-fall sound-array pointer assigned from FtSFX and dereferenced after the fall transition."
+    },
+    {
+      "old": "struct gmScriptEventDefault {\n",
+      "new": "#pragma scalar_storage_order big-endian\nstruct gmScriptEventDefault {\n",
+      "count": 1,
+      "reason": "Decode the opcode and value from the original big-endian PowerPC action-command bytes before native dispatch."
+    },
+    {
+      "old": "        struct {\n            u8 move_id : 8;\n            struct {\n                u8 x9_b0 : 1;\n                u8 x9_b1 : 1;\n                u8 x9_b2 : 1;\n                u8 x9_b3 : 1;\n                u8 x9_b4 : 1;\n                u8 x9_b5 : 1;\n                u8 x9_b6 : 1;\n                u8 x9_b7 : 1;\n            };\n            u8 xA;\n            u8 xB;\n        };",
+      "new": "        struct {\n            u8 xB;\n            u8 xA;\n            struct __attribute__((scalar_storage_order(\"big-endian\"))) {\n                u8 x9_b0 : 1;\n                u8 x9_b1 : 1;\n                u8 x9_b2 : 1;\n                u8 x9_b3 : 1;\n                u8 x9_b4 : 1;\n                u8 x9_b5 : 1;\n                u8 x9_b6 : 1;\n                u8 x9_b7 : 1;\n            };\n            u8 move_id : 8;\n        };",
+      "count": 1,
+      "reason": "Map the MotionState packed u32 initializer onto the original PowerPC byte fields on little-endian i686: move_id is the high byte, x9 keeps MSB-first named bits, and xA/xB retain their source byte positions."
+    },
+    {
+      "old": "    /*  fp+594 */ union {\n        struct {\n            /* fp+594:0 */ u8 x594_b0 : 1;\n            /* fp+594:1 */ u8 x594_b1_loop : 1;\n            /* fp+594:2 */ u8 x594_b2 : 1;\n            /* fp+594:3 */ u8 x594_b3 : 1;\n            /* fp+594:4 */ u8 x594_b4 : 1;\n            /* fp+594:5 */ u8 x594_b5 : 1;\n            /* fp+594:6 */ u8 x594_b6 : 1;\n            /* fp+594:7 */ u8 x594_b7 : 1;\n            /* fp+596 */ struct {\n                /* fp+596:0 */ u8 x0 : 7;\n                /* fp+596:7 */ u16 x7 : 3;\n            } x596_bits;\n        };\n        struct {\n            u32 x594_pad : 10;\n            u32 x594_bits : 13;\n            u32 x594_pad2 : 3;\n            u32 x597_bits : 6; // FighterKind of this fighter's x590 FigaTree\n        };\n        /* fp+594 */ s32 x594_s32;\n    };",
+      "new": "    /*  fp+594 */ union {\n        struct {\n            u32 x597_bits : 6; // FighterKind of this fighter's x590 FigaTree\n            u32 x594_pad2 : 3;\n            u32 x594_bits : 13;\n            u32 x594_pad : 2;\n            /* fp+594:7 */ u32 x594_b7 : 1;\n            /* fp+594:6 */ u32 x594_b6 : 1;\n            /* fp+594:5 */ u32 x594_b5 : 1;\n            /* fp+594:4 */ u32 x594_b4 : 1;\n            /* fp+594:3 */ u32 x594_b3 : 1;\n            /* fp+594:2 */ u32 x594_b2 : 1;\n            /* fp+594:1 */ u32 x594_b1_loop : 1;\n            /* fp+594:0 */ u32 x594_b0 : 1;\n        };\n        struct {\n            u32 native_x597_pad : 6;\n            /* fp+596:7 */ u32 x7 : 3;\n            /* fp+596:0 */ u32 x0 : 7;\n            u32 native_x596_pad : 16;\n        } x596_bits;\n        /* fp+594 */ s32 x594_s32;\n    };",
+      "count": 1,
+      "reason": "Map every PowerPC animation-flag accessor onto the same numeric bits of the endian-normalized i686 u32. Fighter_ChangeMotionState at GALE01 0x80069C48 loads the big-endian halfword at fp+596 and 0x80069C50 extracts its bits 6 through 8; after u32 normalization those are raw bits 6 through 8, immediately above the six-bit FighterKind field."
+    },
+    {
+      "old": "    /* +10:0 */ u8 x10_b0 : 1;\n    /* +10:1 */ u8 x10_b1 : 1;",
+      "new": "    u32 native_x10_pad : 30;\n    /* +10:1 */ u32 x10_b1 : 1;\n    /* +10:0 */ u32 x10_b0 : 1;",
+      "count": 1,
+      "reason": "Map the action animation flag accessor onto the normalized host-order u32 so partial-animation reloads retain the GALE01 loop bit instead of interpreting the low host byte as an i686 u8 bitfield."
+    },
+    {
+      "old": "};\n\nstruct ftData_UnkCountStruct {",
+      "new": "};\n#pragma scalar_storage_order default\n\nstruct ftData_UnkCountStruct {",
+      "count": 1,
+      "reason": "Limit reverse scalar storage order to the packed asset command overlay and retain host layout for all following runtime structures."
+    },
+    {
+      "old": "/* fp+2070 */ union Struct2070 {\n    /* fp+2070 */ struct {\n        /* fp+2070 */ s8 x2070;\n        /* fp+2071:0 */ u8 x2071_b0_3 : 4;\n        /* fp+2071:4 */ u8 x2071_b4 : 1;\n        /* fp+2071:5 */ u8 x2071_b5 : 1;\n        /* fp+2071:6 */ u8 x2071_b6 : 1;\n        /* fp+2071:7 */ u8 x2071_b7 : 1;\n        /* fp+2072:0 */ u8 x2072_b0 : 1;\n        /* fp+2072:1 */ u8 x2072_b1 : 1;\n        /* fp+2072:2 */ u8 x2072_b2 : 1;\n        /* fp+2072:3 */ u8 count_x1A4 : 1;\n        /* fp+2072:4 */ u8 count_thrown_items : 1;\n        /* fp+2072:5 */ u8 count_aerials : 1;\n        /* fp+2072:6 */ u8 count_x1A0 : 1;\n        /* fp+2072:7 */ u8 count_specials : 1;\n        /* fp+2073 */ u8 x2073;\n    };\n    /* fp+2070 */ int x2070_int;\n};",
+      "new": "/* fp+2070 */ union Struct2070 {\n    struct {\n        u8 x2073;\n        struct __attribute__((scalar_storage_order(\"big-endian\"))) {\n            u8 x2072_b0 : 1;\n            u8 x2072_b1 : 1;\n            u8 x2072_b2 : 1;\n            u8 count_x1A4 : 1;\n            u8 count_thrown_items : 1;\n            u8 count_aerials : 1;\n            u8 count_x1A0 : 1;\n            u8 count_specials : 1;\n        };\n        struct __attribute__((scalar_storage_order(\"big-endian\"))) {\n            u8 x2071_b0_3 : 4;\n            u8 x2071_b4 : 1;\n            u8 x2071_b5 : 1;\n            u8 x2071_b6 : 1;\n            u8 x2071_b7 : 1;\n        };\n        s8 x2070;\n    };\n    int x2070_int;\n};",
+      "count": 1,
+      "reason": "Normalize all four byte lanes of the shared fighter/item motion word while preserving PowerPC MSB-first bits within each byte. Numeric values, move IDs, category flags and signed high-byte access must describe the same word on i686; both runtime-created temporary words and stored fighter/item words use this type."
+    },
+    {
+      "old": "    /* fp+2084 */ union {\n        u32 x2084;\n        struct {\n            u8 x2084_b0 : 1;\n            u8 x2084_b1 : 1;\n            u8 x2084_b2 : 1;\n            u8 x2084_b3 : 1;\n            u8 x2084_b4 : 1;\n            u8 x2084_b5 : 1;\n            u8 x2084_b6 : 1;\n            u8 x2084_b7 : 1;\n            u8 x2085_b0 : 1;\n            u8 x2085_b1 : 1;\n            u8 x2085_b2 : 1;\n            u8 x2085_b3 : 1;\n            u8 x2085_b4 : 1;\n            u8 x2085_b5 : 1;\n            u8 x2085_b6 : 1;\n            u8 x2085_b7 : 1;\n        };\n    };\n",
+      "new": "    /* fp+2084 */ union {\n        u32 x2084;\n        struct {\n            u32 native_low_bits : 16;\n            u32 x2085_b7 : 1;\n            u32 x2085_b6 : 1;\n            u32 x2085_b5 : 1;\n            u32 x2085_b4 : 1;\n            u32 x2085_b3 : 1;\n            u32 x2085_b2 : 1;\n            u32 x2085_b1 : 1;\n            u32 x2085_b0 : 1;\n            u32 x2084_b7 : 1;\n            u32 x2084_b6 : 1;\n            u32 x2084_b5 : 1;\n            u32 x2084_b4 : 1;\n            u32 x2084_b3 : 1;\n            u32 x2084_b2 : 1;\n            u32 x2084_b1 : 1;\n            u32 x2084_b0 : 1;\n        };\n    };\n",
+      "count": 1,
+      "reason": "Map all fighter attack-history flag accessors onto the numeric high 16 bits of x2084. Items copy this complete word through xDA4_word and share Struct2074 consumers; preserve the low 16 bits instead of shifting flags into them on little-endian hosts."
+    }
+  ]
+}

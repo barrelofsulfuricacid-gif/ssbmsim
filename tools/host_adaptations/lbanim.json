@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/lb/lbanim.c",
+  "source_sha256": "4303746ac4697c1726ee8321f0fd503a86f9789c6742b315ff7ed3f075f21f7b",
+  "adapted_sha256": "a4c89316d89dbb6fb329f493e6c5c9517aa6604f4094fa8f9514142257793ee5",
+  "replacements": [
+    {
+      "old": "HSD_FObj* fn_8001E60C(FigaTrack* track, s8 frames)\n{\n    HSD_FObj* fobj;\n",
+      "new": "HSD_FObj* fn_8001E60C(FigaTrack* track, s8 frames)\n{\n    HSD_FObj* fobj = (HSD_FObj*) track;\n",
+      "count": 1,
+      "reason": "Preserve GALE01 instructions 0x8001E618 and 0x8001E6BC: r3 initially holds track and is stored through at function exit when every channel is filtered, instead of invoking host-C undefined behavior through an uninitialized fobj temporary."
+    }
+  ]
+}

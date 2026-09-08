@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/sysdolphin/baselib/class.c",
+  "source_sha256": "9c9c6f8bf436a9bbdc3dea7797a601b4edaab6fa521faef0bb1f2c79cbcbcd24",
+  "adapted_sha256": "916f1787cee18e2a0f679e5d5191fa79abb4f550f9fc5a6497e5b4f1a6f60522",
+  "replacements": [
+    {
+      "old": "#include \"class.h\"",
+      "new": "#include \"class.h\"\n#include \"native_texture_tables.h\"",
+      "count": 1,
+      "reason": "Declare preallocated texture-object slots and their permanently associated palette tables."
+    },
+    {
+      "old": "    HSD_Class* mem_piece = hsdAllocMemPiece(info->head.obj_size);",
+      "new": "    HSD_Class* mem_piece = info == HSD_CLASS_INFO(&hsdTObj)\n        ? pf_hsd_texture_object_take(info->head.obj_size)\n        : hsdAllocMemPiece(info->head.obj_size);",
+      "count": 1,
+      "reason": "Activate a startup-reserved texture-object slot instead of borrowing a splittable generic memory piece. Keep the source live/peak counters, constructor, init, release and class metadata unchanged. Other classes retain their source memory path."
+    },
+    {
+      "old": "    hsdFreeMemPiece(cls, info->head.obj_size);",
+      "new": "    if (info == HSD_CLASS_INFO(&hsdTObj)) {\n        HSD_ASSERT(271, pf_hsd_texture_object_return(cls));\n    } else {\n        hsdFreeMemPiece(cls, info->head.obj_size);\n    }",
+      "count": 1,
+      "reason": "Return only texture objects to their permanent slots after source release and live-counter decrement. Keep source palette destruction order and all non-texture storage behavior intact."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_texture_tables.c",
+      "sha256": "001eb95c4cf6a4292a94c4be282d9f59fe9a13ade3eaf73eca45f2c87cf8b5f8"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_texture_tables.h",
+      "sha256": "602a46973fdac595af9cfd57625a032095697aee66a132a2136483439e397372"
+    }
+  ]
+}

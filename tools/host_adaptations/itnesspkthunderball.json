@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/it/kinds/itnesspkthunderball.c",
+  "source_sha256": "b858e1538b63a163ae08624519082a5aca0693c6b1f8e374db816fff57b04e37",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "evidence": {
+    "target_instructions": [
+      {
+        "address": "0x802abe08",
+        "op": "fmadds",
+        "args": "f0, f2, f1, f0",
+        "function": "itNesspkthunderball_UnkMotion0_Phys"
+      },
+      {
+        "address": "0x802abe24",
+        "op": "fnmsubs",
+        "args": "f0, f2, f1, f0",
+        "function": "itNesspkthunderball_UnkMotion0_Phys"
+      }
+    ],
+    "class": "Degree-to-radian product fused into angular accumulation; no replay-specific conditions.",
+    "first_internal_witness": "PK Thunder angle and velocity match through frame 3375; first angle difference at 3376 precedes fighter launch at 3413."
+  },
+  "replacements": [
+    {
+      "old": "#include \"itnesspkthunderball.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"itnesspkthunderball.h\"",
+      "count": 1,
+      "reason": "Use the established binary32 target multiply-add boundary."
+    },
+    {
+      "old": "ip->xDD4_itemVar.pkthunder.angles[0] +=\n                        MTXDegToRad(attr->x10_PKTHUNDER_TURN_RADIUS);",
+      "new": "ip->xDD4_itemVar.pkthunder.angles[0] =\n                        PF_SlippiMulAddF32(\n                            attr->x10_PKTHUNDER_TURN_RADIUS, 0.01745329252f,\n                            ip->xDD4_itemVar.pkthunder.angles[0]);",
+      "count": 1,
+      "reason": "Fuse degree conversion with angular accumulation in both directions; preserve final negation for target fnmsubs, including signed zero."
+    },
+    {
+      "old": "ip->xDD4_itemVar.pkthunder.angles[0] -=\n                        MTXDegToRad(attr->x10_PKTHUNDER_TURN_RADIUS);",
+      "new": "ip->xDD4_itemVar.pkthunder.angles[0] =\n                        -PF_SlippiMulAddF32(\n                            attr->x10_PKTHUNDER_TURN_RADIUS, 0.01745329252f,\n                            -ip->xDD4_itemVar.pkthunder.angles[0]);",
+      "count": 1,
+      "reason": "Fuse degree conversion with angular accumulation in both directions; preserve final negation for target fnmsubs, including signed zero."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ],
+  "adapted_sha256": "92824613a289223a8df95c5735225462fa2994912fec2f0e18f66485c04557c5"
+}

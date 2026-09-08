@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itmewtwoshadowball.c",
+  "source_sha256": "18a9d81b8ac208a0ed267b34ca42394a2ad109b1bef8244321218b554439d789",
+  "adapted_sha256": "9a5e16f09854061e6c614a15ddecaec896e726e358054677f035dd14241d71a2",
+  "replacements": [
+    {
+      "old": "    HSD_JObjSetTranslate(child, &ip->xDD4_itemVar.mewtwoshadowball.x30);\n    ip->xDD4_itemVar.mewtwoshadowball.x4C++;\n}\n\nbool it_802C4F50",
+      "new": "    HSD_JObjSetTranslate(child, &ip->xDD4_itemVar.mewtwoshadowball.x30);\n    ip->xDD4_itemVar.mewtwoshadowball.x4C++;\n    return 0;\n}\n\nbool it_802C4F50",
+      "count": 1,
+      "reason": "Satisfy the decomp-owned u32 signature after preserving all state updates; the sole pinned source caller discards the return value."
+    }
+  ]
+}

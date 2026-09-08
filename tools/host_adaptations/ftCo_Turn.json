@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/kinds/ftCommon/ftCo_Turn.c",
+  "source_sha256": "2a0df3786c80330a54e6dea5830ba103ba44eb5ff26fb97d43cdb932a501cae3",
+  "adapted_sha256": "c46fd54656967e58ecce6f9308daaa269b4ca558d9a515786f01e6d2a30cd9fd",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_pad_input.h",
+      "sha256": "e434b2e163206e7d201006d32ee76a8870ee8fb95b4dfbadc370343e9203d94e"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include <placeholder.h>\n",
+      "new": "#include <placeholder.h>\n\n#include \"native_pad_input.h\"\n#include <melee/pl/player.h>\n",
+      "count": 1,
+      "reason": "Expose the native copy of UCF's two-frame raw main-stick history to the source Turn callback at the original Dashback injection point."
+    },
+    {
+      "old": "void ftCo_Turn_IASA(Fighter_GObj* gobj)\n{\n    Fighter* fp = GET_FIGHTER(gobj);\n",
+      "new": "typedef struct Ucf084NanaDashbackInput {\n    u8 x0[6];\n    u8 main_stick_x;\n    u8 x7[0x18 - 7];\n    float facing_dir;\n} Ucf084NanaDashbackInput;\n\nstatic void ucf084_apply_dashback(Fighter* fp)\n{\n    int raw_delta;\n\n    if (fp->x221F_b4 || fp->cur_anim_frame != 2.0F ||\n        fp->facing_dir * fp->input.lstick[0].x <\n            p_ftCommonData->dash_smash_stick_threshold ||\n        fp->x670_timer_lstick_tilt_x > 1)\n    {\n        return;\n    }\n\n    raw_delta = pf_ssbm_native_ucf084_raw_main_x_delta_two_frames(\n        fp->x618_player_id);\n    if (raw_delta * raw_delta <= 75 * 75) {\n        return;\n    }\n\n    fp->mv.co.turn.has_turned = true;\n    fp->mv.co.turn.just_turned = true;\n    {\n        Fighter_GObj* partner_gobj =\n            Player_GetEntityAtIndex(fp->player_id, 1);\n        if (partner_gobj != NULL) {\n            Fighter* partner_fp = GET_FIGHTER(partner_gobj);\n            Ucf084NanaDashbackInput* partner_input =\n                (Ucf084NanaDashbackInput*) partner_fp->cpu.x444;\n            union {\n                float value;\n                u32 bits;\n            } facing;\n            facing.value = fp->facing_dir;\n            partner_input->facing_dir = fp->facing_dir;\n            partner_input->main_stick_x =\n                (u8) ((facing.bits >> 31) + 0x7F);\n        }\n    }\n}\n\nvoid ftCo_Turn_IASA(Fighter_GObj* gobj)\n{\n    Fighter* fp = GET_FIGHTER(gobj);\n",
+      "count": 1,
+      "reason": "Translate the pinned UCF 0.84 Dashback hook at GALE01 address 0x800C9A44. The predicate retains the exact Turn frame, facing-relative processed-axis, continuous tilt-age, and raw X delta greater-than-75 boundaries, then reproduces the original Turn flags and Ice Climbers partner input side effects."
+    },
+    {
+      "old": "    if (!fp->mv.co.turn.has_turned) {\n        fp->facing_dir = -fp->facing_dir;\n    }\n\n    RETURN_IF(ftCo_SpecialS_CheckInput(gobj));\n",
+      "new": "    if (!fp->mv.co.turn.has_turned) {\n        fp->facing_dir = -fp->facing_dir;\n        ucf084_apply_dashback(fp);\n    }\n\n    RETURN_IF(ftCo_SpecialS_CheckInput(gobj));\n",
+      "count": 1,
+      "reason": "Invoke the native UCF translation immediately after the same facing-direction store replaced by the official 0x800C9A44 hook, before every ordinary Turn interrupt check."
+    }
+  ]
+}

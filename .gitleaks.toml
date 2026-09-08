@@ -1,0 +1,9 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Public HSDLib commit pin, not a Sourcegraph credential"
+condition = "AND"
+paths = ['''^tools/ssbm_asset_compiler/Program\.cs$''']
+regexTarget = "line"
+regexes = ['''RequiredHsdLibRevision = "5cf0c4d2d2f0d8d9301f3ed56c3cb826ee80536b";''']

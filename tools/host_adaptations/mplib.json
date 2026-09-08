@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "source_path": "src/melee/mp/mplib.c",
+  "source_sha256": "7984d542363a1ee87ec5c812fb087ae0bc780916ea047278f297efbdb369e7eb",
+  "adapted_sha256": "87943071a6bc03f321c29524010cb97e5c64a94ec5630055cc8cef670f0d27d9",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "            v_r4->pos.x = v_r4->x0 * m0_0 + m0_3;",
+      "new": "            v_r4->pos.x = PF_SlippiMulAddF32(v_r4->x0, m0_0, m0_3);",
+      "count": 1,
+      "reason": "Match the PowerPC single-precision fused multiply-add codegen for the uniform-scale ground-collision vertex write in mpLib_80055E9C: v->pos.x = v->x0 * m0_0 + m0_3 is one ordered a*b+c expression, which the target compiles to a single fmadds while the native import globally disables contraction. Same fmadds class as the fobj linear-channel adaptation and the spline adaptations; verified end to end by the 9217 frame-923 oracle proof (native x923 converges to the oracle value when the previous-frame vertex is fused). Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            v_r4->pos.y = v_r4->x4 * m0_0 + m1_3;",
+      "new": "            v_r4->pos.y = PF_SlippiMulAddF32(v_r4->x4, m0_0, m1_3);",
+      "count": 1,
+      "reason": "Match the PowerPC single-precision fused multiply-add codegen for the uniform-scale ground-collision vertex write in mpLib_80055E9C: v->pos.x = v->x0 * m0_0 + m0_3 is one ordered a*b+c expression, which the target compiles to a single fmadds while the native import globally disables contraction. Same fmadds class as the fobj linear-channel adaptation and the spline adaptations; verified end to end by the 9217 frame-923 oracle proof (native x923 converges to the oracle value when the previous-frame vertex is fused). Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            (joint->inner->left_bound * m0_0 + m0_3) - 30.0F;",
+      "new": "            PF_SlippiMulAddF32(joint->inner->left_bound, m0_0, m0_3) - 30.0F;",
+      "count": 1,
+      "reason": "Same PowerPC fused multiply-add codegen class as the uniform-scale vertex writes in mpLib_80055E9C: each bounding-box line computes one ordered a*b+c expression before the constant widening offset, which the target contracts to a single fmadds. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            (joint->inner->bottom_bound * m0_0 + m1_3) - 30.0F;",
+      "new": "            PF_SlippiMulAddF32(joint->inner->bottom_bound, m0_0, m1_3) - 30.0F;",
+      "count": 1,
+      "reason": "Same PowerPC fused multiply-add codegen class as the uniform-scale vertex writes in mpLib_80055E9C: each bounding-box line computes one ordered a*b+c expression before the constant widening offset, which the target contracts to a single fmadds. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            30.0F + (joint->inner->right_bound * m0_0 + m0_3);",
+      "new": "            30.0F + PF_SlippiMulAddF32(joint->inner->right_bound, m0_0, m0_3);",
+      "count": 1,
+      "reason": "Same PowerPC fused multiply-add codegen class as the uniform-scale vertex writes in mpLib_80055E9C: each bounding-box line computes one ordered a*b+c expression before the constant widening offset, which the target contracts to a single fmadds. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "            30.0F + (joint->inner->top_bound * m0_0 + m1_3);",
+      "new": "            30.0F + PF_SlippiMulAddF32(joint->inner->top_bound, m0_0, m1_3);",
+      "count": 1,
+      "reason": "Same PowerPC fused multiply-add codegen class as the uniform-scale vertex writes in mpLib_80055E9C: each bounding-box line computes one ordered a*b+c expression before the constant widening offset, which the target contracts to a single fmadds. Use Slippi binary64 intermediate rounding before binary32 storage; direct host fmaf differs at double-rounding boundaries."
+    },
+    {
+      "old": "#include \"mplib.h\"",
+      "new": "#include \"native_numeric.h\"\n#include \"mplib.h\"",
+      "count": 1,
+      "reason": "Declare the shared Slippi multiply-add rounding helper."
+    },
+    {
+      "old": "sqrt_tmp - 4",
+      "new": "&sqrt_tmp[0]",
+      "count": 1,
+      "reason": "mpLib_80056C54 uses sqrtf_store solely for a volatile binary32 store/reload; the two scratch results are not otherwise read. Negative indices reconstruct retail stack slots outside the declared array and corrupt native caller state. Use distinct in-bounds scratch elements, preserving every arithmetic operation, branch, store width and output. Both traversal directions receive the same class repair."
+    },
+    {
+      "old": "sqrt_tmp - 5",
+      "new": "&sqrt_tmp[1]",
+      "count": 1,
+      "reason": "mpLib_80056C54 uses sqrtf_store solely for a volatile binary32 store/reload; the two scratch results are not otherwise read. Negative indices reconstruct retail stack slots outside the declared array and corrupt native caller state. Use distinct in-bounds scratch elements, preserving every arithmetic operation, branch, store width and output. Both traversal directions receive the same class repair."
+    }
+  ],
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_numeric.h",
+      "sha256": "9baa1ebf164ec209af1b651580c7fa4373f32a54508220d34e505e8e341b1e4f"
+    },
+    {
+      "path": "src/ssbm/native_compat/native_arithmetic.h",
+      "sha256": "c963ad847610dadbc19493342fde021a1cbe45555d70306f7474647ae3e1cfe3"
+    }
+  ]
+}

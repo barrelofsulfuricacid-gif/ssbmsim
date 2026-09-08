@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "source_path": "src/sysdolphin/baselib/bytecode.c",
+  "source_sha256": "18c1c7e6c0258f5cbf7ea2e23433ea3f93c67baaf41bd37d3f06b9a0e9ebdd11",
+  "adapted_sha256": "f2ce8c66a6d24590946d68bc0359004b67e25bf0ee180410cfa3f3af10130f77",
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "replacements": [
+    {
+      "old": "#include <math.h>\n",
+      "new": "#include <math.h>\n#include \"native_msl_math.h\"\n",
+      "count": 1,
+      "reason": "The native build intentionally resolves the host math header, while GALE01 resolves src/MSL/math.h and inlines its fmodf with signed-64 conversion plus fused fnmsubs rounding. The compatibility helper reproduces that source and DOL behavior without host libm."
+    },
+    {
+      "old": "fmodf(f1, f0)",
+      "new": "PF_MSLFmodf(f1, f0)",
+      "count": 1,
+      "reason": "Route bytecode opcode 0x1B through the exact native form of the source-owned MSL helper."
+    }
+  ]
+}

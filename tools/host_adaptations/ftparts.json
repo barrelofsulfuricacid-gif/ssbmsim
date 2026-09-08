@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/ft/ftparts.c",
+  "source_sha256": "babbbb43e2dec59efb3406b40ba8c62c06163b5fa9daa7c70516f0e68778b5d2",
+  "adapted_sha256": "edca9f7008866a11e9ae641a379f8f5e54cc354d7996c9e52df0d731779acb04",
+  "replacements": [
+    {
+      "old": "void ftPartsSetupSharedVtxMtx(HSD_PObj* pobj, MtxPtr vmtx, MtxPtr pmtx,",
+      "new": "void ftPartsSetupSharedVtxMtx(HSD_PObj* pobj, Mtx vmtx, Mtx pmtx,",
+      "count": 1,
+      "reason": "Spell the definition's two matrix parameters exactly like the existing public declaration; C adjusts both array parameters to the same pointer type, so this removes the host diagnostic without changing the function type or generated behavior."
+    },
+    {
+      "old": "void ftPartsSetupEnvelopeMtx(HSD_PObj* pobj, MtxPtr vmtx, MtxPtr pmtx,",
+      "new": "void ftPartsSetupEnvelopeMtx(HSD_PObj* pobj, Mtx vmtx, Mtx pmtx,",
+      "count": 1,
+      "reason": "Spell the definition's two matrix parameters exactly like the existing public declaration; C adjusts both array parameters to the same pointer type, so this removes the host diagnostic without changing the function type or generated behavior."
+    },
+    {
+      "old": "        HSD_JObjSetupMatrix(pobj->u.jobj);\n        PSMTXConcat(vmtx, pobj->u.jobj->mtx, tmp);",
+      "new": "        PSMTXConcat(vmtx, HSD_JObjGetMtxPtr(pobj->u.jobj), tmp);",
+      "count": 1,
+      "reason": "Use the source-owned inline accessor that performs the same single setup call and returns the same inline matrix; this avoids GCC 11's false zero-sized-region inference for the direct union-member expression without suppressing the diagnostic."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/pl/player.c",
+  "source_sha256": "1d3bf43ad9071026f5c7bb056a8227cb2c29c9a33b922411142bd371abb623e4",
+  "adapted_sha256": "f860a0331464aebeac5052bb5a4b2242b9976cc86e28dca3c4ce112bb8502d8d",
+  "native_dependencies": [
+    {
+      "path": "src/ssbm/native_compat/native_player_common_api.h",
+      "sha256": "84bff83dd4404e8a308a41329a196c0101aa21558f989675642d5d38e1606e52"
+    }
+  ],
+  "replacements": [
+    {
+      "old": "#include \"player.h\"\n",
+      "new": "#include \"player.h\"\n#include \"native_player_common_api.h\"\n",
+      "count": 1,
+      "reason": "Declare the startup-only typed player-common asset binding used in place of runtime DAT parsing."
+    },
+    {
+      "old": "/// @todo delete after fixing functions that use this\nstruct Unk_Struct_w_Array {\n    char some_str[8 + 4]; //\"PdPm.dat\"\n    char another_str[16 + 4];\n    S8Vec3 vec_arr[30]; /// ftMapping_list\n};\n\n",
+      "new": "/// Native host code indexes ftMapping_list directly; it cannot depend on\n/// the original DOL linker placing this table after two string globals.\n\n",
+      "count": 1,
+      "reason": "Remove the decomp-only overlay that reconstructs ftMapping_list from the original DOL data-section adjacency, which is not preserved by native ELF linking."
+    },
+    {
+      "old": "    struct Unk_Struct_w_Array* unkStruct =\n        (struct Unk_Struct_w_Array*) &str_PdPmdat_start_of_data;\n",
+      "new": "",
+      "count": 3,
+      "reason": "Remove the three local DOL-layout overlays now that their field accesses use the named mapping table."
+    },
+    {
+      "old": "    struct Unk_Struct_w_Array* unk_struct =\n        (struct Unk_Struct_w_Array*) &str_PdPmdat_start_of_data;\n",
+      "new": "",
+      "count": 1,
+      "reason": "Remove Player_8003248C's DOL-layout overlay before directly querying the named mapping table."
+    },
+    {
+      "old": "    struct Unk_Struct_w_Array* some_struct =\n        (struct Unk_Struct_w_Array*) &str_PdPmdat_start_of_data;\n",
+      "new": "",
+      "count": 1,
+      "reason": "Remove Player_80032610's DOL-layout overlay before directly querying the named mapping table."
+    },
+    {
+      "old": "unkStruct->vec_arr[player->player_character].z",
+      "new": "ftMapping_list[player->player_character].has_transformation",
+      "count": 2,
+      "reason": "Preserve the mapping-table transformation predicate in player reset and fall accounting without relying on cross-global address arithmetic."
+    },
+    {
+      "old": "unk_struct->vec_arr[player->player_character].z",
+      "new": "ftMapping_list[player->player_character].has_transformation",
+      "count": 1,
+      "reason": "Preserve the original subfighter CPU-classification predicate through the named mapping table."
+    },
+    {
+      "old": "some_struct->vec_arr[player->player_character].x",
+      "new": "ftMapping_list[player->player_character].internal_id",
+      "count": 1,
+      "reason": "Return the primary fighter kind from the named source table rather than an ELF-invalid DOL overlay."
+    },
+    {
+      "old": "some_struct->vec_arr[player->player_character].y",
+      "new": "ftMapping_list[player->player_character].extra_internal_id",
+      "count": 1,
+      "reason": "Return the companion or transformation fighter kind from the named source table rather than an ELF-invalid DOL overlay."
+    },
+    {
+      "old": "unkStruct->vec_arr[player->player_character].y",
+      "new": "ftMapping_list[player->player_character].extra_internal_id",
+      "count": 1,
+      "reason": "Preserve combined-fall accounting for mapped paired fighters through the named source table."
+    },
+    {
+      "old": "unkStruct->vec_arr[ckind].x",
+      "new": "ftMapping_list[ckind].internal_id",
+      "count": 1,
+      "reason": "Bind demo archive data to the named primary fighter mapping without assuming DOL global adjacency."
+    },
+    {
+      "old": "unkStruct->vec_arr[ckind].y",
+      "new": "ftMapping_list[ckind].extra_internal_id",
+      "count": 2,
+      "reason": "Bind and test demo companion archive data through the named extra-fighter mapping without assuming DOL global adjacency."
+    },
+    {
+      "old": "unkStruct->vec_arr[ckind].z",
+      "new": "ftMapping_list[ckind].has_transformation",
+      "count": 1,
+      "reason": "Preserve the demo companion-versus-transformation predicate through the named source table."
+    },
+    {
+      "old": "void Player_80036DD8(void)\n{\n    void** sp8;\n\n    lbArchive_LoadSymbols(str_PdPmdat_start_of_data, (void**) &sp8,\n                          str_plLoadCommonData, 0);\n    pl_804D6470 = *sp8;\n}\n",
+      "new": "void Player_80036DD8(void)\n{\n    pl_804D6470 = pf_ssbm_native_player_common_require();\n}\n",
+      "count": 1,
+      "reason": "Point the original gameplay global at the immutable endian-normalized PdPm common table already memory-mapped at startup; remove disc access, DAT relocation, heap allocation, and parsing."
+    },
+    {
+      "old": "u8 Player_SetFlagsAEBit1(int slot, u8 bit1)\n{\n    StaticPlayer* player;\n    Player_CheckSlot(slot);\n    player = &player_slots[slot];\n    player->flagsAE.b1 = bit1;\n}",
+      "new": "u8 Player_SetFlagsAEBit1(int slot, u8 bit1)\n{\n    StaticPlayer* player;\n    Player_CheckSlot(slot);\n    player = &player_slots[slot];\n    player->flagsAE.b1 = bit1;\n    return bit1;\n}",
+      "count": 1,
+      "reason": "Satisfy the host compiler for the decomp-owned u8 signature by returning the value just stored; every source call site ignores the return value."
+    }
+  ]
+}

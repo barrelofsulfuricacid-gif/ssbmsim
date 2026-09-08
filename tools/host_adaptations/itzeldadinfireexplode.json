@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "claim_boundary": "source-host-adaptation-not-behavioral-coverage",
+  "source_path": "src/melee/it/kinds/itzeldadinfireexplode.c",
+  "source_sha256": "263b5f54a659e092ea68640e6c3ab1768b0c35fdbd8b8ef52c5a90c9e851fc73",
+  "adapted_sha256": "03f974775891c47376b44b266aabdffd14ede840b94dbc42dd30927f291545a0",
+  "replacements": [
+    {
+      "old": "    ip->x40_vel.z = ip->x40_vel.y = ip->x40_vel.z = 0.0F;",
+      "new": "    ip->x40_vel.z = 0.0F;\n    ip->x40_vel.y = 0.0F;\n    ip->x40_vel.z = 0.0F;",
+      "count": 1,
+      "reason": "Preserve the exact GALE01 DOL store order z, y, z (0x802C4988 through 0x802C4990), including the untouched x component, while eliminating unsequenced host-C behavior rejected by the native warning policy."
+    }
+  ]
+}
