@@ -2,13 +2,9 @@
 
 A native, headless Super Smash Bros. Melee research simulator targeting
 **GALE01 NTSC 1.02 with UCF 0.84**. It compiles pinned gameplay source into
-native C/C++; it does not emulate a GameCube. Intended for simulation research,
-replay diagnostics, and contributions to native gameplay fidelity.
+native C/C++.
 
-**Work in progress:** full canonical equivalence is not established. The target
-is 500 complete matches across all playable fighters/forms and six tournament
-stages, with items off. Passing unit tests or matching recorded Slippi fields
-does not prove that target. See [status](docs/status.md).
+**Work in progress:** full canonical equivalence is not established.
 
 ## Quick start
 
